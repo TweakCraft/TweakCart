@@ -21,8 +21,6 @@ import java.util.logging.Logger;
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
-    private static HashMap<Minecart, TweakMinecart> tweakMinecarts = new HashMap<Minecart, TweakMinecart>();
-    private static HashMap<Block, TweakMinecart> lockedMinecarts = new HashMap<Block, TweakMinecart>();
 
     public TweakCartVehicleListener(TweakCart p) {
         plugin = p;
@@ -30,30 +28,33 @@ public class TweakCartVehicleListener extends VehicleListener {
 
     public void onVehicleMove(VehicleMoveEvent event) {
         if (event.getVehicle() instanceof Minecart) {
-            if (tweakMinecarts.containsKey(event.getVehicle())) {
-                TweakMinecart cart = tweakMinecarts.get(event.getVehicle());
-                if (lockedMinecarts.containsValue(cart)) {
+            if (plugin.tweakMinecarts.containsKey(event.getVehicle())) {
+                TweakMinecart cart = plugin.tweakMinecarts.get(event.getVehicle());
+                if (plugin.lockedMinecarts.containsValue(cart)) {
                     cart.stop();
+                    cart.getCart().teleport(event.getFrom());
+                    return;
                 }
-            } else if (event.getFrom().getBlock().equals(event.getTo().getBlock())) {
+            }
+
+            if (event.getFrom().getBlock().equals(event.getTo().getBlock())) {
                 return;
-            } else {
-                if (event.getTo().getBlock().getType() == Material.POWERED_RAIL) {
-                    TweakMinecart cart;
-                    if (tweakMinecarts.containsKey(event.getVehicle())) {
-                        cart = tweakMinecarts.get(event.getVehicle());
-                    } else {
-                        cart = new TweakMinecart((Minecart) event.getVehicle());
-                        tweakMinecarts.put((Minecart) event.getVehicle(), cart);
-                    }
-                    Block rail = event.getTo().getBlock();
-                    if ((rail.getData() & 0x8) > 0) {
-                        log.info("Block is powered!");
-                    } else {
-                        log.info("Block is not powered!");
-                        cart.stop();
-                        lockedMinecarts.put(rail, cart);
-                    }
+            }
+
+            if (event.getTo().getBlock().getType() == Material.POWERED_RAIL) {
+                TweakMinecart cart;
+                if (plugin.tweakMinecarts.containsKey(event.getVehicle())) {
+                    cart = plugin.tweakMinecarts.get(event.getVehicle());
+                } else {
+                    cart = new TweakMinecart((Minecart) event.getVehicle());
+                    plugin.tweakMinecarts.put((Minecart) event.getVehicle(), cart);
+                }
+                Block rail = event.getTo().getBlock();
+                if ((rail.getData() & 0x8) > 0) {
+                    cart.boost();
+                } else {
+                    cart.stop();
+                    plugin.lockedMinecarts.put(rail, cart);
                 }
             }
         }

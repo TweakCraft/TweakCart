@@ -2,10 +2,14 @@ package com.edoxile.bukkit.tweakcart;
 
 import com.edoxile.bukkit.tweakcart.Listeners.TweakCartBlockListener;
 import com.edoxile.bukkit.tweakcart.Listeners.TweakCartVehicleListener;
+import com.edoxile.bukkit.tweakcart.Utils.TweakMinecart;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Minecart;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**
@@ -16,6 +20,8 @@ public class TweakCart extends JavaPlugin {
     private static Logger log = Logger.getLogger("Minecraft");
     private TweakCartVehicleListener vehicleListener = null;
     private TweakCartBlockListener blockListener = null;
+    public HashMap<Minecart, TweakMinecart> tweakMinecarts = new HashMap<Minecart, TweakMinecart>();
+    public HashMap<Block, TweakMinecart> lockedMinecarts = new HashMap<Block, TweakMinecart>();
 
     public void onEnable() {
         vehicleListener = new TweakCartVehicleListener(this);
