@@ -1,5 +1,6 @@
 package com.edoxile.bukkit.tweakcart.Utils;
 
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
 
@@ -16,12 +17,17 @@ public class TweakMinecart {
         speed = cart.getVelocity();
     }
 
-    public void reverse(){
+    public BlockFace getDirection() {
         Vector velocity = minecart.getVelocity();
-        velocity.setX(-velocity.getX());
-        velocity.setY(-velocity.getY());
-        velocity.setZ(-velocity.getZ());
-        minecart.setVelocity(velocity);
+        if (Math.abs(velocity.getX()) > 0.01) {
+            return (velocity.getX() > 0 ? BlockFace.SOUTH : BlockFace.NORTH);
+        } else if (Math.abs(velocity.getZ()) > 0.01) {
+            return (velocity.getZ() > 0 ? BlockFace.WEST : BlockFace.EAST);
+        } else if (Math.abs(velocity.getY()) > 0.01) {
+            return (velocity.getY() > 0 ? BlockFace.UP : BlockFace.DOWN);
+        } else {
+            return BlockFace.SELF;
+        }
     }
 
     public void stop(){

@@ -24,7 +24,7 @@ public class TweakCartBlockListener extends BlockListener {
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         if (event.getNewCurrent() == event.getOldCurrent() || event.getNewCurrent() > 0 & event.getOldCurrent() > 0)
             return;
-        ArrayList<Block> blockList = BlockMapper.mapBlocks(event.getBlock(), 1, Material.POWERED_RAIL);
+        ArrayList<Block> blockList = BlockMapper.mapPoweredRails(event.getBlock());
         for (Block b : blockList) {
             if ((b.getData() & 0x8) == 0) {
                 if (plugin.lockedMinecarts.containsKey(b)) {
