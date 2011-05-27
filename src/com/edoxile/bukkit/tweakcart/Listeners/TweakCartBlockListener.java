@@ -1,14 +1,8 @@
 package com.edoxile.bukkit.tweakcart.Listeners;
 
 import com.edoxile.bukkit.tweakcart.TweakCart;
-import com.edoxile.bukkit.tweakcart.Utils.BlockMapper;
-import com.edoxile.bukkit.tweakcart.Utils.TweakMinecart;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockRedstoneEvent;
-
-import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,16 +18,8 @@ public class TweakCartBlockListener extends BlockListener {
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         if (event.getNewCurrent() == event.getOldCurrent() || event.getNewCurrent() > 0 & event.getOldCurrent() > 0)
             return;
-        ArrayList<Block> blockList = BlockMapper.mapPoweredRails(event.getBlock());
-        for (Block b : blockList) {
-            if ((b.getData() & 0x8) == 0) {
-                if (plugin.lockedMinecarts.containsKey(b)) {
-                    TweakMinecart cart = plugin.lockedMinecarts.get(b);
-                    plugin.lockedMinecarts.remove(b);
-                    cart.start();
-                    cart.boost();
-                }
-            }
-        }
+        /**
+         * TODO: search for either 1) a chest, 2) a rail. The chests can be found by using the BlockState mapper.
+         */
     }
 }
