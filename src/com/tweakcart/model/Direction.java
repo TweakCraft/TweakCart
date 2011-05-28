@@ -59,6 +59,10 @@ public enum Direction {
     public int getModZ() {
         return modZ;
     }
+
+    public Vector mod(double mod){
+        return new Vector(modX * mod, modY * mod, modZ * mod);
+    }
     
     public static Direction getHorizontalDirection(Vector velocity) {
     	int modx = (velocity.getX() == 0 ? 0 : velocity.getX() > 0 ? 1 : -1);
