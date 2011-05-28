@@ -1,5 +1,6 @@
 package com.tweakcart.listeners;
 
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
@@ -16,11 +17,18 @@ public class TweakCartBlockListener extends BlockListener {
         this.plugin = plugin;
     }
 
-    public void onBlockRedstoneChange(BlockRedstoneEvent event) {
-        if (event.getNewCurrent() == event.getOldCurrent() || event.getNewCurrent() > 0 & event.getOldCurrent() > 0)
-            return;
-        /**
-         * TODO: search for either 1) a chest, 2) a rail. The chests can be found by using the BlockState mapper.
-         */
+    /*
+	    public void onBlockRedstoneChange(BlockRedstoneEvent event) {
+	        if (event.getNewCurrent() == event.getOldCurrent() || event.getNewCurrent() > 0 & event.getOldCurrent() > 0)
+	            return;
+	    }
+    */
+    /**
+     * Called when a block is dispensing an item
+     * 
+     * @param event Relevant event details
+     */
+    public void onBlockDispense(BlockDispenseEvent event) {
     }
+    
 }

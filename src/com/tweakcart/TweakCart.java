@@ -29,7 +29,7 @@ public class TweakCart extends JavaPlugin {
         // Load plugin-manager and register events
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Event.Priority.Normal, this);
-        pm.registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Event.Priority.Normal, this);
+        pm.registerEvent(Event.Type.BLOCK_DISPENSE, blockListener, Event.Priority.Normal, this);
 
         // Loaded!
         log.info("[" + getDescription().getName() + "] Enabled! version:" + getDescription().getVersion());

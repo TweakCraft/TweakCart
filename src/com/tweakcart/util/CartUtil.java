@@ -1,22 +1,46 @@
 package com.tweakcart.util;
 
-import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
+
+import com.tweakcart.model.Direction;
+
 
 /**
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
 public class CartUtil {
-    public static BlockFace getDirection(Vector velocity){
-        if(Math.abs(velocity.getX())>0.04){
-            return (velocity.getX()>0)?BlockFace.SOUTH:BlockFace.NORTH;
-        } else if(Math.abs(velocity.getZ())>0.04){
-            return (velocity.getZ()>0)?BlockFace.WEST:BlockFace.EAST;
-        }  else if(Math.abs(velocity.getY())>0.04){
-            return (velocity.getY()>0)?BlockFace.UP:BlockFace.DOWN;
-        } else {
-            return BlockFace.SELF;
-        }
-    }
+	
+	/*
+	 * The minimal speed needed for a cart to be able to reach the next block.
+	 */
+	private static final double  min_movement = 0.04d;
+	
+	/**
+	 * Checks whereather the cart is moving at a very small pace
+	 * and needs to be stopped to prevent unnececary server load.
+	 * @param cart
+	 * @return true if the cart was stopped, false if nothing was changed.
+	 */
+	public static boolean stoppedSlowCart(Minecart cart){
+		Vector velocity = cart.getVelocity();
+		switch(Direction.getVerticalDirection(velocity)) {
+			case DOWN:
+			case UP:
+				return false;
+			default:
+				break;
+		}
+		
+		if(velocity.getX() < min_movement && velocity.getZ() < min_movement) {
+			if(velocity.getX() > 0 || velocity.getZ() > 0) {
+				velocity.setX(0);
+				velocity.setZ(0);
+				cart.setVelocity(velocity);
+				return true;
+			}
+		}
+		return false;
+	}
 }
