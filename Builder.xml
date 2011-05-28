@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TweakCart" default="jar" basedir=".">
+	<description>
+		This script will build the plugin.
+	</description>
+
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="build.classes" location="${build}/classes" />
+
+	<path id="classpath">
+		<fileset dir="libs">
+			<include name="craftbukkit-0.0.1-SNAPSHOT.jar" />
+			<include name="Permissions.jar" />
+			<include name="trove-2.1.0.jar" />
+		</fileset>
+	</path>
+	
+	<target name="verifyRequirements" description="Checks if the necessary requirements for building Handler are fulfilled">
+		<available classname="javax.script.ScriptContext" property="JDK6.present" />
+		<fail unless="JDK6.present" message="JDK 6 or greater is required." />
+	</target>
+
+	<target name="init" depends="clean, verifyRequirements" description="Create the output directories.">
+		<mkdir dir="${dist}" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+	</target>
+
+	<target name="compile" depends="init" description="Compile the source.">
+		<javac destdir="${build.classes}" optimize="on" debug="on" source="1.6" target="1.6" nowarn="off">
+			<src path="${src}" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" description="Create the jar file">
+		<jar destfile="${dist}/TweakCart.jar">
+			<fileset dir="${build.classes}" />
+			<zipfileset dir="" prefix="" >
+				<include name="plugin.yml" />
+			</zipfileset >
+			<zipfileset dir="${src}" prefix="src" >
+				<include name="**" />
+			</zipfileset>
+			<zipfileset src="libs/trove-2.1.0.jar" prefix="" >
+				<include name="**" />
+				<exclude name="META-INF/*" />
+			</zipfileset>
+		</jar>
+	</target>
+	
+	<target name="clean" description="Remove the output directories">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+</project>
