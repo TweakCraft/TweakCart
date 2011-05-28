@@ -2,6 +2,7 @@ package com.tweakcart.listeners;
 
 import com.tweakcart.model.Direction;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockListener;
@@ -9,11 +10,14 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 
 import com.tweakcart.TweakCart;
 
+import java.util.logging.Logger;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
 public class TweakCartBlockListener extends BlockListener {
+    private static final Logger log = Logger.getLogger("Minecraft");
     private TweakCart plugin;
 
     public TweakCartBlockListener(TweakCart plugin) {
@@ -37,12 +41,31 @@ public class TweakCartBlockListener extends BlockListener {
             case 328:
             case 342:
             case 343:
-                Direction direction = Direction.getHorizontalDirection(event.getVelocity());
-                Block track = event.getBlock().getRelative(direction.getModX(), direction.getModY(), direction.getModZ());
+                Block track = null;
+                Direction direction = null;
+                switch(event.getBlock().getData()){
+                    case 0x2:
+                        track = event.getBlock().getRelative(BlockFace.EAST);
+                        direction = Direction.EAST;
+                        break;
+                    case 0x3:
+                        track = event.getBlock().getRelative(BlockFace.WEST);
+                        direction = Direction.WEST;
+                        break;
+                    case 0x4:
+                        track = event.getBlock().getRelative(BlockFace.NORTH);
+                        direction = Direction.NORTH;
+                        break;
+                    case 0x5:
+                        track = event.getBlock().getRelative(BlockFace.SOUTH);
+                        direction = Direction.SOUTH;
+                        break;
+                }
                 switch (track.getTypeId()) {
                     case 27:
                     case 28:
                     case 66:
+                    log.info("Found a rail!");
                         Minecart cart = null;
                         switch (event.getItem().getTypeId()) {
                             case 328:
@@ -57,6 +80,7 @@ public class TweakCartBlockListener extends BlockListener {
                             default:
                                 break;
                         }
+                        log.info("Setting velocity!");
                         cart.setVelocity(direction.mod(cart.getMaxSpeed()));
                         event.setCancelled(true);
                         break;
