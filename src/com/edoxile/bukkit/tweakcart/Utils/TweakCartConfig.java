@@ -8,7 +8,7 @@ import com.edoxile.bukkit.tweakcart.TweakCart;
  */
 public class TweakCartConfig {
     private TweakCart plugin = null;
-    public /*final, but only after loading config!*/ int switchBlock = 45;
+    public int switchBlock = 45;
 
     /**
      * TODO: load config from config file, put it in all the variables.

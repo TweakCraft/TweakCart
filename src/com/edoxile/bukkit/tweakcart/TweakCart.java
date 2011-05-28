@@ -21,9 +21,9 @@ public class TweakCart extends JavaPlugin {
 
     public void onEnable() {
         // Initialising variables
+        config = new TweakCartConfig(this);
         vehicleListener = new TweakCartVehicleListener(this);
         blockListener = new TweakCartBlockListener(this);
-        config = new TweakCartConfig(this);
 
         // Load plugin-manager and register events
         PluginManager pm = getServer().getPluginManager();
