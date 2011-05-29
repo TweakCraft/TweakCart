@@ -3,6 +3,7 @@ package com.tweakcart.listeners;
 import com.tweakcart.model.Direction;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockListener;
@@ -65,7 +66,6 @@ public class TweakCartBlockListener extends BlockListener {
                     case 27:
                     case 28:
                     case 66:
-                    log.info("Found a rail!");
                         Minecart cart = null;
                         switch (event.getItem().getTypeId()) {
                             case 328:
@@ -80,8 +80,9 @@ public class TweakCartBlockListener extends BlockListener {
                             default:
                                 break;
                         }
-                        log.info("Setting velocity!");
                         cart.setVelocity(direction.mod(cart.getMaxSpeed()));
+                        Dispenser dispenser = (Dispenser)event.getBlock().getState();
+                        dispenser.getInventory().removeItem(event.getItem()).isEmpty();
                         event.setCancelled(true);
                         break;
                     default:
