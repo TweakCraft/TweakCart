@@ -1,6 +1,8 @@
 package com.tweakcart.listeners;
 
+import com.tweakcart.util.ChestUtil;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
@@ -18,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Dispenser;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -60,17 +63,22 @@ public class TweakCartVehicleListener extends VehicleListener {
                 item = new ItemStack(Material.MINECART, 1);
             }
             Dispenser dispenser = (Dispenser) event.getBlock().getRelative(BlockFace.UP).getState();
-            if (dispenser.getInventory().addItem(item).isEmpty()) {
+            ItemStack testje = ChestUtil.putItems(item, dispenser)[0];
+            if (testje == null) {
                 if (event.getVehicle() instanceof StorageMinecart) {
                     StorageMinecart cart = (StorageMinecart) event.getVehicle();
-                    HashMap<Integer, ItemStack> map = dispenser.getInventory().addItem(cart.getInventory().getContents());
-                    for (ItemStack i : map.values()) {
-                        if (i != null)
-                            cart.getWorld().dropItem(cart.getLocation(), i);
+                    ItemStack[] leftovers = ChestUtil.putItems(cart.getInventory().getContents(), dispenser);
+                    cart.getInventory().clear();
+                    for(ItemStack i : leftovers){
+                        if(i == null)
+                            continue;
+                        cart.getWorld().dropItem(cart.getLocation(), i);
                     }
                 }
                 event.getVehicle().remove();
                 return;
+            } else {
+                log.info("Test: " + testje.toString());
             }
         }
     }
