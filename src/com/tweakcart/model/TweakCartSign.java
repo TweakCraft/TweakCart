@@ -3,11 +3,7 @@ package com.tweakcart.model;
 import gnu.trove.TIntIntHashMap;
 import gnu.trove.TIntIntIterator;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.bukkit.material.MaterialData;
 
 /**
  * Created by IntelliJ IDEA.
@@ -178,35 +174,66 @@ public class TweakCartSign {
     }
 
     /**
-     * TODO: this function still needs to be fixed.
+     * TODO: this function still needs to be tested.
+     *
      * @param part
      * @return
      */
     private static TIntIntHashMap parseRange(String part) {
         String[] split = part.split(TYPE.RANGE.getTag());
+
         TIntIntHashMap start = parsePart(split[0]);
         TIntIntHashMap end = parsePart(split[1]);
         TIntIntHashMap items = new TIntIntHashMap();
-        int startitem = start.iterator().key();
-        AbstractItem enditem = end.get(end.size() - 1);
-        for (int item = startitem.getId(); item <= enditem.getId(); item++) {
-            for (AbstractItem i : AbstractItem.getItem(item)) {
-                if (i.getId() == startitem.getId()) {
-                    if (!startitem.hasData() || i.getData() >= startitem.getData())
-                        items.add(i);
-                } else if (i.getId() == enditem.getId()) {
-                    if (!enditem.hasData() || i.getData() <= enditem.getData())
-                        items.add(i);
-                } else
-                    items.add(i);
-            }
+
+        int startitem, enditem, startamount, endamount;
+
+        TIntIntIterator iterator = start.iterator();
+
+        if (iterator.hasNext()) {
+            startitem = iterator.key();
+            startamount = iterator.value();
+        } else {
+            return items;
         }
-        if (startitem.getAmount() != -1) {
-            for (AbstractItem i : items)
-                i.setAmount(startitem.getAmount());
-        } else if (enditem.getAmount() != -1) {
-            for (AbstractItem i : items)
-                i.setAmount(enditem.getAmount());
+
+        iterator = end.iterator();
+        if (iterator.hasNext()) {
+            enditem = iterator.key();
+            endamount = iterator.value();
+        } else {
+            return items;
+        }
+
+
+        for (int item = getIdFromKey(startitem); item <= getIdFromKey(enditem); item++) {
+            for (Material m : Material.values()) {
+                MaterialData data = new MaterialData(m);
+
+                if (items.containsKey(makeKey(data.getItemTypeId(), (short) -1))) {
+                    continue;
+                }
+
+                if (data.getItemTypeId() == getIdFromKey(startitem)) {
+                    if ((getDataFromKey(startitem) < 0)) {
+                        items.put(makeKey(item, (short) -1), (startamount > 0 ? startamount : endamount));
+                    } else {
+                        if (data.getData() >= getDataFromKey(startitem)) {
+                            items.put(makeKey(item, data.getData()), (startamount > 0 ? startamount : endamount));
+                        }
+                    }
+                } else if (data.getItemTypeId() == getIdFromKey(enditem)) {
+                    if ((getDataFromKey(enditem) < 0)) {
+                        items.put(makeKey(item, (short) -1), -1);
+                    } else {
+                        if (data.getData() >= getDataFromKey(enditem)) {
+                            items.put(makeKey(item, data.getData()), (startamount > 0 ? startamount : endamount));
+                        }
+                    }
+                } else {
+                    items.put(makeKey(data.getItemTypeId(), data.getData()), (startamount > 0 ? startamount : endamount));
+                }
+            }
         }
         return items;
     }
@@ -226,16 +253,16 @@ public class TweakCartSign {
     }
 
     private static TIntIntHashMap parseNormal(String part) {
+        TIntIntHashMap item = new TIntIntHashMap();
         try {
-            TIntIntHashMap item = new TIntIntHashMap();
             int materialId = Integer.parseInt(part);
             if (Material.getMaterial(materialId) != null) {
-                item.put(makeKey(materialId, (short)-1),-1);
+                item.put(makeKey(materialId, (short) -1), -1);
             }
             return item;
         } catch (NumberFormatException exception) {
-            return null;
         }
+        return item;
     }
 
     private static String removeBrackets(String s) {
