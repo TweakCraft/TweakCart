@@ -31,7 +31,6 @@ public class TweakCart extends JavaPlugin {
         pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_DISPENSE, blockListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.VEHICLE_COLLISION_BLOCK, vehicleListener, Event.Priority.Normal, this);
-        pm.registerEvent(Event.Type.VEHICLE_CREATE, vehicleListener, Event.Priority.Normal, this);
 
         // Loaded!
         log.info("[" + getDescription().getName() + "] Enabled! version:" + getDescription().getVersion());

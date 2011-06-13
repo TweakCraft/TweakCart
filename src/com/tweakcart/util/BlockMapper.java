@@ -1,8 +1,8 @@
 package com.tweakcart.util;
 
+import com.tweakcart.model.Direction;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * User: Edoxile
  */
 public class BlockMapper {
-    public static ArrayList<BlockState> mapBlockStates(Block startBlock, BlockFace direction, Material type) {
+    public static ArrayList<BlockState> mapBlockStates(Block startBlock, Direction direction, Material type) {
         ArrayList<BlockState> bagList = new ArrayList<BlockState>();
         switch (direction) {
             case NORTH:
@@ -47,6 +47,8 @@ public class BlockMapper {
                 }
             }
             break;
+            default:
+                break;
         }
         return bagList;
     }
