@@ -11,6 +11,7 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import com.tweakcart.TweakCart;
 import com.tweakcart.model.TweakCartConfig;
@@ -37,9 +38,10 @@ public class TweakCartVehicleListener extends VehicleListener {
     public void onVehicleMove(VehicleMoveEvent event) {
         if (event.getVehicle() instanceof Minecart) {
             Minecart cart = (Minecart) event.getVehicle();
-            if (CartUtil.stoppedSlowCart(cart)) return;
+            Vector cartSpeed = cart.getVelocity(); // We are gonna use this 1 object everywhere(a new Vector() is made on every call ;) ).
+            if (CartUtil.stoppedSlowCart(cart, cartSpeed)) return;
             if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) return;
-            Direction horizontalDirection = Direction.getHorizontalDirection(cart.getVelocity());
+            Direction horizontalDirection = Direction.getHorizontalDirection(cartSpeed);
             switch (horizontalDirection) {
                 case NORTH:
                 case SOUTH:

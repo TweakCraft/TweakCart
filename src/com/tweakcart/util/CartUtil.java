@@ -24,16 +24,13 @@ public class CartUtil {
      * @param cart
      * @return true if the cart was stopped, false if nothing was changed.
      */
-    public static boolean stoppedSlowCart(Minecart cart) {
-        Vector velocity = cart.getVelocity();
+    public static final boolean stoppedSlowCart(Minecart cart, Vector velocity) {
         switch (Direction.getVerticalDirection(velocity)) {
             case DOWN:
             case UP:
                 return false;
-            default:
-                break;
         }
-
+        
         if (MathUtil.abs(velocity.getX()) < min_movement && MathUtil.abs(velocity.getZ()) < min_movement) {
             velocity.setX(0);
             velocity.setZ(0);

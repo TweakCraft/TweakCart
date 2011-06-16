@@ -3,6 +3,7 @@ package com.tweakcart.model;
 import gnu.trove.TIntIntHashMap;
 import gnu.trove.TIntIntIterator;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 /**
@@ -12,29 +13,32 @@ import org.bukkit.material.MaterialData;
 
 public class TweakCartSign {
 
-    public static Direction getLineItemDirection(String str) {
+    public static final Direction getLineItemDirection(String str) {
         Direction direction = Direction.SELF;
-        int index = str.indexOf("+");
-        if (index == 1) {
-            String dir = str.substring(0, 1);
-            if (dir.equalsIgnoreCase("n")) direction = Direction.NORTH;
-            if (dir.equalsIgnoreCase("s")) direction = Direction.SOUTH;
-            if (dir.equalsIgnoreCase("e")) direction = Direction.EAST;
-            if (dir.equalsIgnoreCase("w")) direction = Direction.WEST;
+        if (str.length() > 2 && str.charAt(1) == '+') {
+            char dir = str.charAt(0);
+            if (dir == 'n') direction = Direction.NORTH;
+            else if (dir == 's') direction = Direction.SOUTH;
+            else if (dir == 'e') direction = Direction.EAST;
+            else if (dir == 'w') direction = Direction.WEST;
         }
         return direction;
     }
 
-    public static int makeKey(int id, short data) {
-        return ((data << 16) | id);
+    public static final int getKey(ItemStack item) {
+    	return getKey(item.getTypeId(), item.getDurability());
+    }
+    
+    public static final int getKey(int itemid, short itemdata) {
+        return ((itemdata << 16) | (itemid & 0xFFFF));
     }
 
-    public static int getIdFromKey(int key) {
-        return (key & 0xffff);
+    public static final int getId(int key) {
+        return (key & 0xFFFF);
     }
 
-    public static int getDataFromKey(int key) {
-        return ((key >> 16) & 0xffff);
+    public static final short getData(int key) {
+        return (short) ((key >> 16) & 0xFFFF);
     }
 
     /**
@@ -45,7 +49,7 @@ public class TweakCartSign {
      *
      * @return materials found, or an empty array
      */
-    public static TIntIntHashMap getItemStringListToMaterial(String[] list, Direction facing) {
+    public static final TIntIntHashMap getItemStringListToMaterial(String[] list, Direction facing) {
         TIntIntHashMap items = new TIntIntHashMap();
         for (int line = 0; line < list.length; line++) {
             String str = removeBrackets(list[line].toLowerCase());
@@ -127,7 +131,7 @@ public class TweakCartSign {
      * @param part
      * @return
      */
-    private static TIntIntHashMap parsePart(String part) {
+    private static final TIntIntHashMap parsePart(String part) {
         try {
             switch (TYPE.getType(part)) {
                 case RANGE:
@@ -146,7 +150,7 @@ public class TweakCartSign {
         }
     }
 
-    private static TIntIntHashMap parseAmount(String part) {
+    private static final TIntIntHashMap parseAmount(String part) {
         String[] split = part.split(TYPE.AMOUNT.getTag());
         TIntIntHashMap items = parsePart(split[0]);
 
@@ -161,7 +165,7 @@ public class TweakCartSign {
         return items;
     }
 
-    private static TIntIntHashMap parseNegative(String part) {
+    private static final TIntIntHashMap parseNegative(String part) {
         part = part.replace(TYPE.REMOVE.getTag(), "");
         TIntIntHashMap items = parsePart(part);
 
@@ -179,7 +183,7 @@ public class TweakCartSign {
      * @param part
      * @return
      */
-    private static TIntIntHashMap parseRange(String part) {
+    private static final TIntIntHashMap parseRange(String part) {
         String[] split = part.split(TYPE.RANGE.getTag());
 
         TIntIntHashMap start = parsePart(split[0]);
@@ -206,58 +210,58 @@ public class TweakCartSign {
         }
 
 
-        for (int item = getIdFromKey(startitem); item <= getIdFromKey(enditem); item++) {
+        for (int item = getId(startitem); item <= getId(enditem); item++) {
             for (Material m : Material.values()) {
                 MaterialData data = new MaterialData(m);
 
-                if (items.containsKey(makeKey(data.getItemTypeId(), (short) -1))) {
+                if (items.containsKey(getKey(data.getItemTypeId(), (short) -1))) {
                     continue;
                 }
 
-                if (data.getItemTypeId() == getIdFromKey(startitem)) {
-                    if ((getDataFromKey(startitem) < 0)) {
-                        items.put(makeKey(item, (short) -1), (startamount > 0 ? startamount : endamount));
+                if (data.getItemTypeId() == getId(startitem)) {
+                    if ((getData(startitem) < 0)) {
+                        items.put(getKey(item, (short) -1), (startamount > 0 ? startamount : endamount));
                     } else {
-                        if (data.getData() >= getDataFromKey(startitem)) {
-                            items.put(makeKey(item, data.getData()), (startamount > 0 ? startamount : endamount));
+                        if (data.getData() >= getData(startitem)) {
+                            items.put(getKey(item, data.getData()), (startamount > 0 ? startamount : endamount));
                         }
                     }
-                } else if (data.getItemTypeId() == getIdFromKey(enditem)) {
-                    if ((getDataFromKey(enditem) < 0)) {
-                        items.put(makeKey(item, (short) -1), -1);
+                } else if (data.getItemTypeId() == getId(enditem)) {
+                    if ((getData(enditem) < 0)) {
+                        items.put(getKey(item, (short) -1), -1);
                     } else {
-                        if (data.getData() >= getDataFromKey(enditem)) {
-                            items.put(makeKey(item, data.getData()), (startamount > 0 ? startamount : endamount));
+                        if (data.getData() >= getData(enditem)) {
+                            items.put(getKey(item, data.getData()), (startamount > 0 ? startamount : endamount));
                         }
                     }
                 } else {
-                    items.put(makeKey(data.getItemTypeId(), data.getData()), (startamount > 0 ? startamount : endamount));
+                    items.put(getKey(data.getItemTypeId(), data.getData()), (startamount > 0 ? startamount : endamount));
                 }
             }
         }
         return items;
     }
 
-    private static TIntIntHashMap parseData(String part) {
+    private static final TIntIntHashMap parseData(String part) {
         String[] split = part.split(TYPE.DATA.getTag());
         TIntIntHashMap items = parsePart(split[0]);
         short data = Short.parseShort(split[1]);
 
         TIntIntIterator iterator = items.iterator();
         while (iterator.hasNext()) {
-            items.put(makeKey(iterator.key(), data), iterator.value());
+            items.put(getKey(iterator.key(), data), iterator.value());
             items.remove(iterator.key());
         }
 
         return items;
     }
 
-    private static TIntIntHashMap parseNormal(String part) {
+    private static final TIntIntHashMap parseNormal(String part) {
         TIntIntHashMap item = new TIntIntHashMap();
         try {
             int materialId = Integer.parseInt(part);
             if (Material.getMaterial(materialId) != null) {
-                item.put(makeKey(materialId, (short) -1), -1);
+                item.put(getKey(materialId, (short) -1), -1);
             }
             return item;
         } catch (NumberFormatException exception) {
@@ -265,7 +269,7 @@ public class TweakCartSign {
         return item;
     }
 
-    private static String removeBrackets(String s) {
+    private static final String removeBrackets(String s) {
         String str = "";
         boolean isStation = false;
         if (s.toLowerCase().contains("st-")) {

@@ -62,6 +62,7 @@ public class TweakCartBlockListener extends BlockListener {
                         direction = Direction.SOUTH;
                         break;
                 }
+                if(track == null) break;
                 switch (track.getTypeId()) {
                     case 27:
                     case 28:

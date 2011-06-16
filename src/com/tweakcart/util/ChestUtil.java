@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ChestUtil {
 
-    public static ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
+    public static final ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
         ItemStack[] to = containerBlock.getInventory().getContents();
         for (int i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null)
