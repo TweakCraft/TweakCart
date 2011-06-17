@@ -1,6 +1,9 @@
 package com.tweakcart.listeners;
 
 import com.tweakcart.model.Direction;
+import com.tweakcart.model.SignUtil;
+import com.tweakcart.util.BlockMapper;
+import gnu.trove.TIntIntHashMap;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -19,6 +22,9 @@ import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.MathUtil;
 import com.tweakcart.util.ChestUtil;
 
+import javax.naming.LinkException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -50,7 +56,8 @@ public class TweakCartVehicleListener extends VehicleListener {
                             Block tempBlock = event.getTo().getBlock().getRelative(0, dy, dz);
                             if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
                                     || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                                Sign s = (Sign)tempBlock.getState();
+                                Sign s = (Sign) tempBlock.getState();
+                                parseSign(s, cart, horizontalDirection);
                             }
                         }
                     }
@@ -59,7 +66,12 @@ public class TweakCartVehicleListener extends VehicleListener {
                 case WEST:
                     for (int dy = -1; dy <= 0; dy++) {
                         for (int dx = -1; dx <= 1; dx++) {
-
+                            Block tempBlock = event.getTo().getBlock().getRelative(dx, dy, 0);
+                            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                Sign s = (Sign) tempBlock.getState();
+                                parseSign(s, cart, horizontalDirection);
+                            }
                         }
                     }
                     break;
@@ -92,6 +104,75 @@ public class TweakCartVehicleListener extends VehicleListener {
                 }
                 event.getVehicle().remove();
                 return;
+            }
+        }
+    }
+
+    private void parseSign(Sign sign, Minecart cart, Direction direction) {
+        String[] lines = sign.getLines();
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].toLowerCase().contains("collect items") && cart instanceof StorageMinecart) {
+                //Collect items (cart -> chest)
+                //Get chests first, and then move items
+                List<BlockState> stateList = BlockMapper.mapBlockStates(sign.getBlock(), direction, Material.CHEST);
+                if (!stateList.isEmpty()) {
+                    TIntIntHashMap materials = SignUtil.getItemStringListToMaterial(lines[i + 1], direction);
+                    if (!(materials == null || materials.isEmpty())) {
+                        ItemStack[] cartContent = ((StorageMinecart) cart).getInventory().getContents();
+                        for (int itemIndex = 0; itemIndex < cartContent.length; itemIndex++) {
+                            if (cartContent[itemIndex] == null) continue;
+                            int key = SignUtil.getKey(cartContent[itemIndex]);
+                            int amount = materials.get(key);
+                            switch (amount) {
+                                case -2:
+                                    //Don't do this item, so skip to next
+                                    continue;
+                                default:
+                                    for (BlockState s : stateList) {
+                                        ContainerBlock chest = (ContainerBlock) s;
+                                        cartContent[itemIndex] = ChestUtil.putItems(cartContent[itemIndex], chest)[0];
+                                        if (cartContent[itemIndex] == null || cartContent[itemIndex].getAmount() < 1) {
+                                            //Contents is null!
+                                            break;
+                                        }
+                                    }
+                            }
+                        }
+                        ((StorageMinecart) cart).getInventory().setContents(cartContent);
+                    }
+                }
+            } else if (lines[i].toLowerCase().contains("deposit items") && cart instanceof StorageMinecart) {
+                //Deposit items (chest -> cart)
+                //Get chests first, and then move items
+                List<BlockState> stateList = BlockMapper.mapBlockStates(sign.getBlock(), direction, Material.CHEST);
+                if (!stateList.isEmpty()) {
+                    TIntIntHashMap materials = SignUtil.getItemStringListToMaterial(lines[i + 1], direction);
+                    if (!(materials == null || materials.isEmpty())) {
+                        ItemStack[] chestContent = ((StorageMinecart) cart).getInventory().getContents();
+                        for (int itemIndex = 0; itemIndex < cartContent.length; itemIndex++) {
+                            if (cartContent[itemIndex] == null) continue;
+                            int key = SignUtil.getKey(cartContent[itemIndex]);
+                            int amount = materials.get(key);
+                            switch (amount) {
+                                case -2:
+                                    //Don't do this item, so skip to next
+                                    continue;
+                                default:
+                                    for (BlockState s : stateList) {
+                                        ContainerBlock chest = (ContainerBlock) s;
+                                        cartContent[itemIndex] = ChestUtil.putItems(cartContent[itemIndex], chest)[0];
+                                        if (cartContent[itemIndex] == null || cartContent[itemIndex].getAmount() < 1) {
+                                            //Contents is null!
+                                            break;
+                                        }
+                                    }
+                            }
+                        }
+                        ((StorageMinecart) cart).getInventory().setContents(cartContent);
+                    }
+                }
+            } else {
+                //no action, continue;
             }
         }
     }
