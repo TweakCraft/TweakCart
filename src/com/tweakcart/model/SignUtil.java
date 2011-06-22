@@ -6,12 +6,15 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import java.util.logging.Logger;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
 
 public class SignUtil {
+    private static final Logger log = Logger.getLogger("Minecraft");
 
     public static final Direction getLineItemDirection(String str) {
         Direction direction = Direction.SELF;
@@ -26,9 +29,9 @@ public class SignUtil {
     }
 
     public static final int getKey(ItemStack item) {
-    	return getKey(item.getTypeId(), item.getDurability());
+        return getKey(item.getTypeId(), item.getDurability());
     }
-    
+
     public static final int getKey(int itemid, short itemdata) {
         return ((itemdata << 16) | (itemid & 0xFFFF));
     }
@@ -50,42 +53,47 @@ public class SignUtil {
      * @return materials found, or an empty array
      */
     public static final TIntIntHashMap getItemStringListToMaterial(String list, Direction facing) {
-        TIntIntHashMap items = new TIntIntHashMap();
-            String str = removeBrackets(list.toLowerCase());
-            str = str.trim();
-            if (str.equals("")) {
-                return null;
-            }
+        TIntIntHashMap items = new TIntIntHashMap(20);
+        String str = removeBrackets(list.toLowerCase());
+        str = str.trim();
+        if (str.equals("")) {
+            return null;
+        }
 
-            //Check the given direction and intended direction from the sign
-            Direction direction = getLineItemDirection(str);
-            if (direction != Direction.SELF) {
-                str = str.substring(2, str.length()); // remove the direction for further parsing.
-            }
-            if (facing != null && direction != facing && direction != Direction.SELF) {
-                return null;
-            }
+        //Check the given direction and intended direction from the sign
+        Direction direction = getLineItemDirection(str);
+        if (direction != Direction.SELF) {
+            str = str.substring(2, str.length()); // remove the direction for further parsing.
+        }
+        if (facing != null && direction != facing && direction != Direction.SELF) {
+            return null;
+        }
 
-            //short circuit if it's everything
-            if (str.contains("all items")) {
-                items.put(Material.AIR.getId(), -1);
-            }
+        //short circuit if it's everything
+        if (str.contains("all items")) {
+            items.put(Material.AIR.getId(), -1);
+        }
 
-            String[] keys = str.split(":");
-            for (int i = 0; i < keys.length; i++) {
-                String part = keys[i].trim();
-                TIntIntHashMap parsedset = parsePart(part);
+        String[] keys = str.split(":");
+        for (int i = 0; i < keys.length; i++) {
+            System.out.println("Entering for loop!");
+            String part = keys[i].trim();
+            TIntIntHashMap parsedset = parsePart(part);
 
 
-                if (parsedset == null || parsedset.size() < 1)
-                    continue;
+            if (parsedset == null || parsedset.size() < 1)
+                continue;
 
-                TIntIntIterator iterator = parsedset.iterator();
-                while (iterator.hasNext()) {
+            TIntIntIterator iterator = parsedset.iterator();
+            while (iterator.hasNext()) {
+                try {
                     items.put(iterator.key(), iterator.value());
+                } catch (IndexOutOfBoundsException e) {
+                    log.warning("Unsuspected error!");
                 }
             }
-
+        }
+        log.info("Items dump: " + items.toString());
         return items;
     }
 
@@ -185,7 +193,7 @@ public class SignUtil {
 
         TIntIntHashMap start = parsePart(split[0]);
         TIntIntHashMap end = parsePart(split[1]);
-        TIntIntHashMap items = new TIntIntHashMap();
+        TIntIntHashMap items = new TIntIntHashMap(20);
 
         int startitem, enditem, startamount, endamount;
 
@@ -254,7 +262,7 @@ public class SignUtil {
     }
 
     private static final TIntIntHashMap parseNormal(String part) {
-        TIntIntHashMap item = new TIntIntHashMap();
+        TIntIntHashMap item = new TIntIntHashMap(20);
         try {
             int materialId = Integer.parseInt(part);
             if (Material.getMaterial(materialId) != null) {

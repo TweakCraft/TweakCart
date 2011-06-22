@@ -1,8 +1,13 @@
 package com.tweakcart.listeners;
 
+import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.SignUtil;
+import com.tweakcart.model.TweakCartConfig;
 import com.tweakcart.util.BlockMapper;
+import com.tweakcart.util.CartUtil;
+import com.tweakcart.util.ChestUtil;
+import com.tweakcart.util.MathUtil;
 import gnu.trove.TIntIntHashMap;
 import org.bukkit.Material;
 import org.bukkit.block.*;
@@ -10,20 +15,11 @@ import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
-import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.tweakcart.TweakCart;
-import com.tweakcart.model.TweakCartConfig;
-import com.tweakcart.util.CartUtil;
-import com.tweakcart.util.MathUtil;
-import com.tweakcart.util.ChestUtil;
-
-import javax.naming.LinkException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -111,6 +107,7 @@ public class TweakCartVehicleListener extends VehicleListener {
     private void parseSign(Sign sign, Minecart cart, Direction direction) {
         String[] lines = sign.getLines();
         for (int i = 0; i < lines.length; i++) {
+            System.out.println("Entering vehicle for loop!");
             if (lines[i].toLowerCase().contains("collect items") && cart instanceof StorageMinecart) {
                 //Collect items (cart -> chest)
                 //Get chests first, and then move items
@@ -149,9 +146,9 @@ public class TweakCartVehicleListener extends VehicleListener {
                     TIntIntHashMap materials = SignUtil.getItemStringListToMaterial(lines[i + 1], direction);
                     if (!(materials == null || materials.isEmpty())) {
                         ItemStack[] chestContent = ((StorageMinecart) cart).getInventory().getContents();
-                        for (int itemIndex = 0; itemIndex < cartContent.length; itemIndex++) {
-                            if (cartContent[itemIndex] == null) continue;
-                            int key = SignUtil.getKey(cartContent[itemIndex]);
+                        for (int itemIndex = 0; itemIndex < chestContent.length; itemIndex++) {
+                            if (chestContent[itemIndex] == null) continue;
+                            int key = SignUtil.getKey(chestContent[itemIndex]);
                             int amount = materials.get(key);
                             switch (amount) {
                                 case -2:
@@ -160,15 +157,15 @@ public class TweakCartVehicleListener extends VehicleListener {
                                 default:
                                     for (BlockState s : stateList) {
                                         ContainerBlock chest = (ContainerBlock) s;
-                                        cartContent[itemIndex] = ChestUtil.putItems(cartContent[itemIndex], chest)[0];
-                                        if (cartContent[itemIndex] == null || cartContent[itemIndex].getAmount() < 1) {
+                                        chestContent[itemIndex] = ChestUtil.putItems(chestContent[itemIndex], chest)[0];
+                                        if (chestContent[itemIndex] == null || chestContent[itemIndex].getAmount() < 1) {
                                             //Contents is null!
                                             break;
                                         }
                                     }
                             }
                         }
-                        ((StorageMinecart) cart).getInventory().setContents(cartContent);
+                        ((StorageMinecart) cart).getInventory().setContents(chestContent);
                     }
                 }
             } else {

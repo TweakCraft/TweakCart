@@ -1,5 +1,6 @@
 package com.tweakcart.listeners;
 
+import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -7,9 +8,6 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.block.BlockRedstoneEvent;
-
-import com.tweakcart.TweakCart;
 
 import java.util.logging.Logger;
 
@@ -44,7 +42,7 @@ public class TweakCartBlockListener extends BlockListener {
             case 343:
                 Block track = null;
                 Direction direction = null;
-                switch(event.getBlock().getData()){
+                switch (event.getBlock().getData()) {
                     case 0x2:
                         track = event.getBlock().getRelative(BlockFace.EAST);
                         direction = Direction.EAST;
@@ -62,7 +60,7 @@ public class TweakCartBlockListener extends BlockListener {
                         direction = Direction.SOUTH;
                         break;
                 }
-                if(track == null) break;
+                if (track == null) break;
                 switch (track.getTypeId()) {
                     case 27:
                     case 28:
@@ -82,7 +80,7 @@ public class TweakCartBlockListener extends BlockListener {
                                 break;
                         }
                         cart.setVelocity(direction.mod(cart.getMaxSpeed()));
-                        Dispenser dispenser = (Dispenser)event.getBlock().getState();
+                        Dispenser dispenser = (Dispenser) event.getBlock().getState();
                         dispenser.getInventory().removeItem(event.getItem()).isEmpty();
                         event.setCancelled(true);
                         break;
