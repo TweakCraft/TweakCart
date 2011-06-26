@@ -104,72 +104,97 @@ public class TweakCartVehicleListener extends VehicleListener {
         }
     }
 
-    private void parseSign(Sign sign, Minecart cart, Direction direction) {
-        String[] lines = sign.getLines();
-        for (int i = 0; i < lines.length; i++) {
-            System.out.println("Entering vehicle for loop!");
-            if (lines[i].toLowerCase().contains("collect items") && cart instanceof StorageMinecart) {
-                //Collect items (cart -> chest)
-                //Get chests first, and then move items
-                List<BlockState> stateList = BlockMapper.mapBlockStates(sign.getBlock(), direction, Material.CHEST);
-                if (!stateList.isEmpty()) {
-                    TIntIntHashMap materials = SignUtil.getItemStringListToMaterial(lines[i + 1], direction);
-                    if (!(materials == null || materials.isEmpty())) {
-                        ItemStack[] cartContent = ((StorageMinecart) cart).getInventory().getContents();
-                        for (int itemIndex = 0; itemIndex < cartContent.length; itemIndex++) {
-                            if (cartContent[itemIndex] == null) continue;
-                            int key = SignUtil.getKey(cartContent[itemIndex]);
-                            int amount = materials.get(key);
-                            switch (amount) {
-                                case -2:
-                                    //Don't do this item, so skip to next
-                                    continue;
-                                default:
-                                    for (BlockState s : stateList) {
-                                        ContainerBlock chest = (ContainerBlock) s;
-                                        cartContent[itemIndex] = ChestUtil.putItems(cartContent[itemIndex], chest)[0];
-                                        if (cartContent[itemIndex] == null || cartContent[itemIndex].getAmount() < 1) {
-                                            //Contents is null!
-                                            break;
+    private void parseSign(Sign sign, Minecart cart, Direction direction)
+    {
+        if(cart instanceof StorageMinecart)
+        {
+            StorageMinecart StorageCart = (StorageMinecart) cart;
+
+            String[] lines = sign.getLines();
+            for (int i = 0; i < lines.length; i++) {
+                System.out.println("Entering vehicle for loop!");
+                if (lines[i].toLowerCase().contains("collect items"))
+                {
+                    //Collect items (cart -> chest)
+                    //Get chests first, and then move items
+                    List<BlockState> stateList = BlockMapper.mapBlockStates(sign.getBlock(), direction, Material.CHEST);
+                    if (!stateList.isEmpty())
+                    {
+                        TIntIntHashMap materials = SignUtil.getItemStringListToMaterial(lines[i + 1], direction);
+                        if (!(materials == null || materials.isEmpty()))
+                        {
+                            ItemStack[] cartContent = StorageCart.getInventory().getContents();
+                            for (int itemIndex = 0; itemIndex < cartContent.length; itemIndex++)
+                            {
+                                if (cartContent[itemIndex] == null) continue;
+                                int key = SignUtil.getKey(cartContent[itemIndex]);
+                                int amount = materials.get(key);
+                                switch (amount)
+                                {
+                                    case -2:
+                                        //Don't do this item, so skip to next
+                                        continue;
+                                    default:
+                                        for (BlockState s : stateList)
+                                        {
+                                            ContainerBlock chest = (ContainerBlock) s;
+                                            cartContent[itemIndex] = ChestUtil.putItems(cartContent[itemIndex], chest)[0];
+                                            if (cartContent[itemIndex] == null || cartContent[itemIndex].getAmount() < 1) {
+                                                //Contents is null!
+                                                StorageCart.getInventory().setContents(cartContent);
+                                                return;
+                                            }
                                         }
-                                    }
+                                }
                             }
+                            StorageCart.getInventory().setContents(cartContent);
                         }
-                        ((StorageMinecart) cart).getInventory().setContents(cartContent);
                     }
                 }
-            } else if (lines[i].toLowerCase().contains("deposit items") && cart instanceof StorageMinecart) {
-                //Deposit items (chest -> cart)
-                //Get chests first, and then move items
-                List<BlockState> stateList = BlockMapper.mapBlockStates(sign.getBlock(), direction, Material.CHEST);
-                if (!stateList.isEmpty()) {
-                    TIntIntHashMap materials = SignUtil.getItemStringListToMaterial(lines[i + 1], direction);
-                    if (!(materials == null || materials.isEmpty())) {
-                        ItemStack[] chestContent = ((StorageMinecart) cart).getInventory().getContents();
-                        for (int itemIndex = 0; itemIndex < chestContent.length; itemIndex++) {
-                            if (chestContent[itemIndex] == null) continue;
-                            int key = SignUtil.getKey(chestContent[itemIndex]);
-                            int amount = materials.get(key);
-                            switch (amount) {
-                                case -2:
-                                    //Don't do this item, so skip to next
-                                    continue;
-                                default:
-                                    for (BlockState s : stateList) {
-                                        ContainerBlock chest = (ContainerBlock) s;
-                                        chestContent[itemIndex] = ChestUtil.putItems(chestContent[itemIndex], chest)[0];
-                                        if (chestContent[itemIndex] == null || chestContent[itemIndex].getAmount() < 1) {
-                                            //Contents is null!
-                                            break;
+                else if (lines[i].toLowerCase().contains("deposit items"))
+                {
+                    //Deposit items (chest -> cart)
+                    //Get chests first, and then move items
+                    List<BlockState> stateList = BlockMapper.mapBlockStates(sign.getBlock(), direction, Material.CHEST);
+                    if (!stateList.isEmpty())
+                    {
+                        TIntIntHashMap materials = SignUtil.getItemStringListToMaterial(lines[i + 1], direction);
+                        if (!(materials == null || materials.isEmpty()))
+                        {
+                            ItemStack[] chestContent = StorageCart.getInventory().getContents();
+                            for (int itemIndex = 0; itemIndex < chestContent.length; itemIndex++)
+                            {
+                                if (chestContent[itemIndex] == null) continue;
+                                int key = SignUtil.getKey(chestContent[itemIndex]);
+                                int amount = materials.get(key);
+                                switch (amount)
+                                {
+                                    case -2:
+                                        //Don't do this item, so skip to next
+                                        continue;
+                                    default:
+                                        for (BlockState s : stateList)
+                                        {
+                                            ContainerBlock chest = (ContainerBlock) s;
+                                            chestContent[itemIndex] = ChestUtil.putItems(chestContent[itemIndex], chest)[0];
+                                            if (chestContent[itemIndex] == null || chestContent[itemIndex].getAmount() < 1)
+                                            {
+                                                //Contents is null!
+                                                StorageCart.getInventory().setContents(cartContent);
+                                                return;
+                                            }
                                         }
-                                    }
+                                }
                             }
+                            StorageCart.getInventory().setContents(chestContent);
                         }
-                        ((StorageMinecart) cart).getInventory().setContents(chestContent);
                     }
                 }
-            } else {
-                //no action, continue;
+                else
+                {
+                    //no action, continue;
+                }
+
             }
         }
     }
