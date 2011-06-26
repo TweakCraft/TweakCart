@@ -141,8 +141,7 @@ public class TweakCartVehicleListener extends VehicleListener {
                                             cartContent[itemIndex] = ChestUtil.putItems(cartContent[itemIndex], chest)[0];
                                             if (cartContent[itemIndex] == null || cartContent[itemIndex].getAmount() < 1) {
                                                 //Contents is null!
-                                                StorageCart.getInventory().setContents(cartContent);
-                                                return;
+                                                break;
                                             }
                                         }
                                 }
@@ -180,8 +179,7 @@ public class TweakCartVehicleListener extends VehicleListener {
                                             if (chestContent[itemIndex] == null || chestContent[itemIndex].getAmount() < 1)
                                             {
                                                 //Contents is null!
-                                                StorageCart.getInventory().setContents(cartContent);
-                                                return;
+                                                break;
                                             }
                                         }
                                 }
