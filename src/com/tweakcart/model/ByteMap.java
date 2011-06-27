@@ -6,7 +6,7 @@ package com.tweakcart.model;
  * Date: 27-6-11
  * Time: 11:34
  */
-public class ByteMap
+public final class ByteMap
 {
     public static boolean Allowed(int id, byte data, byte[] map)
     {
@@ -68,12 +68,12 @@ public class ByteMap
             case 6:
                 switch (data)
                 {
-                    case 0:
-                        return 5;
                     case 1:
                         return 6;
                     case 2:
                         return 7;
+                    default:
+                        return 5;
                 }
             case 7:
                 return 8;
@@ -98,12 +98,12 @@ public class ByteMap
             case 17:
                 switch (data)
                 {
-                    case 0:
-                        return 18;
                     case 1:
                         return 19;
                     case 2:
                         return 20;
+                    default:
+                        return 18;
                 }
             case 18:
                 return 21;
@@ -142,8 +142,6 @@ public class ByteMap
             case 35:
                 switch (data)
                 {
-                    case 0:
-                        return 38;
                     case 1:
                         return 39;
                     case 2:
@@ -174,6 +172,8 @@ public class ByteMap
                         return 52;
                     case 15:
                         return 53;
+                    default:
+                        return 38;
                 }
             case 36:
                 return 54;
@@ -192,26 +192,26 @@ public class ByteMap
             case 43:
                 switch (data)
                 {
-                    case 0:
-                        return 61;
                     case 1:
                         return 62;
                     case 2:
                         return 63;
                     case 3:
                         return 64;
+                    default:
+                        return 61;
                 }
             case 44:
                 switch (data)
                 {
-                    case 0:
-                        return 65;
                     case 1:
                         return 66;
                     case 2:
                         return 67;
                     case 3:
                         return 68;
+                    default:
+                        return 65;
                 }
             case 45:
                 return 69;
@@ -652,10 +652,10 @@ public class ByteMap
             case 263:
                 switch (data)
                 {
-                    case 0:
-                        return 287;
                     case 1:
                         return 288;
+                    default:
+                        return 287;
                 }
             case 264:
                 return 289;
@@ -834,8 +834,6 @@ public class ByteMap
             case 351:
                 switch (data)
                 {
-                    case 0:
-                        return 358;
                     case 1:
                         return 359;
                     case 2:
@@ -866,6 +864,8 @@ public class ByteMap
                         return 372;
                     case 15:
                         return 373;
+                    default:
+                        return 358;
                 }
             case 352:
                 return 374;
