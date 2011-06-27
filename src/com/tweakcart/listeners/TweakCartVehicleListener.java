@@ -27,31 +27,48 @@ import java.util.logging.Logger;
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
-public class TweakCartVehicleListener extends VehicleListener {
+public class TweakCartVehicleListener extends VehicleListener
+{
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
     private TweakCartConfig config = null;
 
-    public TweakCartVehicleListener(TweakCart instance) {
+    public TweakCartVehicleListener(TweakCart instance)
+    {
         plugin = instance;
         config = plugin.getConfig();
     }
 
-    public void onVehicleMove(VehicleMoveEvent event) {
-        if (event.getVehicle() instanceof Minecart) {
+    public void onVehicleMove(VehicleMoveEvent event)
+    {
+        if (MathUtil.isSameBlock(event.getFrom(), event.getTo()))
+        {
+            return;
+        }
+
+        if (event.getVehicle() instanceof Minecart)
+        {
             Minecart cart = (Minecart) event.getVehicle();
+
             Vector cartSpeed = cart.getVelocity(); // We are gonna use this 1 object everywhere(a new Vector() is made on every call ;) ).
-            if (CartUtil.stoppedSlowCart(cart, cartSpeed)) return;
-            if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) return;
+            if (CartUtil.stoppedSlowCart(cart, cartSpeed))
+            {
+                return;
+            }
+
             Direction horizontalDirection = Direction.getHorizontalDirection(cartSpeed);
-            switch (horizontalDirection) {
+            switch (horizontalDirection)
+            {
                 case NORTH:
                 case SOUTH:
-                    for (int dy = -1; dy <= 0; dy++) {
-                        for (int dz = -1; dz <= 1; dz++) {
+                    for (int dy = -1; dy <= 0; dy++)
+                    {
+                        for (int dz = -1; dz <= 1; dz++)
+                        {
                             Block tempBlock = event.getTo().getBlock().getRelative(0, dy, dz);
                             if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId())
+                            {
                                 Sign s = (Sign) tempBlock.getState();
                                 parseSign(s, cart, horizontalDirection);
                             }
@@ -60,11 +77,14 @@ public class TweakCartVehicleListener extends VehicleListener {
                     break;
                 case EAST:
                 case WEST:
-                    for (int dy = -1; dy <= 0; dy++) {
-                        for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 0; dy++)
+                    {
+                        for (int dx = -1; dx <= 1; dx++)
+                        {
                             Block tempBlock = event.getTo().getBlock().getRelative(dx, dy, 0);
                             if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId())
+                            {
                                 Sign s = (Sign) tempBlock.getState();
                                 parseSign(s, cart, horizontalDirection);
                             }
@@ -75,24 +95,34 @@ public class TweakCartVehicleListener extends VehicleListener {
         }
     }
 
-    public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-        if (event.getBlock().getRelative(BlockFace.UP).getTypeId() == 23 && event.getVehicle() instanceof Minecart) {
+    public void onVehicleBlockCollision(VehicleBlockCollisionEvent event)
+    {
+        if (event.getBlock().getRelative(BlockFace.UP).getTypeId() == 23 && event.getVehicle() instanceof Minecart)
+        {
             ItemStack item;
-            if (event.getVehicle() instanceof PoweredMinecart) {
+            if (event.getVehicle() instanceof PoweredMinecart)
+            {
                 item = new ItemStack(Material.POWERED_MINECART, 1);
-            } else if (event.getVehicle() instanceof StorageMinecart) {
+            }
+            else if (event.getVehicle() instanceof StorageMinecart)
+            {
                 item = new ItemStack(Material.STORAGE_MINECART, 1);
-            } else {
+            }
+            else
+            {
                 item = new ItemStack(Material.MINECART, 1);
             }
             Dispenser dispenser = (Dispenser) event.getBlock().getRelative(BlockFace.UP).getState();
             ItemStack cartItemStack = ChestUtil.putItems(item, dispenser)[0];
-            if (cartItemStack == null) {
-                if (event.getVehicle() instanceof StorageMinecart) {
+            if (cartItemStack == null)
+            {
+                if (event.getVehicle() instanceof StorageMinecart)
+                {
                     StorageMinecart cart = (StorageMinecart) event.getVehicle();
                     ItemStack[] leftovers = ChestUtil.putItems(cart.getInventory().getContents(), dispenser);
                     cart.getInventory().clear();
-                    for (ItemStack i : leftovers) {
+                    for (ItemStack i : leftovers)
+                    {
                         if (i == null)
                             continue;
                         cart.getWorld().dropItem(cart.getLocation(), i);
@@ -106,12 +136,13 @@ public class TweakCartVehicleListener extends VehicleListener {
 
     private void parseSign(Sign sign, Minecart cart, Direction direction)
     {
-        if(cart instanceof StorageMinecart)
+        if (cart instanceof StorageMinecart)
         {
             StorageMinecart StorageCart = (StorageMinecart) cart;
 
             String[] lines = sign.getLines();
-            for (int i = 0; i < lines.length; i++) {
+            for (int i = 0; i < lines.length; i++)
+            {
                 System.out.println("Entering vehicle for loop!");
                 if (lines[i].toLowerCase().contains("collect items"))
                 {
@@ -139,7 +170,8 @@ public class TweakCartVehicleListener extends VehicleListener {
                                         {
                                             ContainerBlock chest = (ContainerBlock) s;
                                             cartContent[itemIndex] = ChestUtil.putItems(cartContent[itemIndex], chest)[0];
-                                            if (cartContent[itemIndex] == null || cartContent[itemIndex].getAmount() < 1) {
+                                            if (cartContent[itemIndex] == null || cartContent[itemIndex].getAmount() < 1)
+                                            {
                                                 //Contents is null!
                                                 break;
                                             }
