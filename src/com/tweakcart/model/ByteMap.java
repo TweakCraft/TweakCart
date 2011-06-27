@@ -11,7 +11,7 @@ public class ByteMap
     public static boolean Allowed(int id, byte data, byte[] map)
     {
         int byteLocation = ByteMap.getByteIndex(id, data);
-        if (byteLocation > map.length)
+        if ((byteLocation > map.length) || (byteLocation == -1))
         {
             return false;
         }
@@ -32,7 +32,7 @@ public class ByteMap
     public static void SetByte(int id, byte data, byte value, byte[] map)
     {
         int byteLocation = ByteMap.getByteIndex(id, data);
-        if (byteLocation > map.length)
+        if ((byteLocation > map.length) || (byteLocation == -1))
         {
             return;
         }
