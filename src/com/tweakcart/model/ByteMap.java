@@ -24,6 +24,17 @@ public class ByteMap
         return false;
     }
 
+    public static byte Amount(int id, byte data, byte[] map)
+    {
+        int byteLocation = ByteMap.getByteIndex(id, data);
+        if ((byteLocation > map.length) || (byteLocation == -1))
+        {
+            return 0;
+        }
+
+        return map[byteLocation];
+    }
+
     public static void SetByte(int id, byte data, byte[] map)
     {
         ByteMap.SetByte(id, data, (byte) 255, map);
