@@ -10,14 +10,13 @@ public class ByteMap
 {
     public static boolean Allowed(int id, byte data, byte[] map)
     {
-        //
         int byteLocation = ByteMap.getByteIndex(id, data);
         if (byteLocation > map.length)
         {
             return false;
         }
 
-        if (map[byteLocation] == 1)
+        if (map[byteLocation] != (byte) 0)
         {
             return true;
         }
@@ -27,14 +26,18 @@ public class ByteMap
 
     public static void SetByte(int id, byte data, byte[] map)
     {
-        //
+        ByteMap.SetByte(id, data, (byte) 255, map);
+    }
+
+    public static void SetByte(int id, byte data, byte value, byte[] map)
+    {
         int byteLocation = ByteMap.getByteIndex(id, data);
         if (byteLocation > map.length)
         {
             return;
         }
 
-        map[byteLocation] = 1;
+        map[byteLocation] = value;
     }
 
     public static int getByteIndex(int id, byte data)
