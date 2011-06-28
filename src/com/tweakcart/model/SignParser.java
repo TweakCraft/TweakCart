@@ -1,5 +1,6 @@
 package com.tweakcart.model;
 
+import com.tweakcart.util.Bitwise;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
@@ -15,32 +16,35 @@ public class SignParser
 {
     public enum ACTION
     {
-        NULL(0),
-        COLLECT(1),
-        DEPOSIT(2),
-        FUEL(3),
-        SMELT(4),
-        ITEM(5);
+        NULL((short) 0),
+        COLLECT((short) 1),
+        DEPOSIT((short) 2),
+        FUEL((short) 3),
+        SMELT((short) 4),
+        ITEM((short) 5);
 
-        private int id;
+        private short id;
         private static final ACTION[] actions = new ACTION[6];
 
-        private ACTION(int id)
+        private ACTION(short id)
         {
             this.id = id;
         }
 
         static
         {
-            for (ACTION act : values()) actions[act.getId()] = act;
+            for (ACTION act : values())
+            {
+                actions[act.getId()] = act;
+            }
         }
 
-        public int getId()
+        public short getId()
         {
             return id;
         }
 
-        public static ACTION fromId(int id)
+        public static ACTION fromId(short id)
         {
             return actions[id];
         }
@@ -139,14 +143,24 @@ public class SignParser
 
         for (int a = 0; a < lines.length; a++)
         {
-            first = ParseLine(lines[a].toLowerCase(), cart);
+            first = ParseLine(SignParser.removeBracers(lines[a].toLowerCase()), cart);
             if (first != ACTION.NULL)
             {
-                return Integer.highestOneBit();
+                return Bitwise.packBits((short) a, (short) first.getId(), (short) 2);
             }
         }
 
-        return -1;
+        return 255;
+    }
+
+    public static String removeBracers(String line)
+    {
+        if ((line.charAt(0) != '[') && (line.charAt(line.length() - 2) != ']'))
+        {
+            return line;
+        }
+
+        return line.substring(1, line.length() - 3);
     }
 
     public static ACTION ParseSign(Sign sign, Minecart cart)
