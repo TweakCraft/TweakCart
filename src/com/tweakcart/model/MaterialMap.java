@@ -6,36 +6,43 @@ import com.tweakcart.TweakCartException;
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
-public class MaterialMap {
+public class MaterialMap
+{
     private int size = 0;
 
     private transient int[] _keys;
     private transient int[] _values;
 
-    public MaterialMap() {
+    public MaterialMap()
+    {
         _keys = new int[size];
         _values = new int[size];
     }
 
-    private MaterialMap(int[] k, int[] v) {
+    private MaterialMap(int[] k, int[] v)
+    {
         _keys = k;
         _values = v;
         size = k.length;
     }
 
-    private int getKey(int id) {
+    private int getKey(int id)
+    {
         return getKey(id, (byte) -1);
     }
 
-    private int getKey(int id, byte data) {
+    private int getKey(int id, byte data)
+    {
         return ((id << 8) | data);
     }
 
-    public void put(int id, byte data, int value) {
+    public void put(int id, byte data, int value)
+    {
         put(getKey(id, data), value);
     }
 
-    private void put(int key, int value) {
+    private void put(int key, int value)
+    {
         try {
             update(key, value);
         } catch (TweakCartException e) {
@@ -57,7 +64,8 @@ public class MaterialMap {
         }
     }
 
-    public void add(int id, byte data, int amount) {
+    public void add(int id, byte data, int amount)
+    {
         int key = getKey(id, data);
         try {
             int index = getIndex(key);
@@ -67,13 +75,15 @@ public class MaterialMap {
         }
     }
 
-    public void remove(int id, byte data, int amount) throws TweakCartException {
+    public void remove(int id, byte data, int amount) throws TweakCartException
+    {
         int key = getKey(id, data);
         int index = getIndex(key);
         _values[index] -= amount;
     }
 
-    public void remove(int id, byte data) throws TweakCartException {
+    public void remove(int id, byte data) throws TweakCartException
+    {
         int key = getKey(id, data);
         int keyIndex = getIndex(key);
 
@@ -94,12 +104,14 @@ public class MaterialMap {
         size = _values.length;
     }
 
-    public int get(int id, byte data) throws TweakCartException {
+    public int get(int id, byte data) throws TweakCartException
+    {
         int key = getKey(id, data);
         return _values[getIndex(key)];
     }
 
-    public boolean containsKey(int id, byte data) {
+    public boolean containsKey(int id, byte data)
+    {
         try {
             getIndex(getKey(id, data));
             return true;
@@ -108,7 +120,8 @@ public class MaterialMap {
         }
     }
 
-    public MaterialMapIterator iterator() {
+    public MaterialMapIterator iterator()
+    {
         try {
             return new MaterialMapIterator(_keys, _values);
         } catch (TweakCartException e) {
@@ -116,7 +129,8 @@ public class MaterialMap {
         }
     }
 
-    private int getIndex(int key) throws TweakCartException {
+    private int getIndex(int key) throws TweakCartException
+    {
         for (int index = 0; index < size; index++) {
             if (_keys[index] == key)
                 return index;
@@ -124,12 +138,14 @@ public class MaterialMap {
         throw new TweakCartException(2);
     }
 
-    private void update(int key, int value) throws TweakCartException {
+    private void update(int key, int value) throws TweakCartException
+    {
         _values[getIndex(key)] = value;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         if (size == 0)
             return "{}";
         String msg = "{ ";
@@ -140,7 +156,8 @@ public class MaterialMap {
     }
 
     @Override
-    public MaterialMap clone() {
+    public MaterialMap clone()
+    {
         MaterialMap clone = new MaterialMap();
         MaterialMapIterator iterator = iterator();
         while (iterator.hasNext()) {
@@ -150,7 +167,8 @@ public class MaterialMap {
         return clone;
     }
 
-    public boolean isEmpty() {
+    public boolean isEmpty()
+    {
         return size == 0;
     }
 }

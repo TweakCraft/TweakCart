@@ -25,11 +25,13 @@ public class SignParser
         private int id;
         private static final ACTION[] actions = new ACTION[6];
 
-        private ACTION(int id){
+        private ACTION(int id)
+        {
             this.id = id;
         }
 
-        static {
+        static
+        {
             for (ACTION act : values()) actions[act.getId()] = act;
         }
 
@@ -54,7 +56,8 @@ public class SignParser
 
     public static SignParser getInstance()
     {
-        if (_Instance == null) {
+        if (_Instance == null)
+        {
             _Instance = new SignParser();
         }
 
@@ -63,43 +66,57 @@ public class SignParser
 
     public static ACTION ParseLine(String line, Minecart cart)
     {
-        if (Character.isDigit(line.charAt(0))) {
+        if (Character.isDigit(line.charAt(0)))
+        {
             return ACTION.ITEM;
         }
 
-        switch (line.charAt(0)) {
+        switch (line.charAt(0))
+        {
             case 'c':
-                if (line.equals("collect items")) {
-                    if (SignParser.CheckStorageCart(cart)) {
+                if (line.equals("collect items"))
+                {
+                    if (SignParser.CheckStorageCart(cart))
+                    {
                         return ACTION.COLLECT;
-                    } else {
+                    } else
+                    {
                         return ACTION.NULL;
                     }
                 }
                 break;
             case 'd':
-                if (line.equals("deposit items")) {
-                    if (SignParser.CheckStorageCart(cart)) {
+                if (line.equals("deposit items"))
+                {
+                    if (SignParser.CheckStorageCart(cart))
+                    {
                         return ACTION.DEPOSIT;
-                    } else {
+                    } else
+                    {
                         return ACTION.NULL;
                     }
                 }
                 break;
             case 'f':
-                if (line.charAt(1) == 'u' && line.charAt(2) == 'e' && line.charAt(3) == 'l') {
-                    if (SignParser.CheckStorageCart(cart)) {
+                if (line.charAt(1) == 'u' && line.charAt(2) == 'e' && line.charAt(3) == 'l')
+                {
+                    if (SignParser.CheckStorageCart(cart))
+                    {
                         return ACTION.FUEL;
-                    } else {
+                    } else
+                    {
                         return ACTION.NULL;
                     }
                 }
                 break;
             case 's':
-                if (line.charAt(1) == 'm' && line.charAt(2) == 'e' && line.charAt(3) == 'l' && line.charAt(4) == 't') {
-                    if (SignParser.CheckStorageCart(cart)) {
+                if (line.charAt(1) == 'm' && line.charAt(2) == 'e' && line.charAt(3) == 'l' && line.charAt(4) == 't')
+                {
+                    if (SignParser.CheckStorageCart(cart))
+                    {
                         return ACTION.SMELT;
-                    } else {
+                    } else
+                    {
                         return ACTION.NULL;
                     }
                 }
@@ -116,9 +133,11 @@ public class SignParser
         ACTION first;
         short _return;
 
-        for (int a = 0; a < lines.length; a++) {
+        for (int a = 0; a < lines.length; a++)
+        {
             first = ParseLine(lines[a].toLowerCase(), cart);
-            if (first != ACTION.NULL) {
+            if (first != ACTION.NULL)
+            {
                 return Integer.highestOneBit();
             }
         }

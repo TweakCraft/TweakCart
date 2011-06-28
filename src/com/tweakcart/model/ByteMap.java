@@ -11,13 +11,11 @@ public final class ByteMap
     public static boolean Allowed(int id, byte data, byte[] map)
     {
         int byteLocation = ByteMap.getByteIndex(id, data);
-        if ((byteLocation > map.length) || (byteLocation == -1))
-        {
+        if ((byteLocation > map.length) || (byteLocation == -1)) {
             return false;
         }
 
-        if (map[byteLocation] != (byte) 0)
-        {
+        if (map[byteLocation] != (byte) 0) {
             return true;
         }
 
@@ -27,8 +25,7 @@ public final class ByteMap
     public static byte Amount(int id, byte data, byte[] map)
     {
         int byteLocation = ByteMap.getByteIndex(id, data);
-        if ((byteLocation > map.length) || (byteLocation == -1))
-        {
+        if ((byteLocation > map.length) || (byteLocation == -1)) {
             return 0;
         }
 
@@ -43,8 +40,7 @@ public final class ByteMap
     public static void SetByte(int id, byte data, byte value, byte[] map)
     {
         int byteLocation = ByteMap.getByteIndex(id, data);
-        if ((byteLocation > map.length) || (byteLocation == -1))
-        {
+        if ((byteLocation > map.length) || (byteLocation == -1)) {
             return;
         }
 
@@ -53,8 +49,7 @@ public final class ByteMap
 
     public static int getByteIndex(int id, byte data)
     {
-        switch (id)
-        {
+        switch (id) {
             case 1:
                 return 0;
             case 2:
@@ -66,8 +61,7 @@ public final class ByteMap
             case 5:
                 return 4;
             case 6:
-                switch (data)
-                {
+                switch (data) {
                     case 1:
                         return 6;
                     case 2:
@@ -96,8 +90,7 @@ public final class ByteMap
             case 16:
                 return 17;
             case 17:
-                switch (data)
-                {
+                switch (data) {
                     case 1:
                         return 19;
                     case 2:
@@ -140,8 +133,7 @@ public final class ByteMap
             case 34:
                 return 37;
             case 35:
-                switch (data)
-                {
+                switch (data) {
                     case 1:
                         return 39;
                     case 2:
@@ -190,8 +182,7 @@ public final class ByteMap
             case 42:
                 return 60;
             case 43:
-                switch (data)
-                {
+                switch (data) {
                     case 1:
                         return 62;
                     case 2:
@@ -202,8 +193,7 @@ public final class ByteMap
                         return 61;
                 }
             case 44:
-                switch (data)
-                {
+                switch (data) {
                     case 1:
                         return 66;
                     case 2:
@@ -650,8 +640,7 @@ public final class ByteMap
             case 262:
                 return 286;
             case 263:
-                switch (data)
-                {
+                switch (data) {
                     case 1:
                         return 288;
                     default:
@@ -832,8 +821,7 @@ public final class ByteMap
             case 350:
                 return 375;
             case 351:
-                switch (data)
-                {
+                switch (data) {
                     case 1:
                         return 359;
                     case 2:
