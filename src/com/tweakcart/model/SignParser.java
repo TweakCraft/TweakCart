@@ -1,6 +1,9 @@
 package com.tweakcart.model;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
 
 /**
@@ -15,7 +18,10 @@ public class SignParser
     {
         NULL,
         COLLECT,
-        DEPOSIT;
+        DEPOSIT,
+        FUEL,
+        SMELT,
+        ITEM;
     }
 
     public byte[] ByteMap = null;
@@ -36,23 +42,96 @@ public class SignParser
         return _Instance;
     }
 
-    public static ACTION ParseSign(String[] sign, Minecart cart)
+    public static ACTION ParseLine(String line, Minecart cart)
     {
-        if (sign[0].equalsIgnoreCase("collect items"))
+        if (Character.isDigit(line.charAt(0)))
         {
-            byte[] ByteMap = new byte[512];
-
-
-            return ACTION.COLLECT;
-        }
-        else if (sign[0].equalsIgnoreCase("deposit items"))
-        {
-            byte[] ByteMap = new byte[512];
-
-
-            return ACTION.DEPOSIT;
+            return ACTION.ITEM;
         }
 
+        switch (line.charAt(0))
+        {
+            case 'c':
+                if (line.equals("collect items"))
+                {
+                    if (SignParser.CheckStorageCart(cart))
+                    {
+                        return ACTION.COLLECT;
+                    }
+                    else
+                    {
+                        return ACTION.NULL;
+                    }
+                }
+                break;
+            case 'd':
+                if (line.equals("deposit items"))
+                {
+                    if (SignParser.CheckStorageCart(cart))
+                    {
+                        return ACTION.DEPOSIT;
+                    }
+                    else
+                    {
+                        return ACTION.NULL;
+                    }
+                }
+                break;
+            case 'f':
+                if (line.charAt(1) == 'u' && line.charAt(2) == 'e' && line.charAt(3) == 'l')
+                {
+                    if (SignParser.CheckStorageCart(cart))
+                    {
+                        return ACTION.FUEL;
+                    }
+                    else
+                    {
+                        return ACTION.NULL;
+                    }
+                }
+                break;
+            case 's':
+                if (line.charAt(1) == 'm' && line.charAt(2) == 'e' && line.charAt(3) == 'l' && line.charAt(4) == 't')
+                {
+                    if (SignParser.CheckStorageCart(cart))
+                    {
+                        return ACTION.SMELT;
+                    }
+                    else
+                    {
+                        return ACTION.NULL;
+                    }
+                }
+                break;
+            default:
+                return ACTION.NULL;
+
+        }
+        return ACTION.NULL;
+    }
+
+    public static short getFirstAction(String[] lines, Minecart cart)
+    {
+        ACTION first;
+        short _return;
+
+        for (int a = 0; a < lines.length; a++)
+        {
+            first = ParseLine(lines[a].toLowerCase(), cart);
+            if (first != ACTION.NULL)
+            {
+                return Integer.highestOneBit();
+            }
+        }
+
+        return -1;
+    }
+
+    public static ACTION ParseSign(Sign sign, Minecart cart)
+    {
+        String[] lines = sign.getLines();
+
+        ACTION FirstLine = SignParser.ParseLine(lines[0].toLowerCase(), cart);
         return ACTION.NULL;
     }
 
@@ -63,6 +142,6 @@ public class SignParser
 
     public static boolean CheckCart(Minecart cart)
     {
-        return !(cart instanceof StorageMinecart);
+        return !((cart instanceof StorageMinecart) || (cart instanceof PoweredMinecart));
     }
 }
