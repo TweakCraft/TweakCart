@@ -103,6 +103,7 @@ public class SignParser
                     }
                 }
                 break;
+            /*
             case 'f':
                 if (line.charAt(1) == 'u' && line.charAt(2) == 'e' && line.charAt(3) == 'l')
                 {
@@ -129,6 +130,7 @@ public class SignParser
                     }
                 }
                 break;
+                */
             default:
                 return ACTION.NULL;
 
@@ -167,13 +169,97 @@ public class SignParser
     {
         String[] lines = sign.getLines();
 
-        ACTION FirstLine = SignParser.ParseLine(lines[0].toLowerCase(), cart);
+        short result = SignParser.getFirstAction(lines, cart);
+        short index = Bitwise.getHighBits(result, (short) 2);
+        ACTION action = ACTION.fromId(Bitwise.getLowBits(result, (short) 2));
+
+        System.out.println("First result on index " + index + " ACTION: " + action.toString());
+
+        if (action == ACTION.COLLECT)
+        {
+            //Parse next line items ?
+            short i = (short) (index + 1);
+            String temp = "";
+            SignParser.getInstance().ByteMap = new byte[512];
+
+            for (int a = 0; a <= lines[i].length(); a++)
+            {
+                char b = lines[i].charAt(a);
+
+                if (Character.isDigit(b))
+                {
+                    temp += b;
+                    continue;
+                }
+
+                //First letter can be a direction, because it isn't a digit.
+                if (a == 0)
+                {
+                    //Check if the second Char is a + with indicates that the first is a direction
+                    if (lines[i].charAt(1) == '+')
+                    {
+                        //Get cart current direction
+                        Direction d = Direction.getHorizontalDirection(cart.getVelocity());
+
+                        //Check if the cart has the desired direction, if not continue to the next line.
+                        switch (b)
+                        {
+                            case 'n':
+                                if (d != Direction.NORTH)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 's':
+                                if (d != Direction.SOUTH)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 'e':
+                                if (d != Direction.EAST)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 'w':
+                                if (d != Direction.WEST)
+                                {
+                                    continue;
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                switch (b)
+                {
+                    case '!':
+                        break;
+                    case ':':
+                        break;
+                    case ';':
+                        break;
+                    case '@':
+                        break;
+                    case '-':
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        else if (action == ACTION.DEPOSIT)
+        {
+            //Parse next line items ?
+        }
+
         return ACTION.NULL;
     }
 
     public static boolean CheckStorageCart(Minecart cart)
     {
-        return cart instanceof StorageMinecart;
+        return (cart instanceof StorageMinecart);
     }
 
     public static boolean CheckCart(Minecart cart)
