@@ -79,7 +79,8 @@ public class SignParser
                     if (SignParser.CheckStorageCart(cart))
                     {
                         return ACTION.COLLECT;
-                    } else
+                    }
+                    else
                     {
                         return ACTION.NULL;
                     }
@@ -91,7 +92,8 @@ public class SignParser
                     if (SignParser.CheckStorageCart(cart))
                     {
                         return ACTION.DEPOSIT;
-                    } else
+                    }
+                    else
                     {
                         return ACTION.NULL;
                     }
@@ -103,7 +105,8 @@ public class SignParser
                     if (SignParser.CheckStorageCart(cart))
                     {
                         return ACTION.FUEL;
-                    } else
+                    }
+                    else
                     {
                         return ACTION.NULL;
                     }
@@ -115,7 +118,8 @@ public class SignParser
                     if (SignParser.CheckStorageCart(cart))
                     {
                         return ACTION.SMELT;
-                    } else
+                    }
+                    else
                     {
                         return ACTION.NULL;
                     }

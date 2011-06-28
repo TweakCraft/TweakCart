@@ -24,7 +24,8 @@ public enum Direction
     private final int modY;
     private final int modZ;
 
-    static {
+    static
+    {
         for (Direction dir : values()) directions[dir.getModX() + 1][dir.getModY() + 1][dir.getModZ() + 1] = dir;
     }
 
@@ -95,7 +96,8 @@ public enum Direction
     public static final Direction getHorizontalTrackDirection(Block track)
     {
         byte data = track.getData();
-        switch (track.getTypeId()) {
+        switch (track.getTypeId())
+        {
             case 27:
             case 66:
                 break;
@@ -104,7 +106,8 @@ public enum Direction
             default:
                 return SELF;
         }
-        switch (data) {
+        switch (data)
+        {
             case 0:
                 return EAST_WEST;
             case 1:
@@ -141,7 +144,8 @@ public enum Direction
      */
     public static final Direction getVerticalTrackDirection(Block track)
     {
-        switch (track.getTypeId()) {
+        switch (track.getTypeId())
+        {
             case 27:
             case 66:
             case 28:

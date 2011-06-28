@@ -20,7 +20,8 @@ public class SignUtil
     public static final Direction getLineItemDirection(String str)
     {
         Direction direction = Direction.SELF;
-        if (str.length() > 2 && str.charAt(1) == '+') {
+        if (str.length() > 2 && str.charAt(1) == '+')
+        {
             char dir = str.charAt(0);
             if (dir == 'n') direction = Direction.NORTH;
             else if (dir == 's') direction = Direction.SOUTH;
@@ -64,26 +65,31 @@ public class SignUtil
         TIntIntHashMap items = new TIntIntHashMap(20);
         String str = removeBrackets(list.toLowerCase());
         str = str.trim();
-        if (str.equals("")) {
+        if (str.equals(""))
+        {
             return null;
         }
 
         //Check the given direction and intended direction from the sign
         Direction direction = getLineItemDirection(str);
-        if (direction != Direction.SELF) {
+        if (direction != Direction.SELF)
+        {
             str = str.substring(2, str.length()); // remove the direction for further parsing.
         }
-        if (facing != null && direction != facing && direction != Direction.SELF) {
+        if (facing != null && direction != facing && direction != Direction.SELF)
+        {
             return null;
         }
 
         //short circuit if it's everything
-        if (str.contains("all items")) {
+        if (str.contains("all items"))
+        {
             items.put(Material.AIR.getId(), -1);
         }
 
         String[] keys = str.split(":");
-        for (int i = 0; i < keys.length; i++) {
+        for (int i = 0; i < keys.length; i++)
+        {
             System.out.println("Entering for loop!");
             String part = keys[i].trim();
             TIntIntHashMap parsedset = parsePart(part);
@@ -93,10 +99,13 @@ public class SignUtil
                 continue;
 
             TIntIntIterator iterator = parsedset.iterator();
-            while (iterator.hasNext()) {
-                try {
+            while (iterator.hasNext())
+            {
+                try
+                {
                     items.put(iterator.key(), iterator.value());
-                } catch (IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException e)
+                {
                     log.warning("Unsuspected error!");
                 }
             }
@@ -151,8 +160,10 @@ public class SignUtil
      */
     private static final TIntIntHashMap parsePart(String part)
     {
-        try {
-            switch (TYPE.getType(part)) {
+        try
+        {
+            switch (TYPE.getType(part))
+            {
                 case RANGE:
                     return parseRange(part);
                 case DATA:
@@ -164,7 +175,8 @@ public class SignUtil
                 default:
                     return parseNormal(part);
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             return null;
         }
     }
@@ -178,7 +190,8 @@ public class SignUtil
         amount = (amount > 0) ? amount : -1;
 
         TIntIntIterator iterator = items.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             items.put(iterator.key(), amount);
         }
 
@@ -191,7 +204,8 @@ public class SignUtil
         TIntIntHashMap items = parsePart(part);
 
         TIntIntIterator iterator = items.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             items.put(iterator.key(), -2);
         }
 
@@ -216,47 +230,69 @@ public class SignUtil
 
         TIntIntIterator iterator = start.iterator();
 
-        if (iterator.hasNext()) {
+        if (iterator.hasNext())
+        {
             startitem = iterator.key();
             startamount = iterator.value();
-        } else {
+        }
+        else
+        {
             return items;
         }
 
         iterator = end.iterator();
-        if (iterator.hasNext()) {
+        if (iterator.hasNext())
+        {
             enditem = iterator.key();
             endamount = iterator.value();
-        } else {
+        }
+        else
+        {
             return items;
         }
 
 
-        for (int item = getId(startitem); item <= getId(enditem); item++) {
-            for (Material m : Material.values()) {
+        for (int item = getId(startitem); item <= getId(enditem); item++)
+        {
+            for (Material m : Material.values())
+            {
                 MaterialData data = new MaterialData(m);
 
-                if (items.containsKey(getKey(data.getItemTypeId(), (short) -1))) {
+                if (items.containsKey(getKey(data.getItemTypeId(), (short) -1)))
+                {
                     continue;
                 }
 
-                if (data.getItemTypeId() == getId(startitem)) {
-                    if ((getData(startitem) < 0)) {
+                if (data.getItemTypeId() == getId(startitem))
+                {
+                    if ((getData(startitem) < 0))
+                    {
                         items.put(getKey(item, (short) -1), (startamount > 0 ? startamount : endamount));
-                    } else {
-                        if (data.getData() >= getData(startitem)) {
+                    }
+                    else
+                    {
+                        if (data.getData() >= getData(startitem))
+                        {
                             items.put(getKey(item, data.getData()), (startamount > 0 ? startamount : endamount));
                         }
                     }
-                } else if (data.getItemTypeId() == getId(enditem)) {
-                    if ((getData(enditem) < 0)) {
+                }
+                else if (data.getItemTypeId() == getId(enditem))
+                {
+                    if ((getData(enditem) < 0))
+                    {
                         items.put(getKey(item, (short) -1), -1);
-                    } else {
-                        if (data.getData() <= getData(enditem)) {
+                    }
+                    else
+                    {
+                        if (data.getData() <= getData(enditem))
+                        {
                             items.put(getKey(item, data.getData()), (startamount > 0 ? startamount : endamount));
                         }
                     }
-                } else {
+                }
+                else
+                {
                     items.put(getKey(data.getItemTypeId(), data.getData()), (startamount > 0 ? startamount : endamount));
                 }
             }
@@ -271,7 +307,8 @@ public class SignUtil
         short data = Short.parseShort(split[1]);
 
         TIntIntIterator iterator = items.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             items.put(getKey(iterator.key(), data), iterator.value());
             items.remove(iterator.key());
         }
@@ -282,13 +319,16 @@ public class SignUtil
     private static final TIntIntHashMap parseNormal(String part)
     {
         TIntIntHashMap item = new TIntIntHashMap(20);
-        try {
+        try
+        {
             int materialId = Integer.parseInt(part);
-            if (Material.getMaterial(materialId) != null) {
+            if (Material.getMaterial(materialId) != null)
+            {
                 item.put(getKey(materialId, (short) -1), -1);
             }
             return item;
-        } catch (NumberFormatException exception) {
+        } catch (NumberFormatException exception)
+        {
         }
         return item;
     }
@@ -297,14 +337,17 @@ public class SignUtil
     {
         String str = "";
         boolean isStation = false;
-        if (s.toLowerCase().contains("st-")) {
+        if (s.toLowerCase().contains("st-"))
+        {
             //see if we need to make sure [ ] in the middle do not get removed.
             //Also lower case because the same sign and line will come in as "st-" AND "St-"
             isStation = true;
         }
-        for (int i = 0; i < s.length(); i++) {
+        for (int i = 0; i < s.length(); i++)
+        {
             char c = s.charAt(i);
-            if (c == ']' || c == '[') {
+            if (c == ']' || c == '[')
+            {
                 if (!isStation) continue;
                 // we have a non-station string so remove all brackets
                 // we have a station string if we got this far

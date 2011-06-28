@@ -43,13 +43,16 @@ public class MaterialMap
 
     private void put(int key, int value)
     {
-        try {
+        try
+        {
             update(key, value);
-        } catch (TweakCartException e) {
+        } catch (TweakCartException e)
+        {
             int[] keys = new int[size + 1];
             int[] values = new int[size + 1];
 
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < size; i++)
+            {
                 keys[i] = _keys[i];
                 values[i] = _values[i];
             }
@@ -67,10 +70,12 @@ public class MaterialMap
     public void add(int id, byte data, int amount)
     {
         int key = getKey(id, data);
-        try {
+        try
+        {
             int index = getIndex(key);
             _values[index] += amount;
-        } catch (TweakCartException e) {
+        } catch (TweakCartException e)
+        {
             put(id, data, amount);
         }
     }
@@ -93,7 +98,8 @@ public class MaterialMap
         int[] values = new int[size];
 
         int index = 0;
-        for (int k = 0; k < size + 1; k++) {
+        for (int k = 0; k < size + 1; k++)
+        {
             if (index == keyIndex)
                 continue;
             values[index] = _values[k];
@@ -112,26 +118,31 @@ public class MaterialMap
 
     public boolean containsKey(int id, byte data)
     {
-        try {
+        try
+        {
             getIndex(getKey(id, data));
             return true;
-        } catch (TweakCartException e) {
+        } catch (TweakCartException e)
+        {
             return false;
         }
     }
 
     public MaterialMapIterator iterator()
     {
-        try {
+        try
+        {
             return new MaterialMapIterator(_keys, _values);
-        } catch (TweakCartException e) {
+        } catch (TweakCartException e)
+        {
             return null;
         }
     }
 
     private int getIndex(int key) throws TweakCartException
     {
-        for (int index = 0; index < size; index++) {
+        for (int index = 0; index < size; index++)
+        {
             if (_keys[index] == key)
                 return index;
         }
@@ -149,7 +160,8 @@ public class MaterialMap
         if (size == 0)
             return "{}";
         String msg = "{ ";
-        for (int index = 0; index < size; index++) {
+        for (int index = 0; index < size; index++)
+        {
             msg += "[" + _keys[index] + ", " + _values[index] + "], ";
         }
         return msg.substring(0, msg.length() - 2) + " }";
@@ -160,7 +172,8 @@ public class MaterialMap
     {
         MaterialMap clone = new MaterialMap();
         MaterialMapIterator iterator = iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             iterator.next();
             clone.put(iterator.key(), iterator.value());
         }

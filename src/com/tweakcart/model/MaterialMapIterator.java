@@ -38,7 +38,8 @@ public class MaterialMapIterator
         int[] values = new int[size - 1];
 
         int index = 0;
-        for (int k = 0; k < size; k++) {
+        for (int k = 0; k < size; k++)
+        {
             if (index == pointer)
                 continue;
             values[index] = _values[k];
@@ -80,7 +81,8 @@ public class MaterialMapIterator
         if (size == 0)
             return "[0 items] {} @ 0";
         String msg = "[" + size + " items] :: { ";
-        for (int index = 0; index < size; index++) {
+        for (int index = 0; index < size; index++)
+        {
             msg += "[" + _keys[index] + ", " + _values[index] + "], ";
         }
         return msg.substring(0, msg.length() - 2) + " } @ " + pointer;
