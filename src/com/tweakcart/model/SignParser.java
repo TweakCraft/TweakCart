@@ -5,6 +5,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
+import org.jcp.xml.dsig.internal.dom.DOMEnvelopedTransform;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,9 +20,7 @@ public class SignParser
         NULL((short) 0),
         COLLECT((short) 1),
         DEPOSIT((short) 2),
-        FUEL((short) 3),
-        SMELT((short) 4),
-        ITEM((short) 5);
+        ITEM((short) 3);
 
         private short id;
         private static final ACTION[] actions = new ACTION[6];
@@ -103,34 +102,6 @@ public class SignParser
                     }
                 }
                 break;
-            /*
-            case 'f':
-                if (line.charAt(1) == 'u' && line.charAt(2) == 'e' && line.charAt(3) == 'l')
-                {
-                    if (SignParser.CheckStorageCart(cart))
-                    {
-                        return ACTION.FUEL;
-                    }
-                    else
-                    {
-                        return ACTION.NULL;
-                    }
-                }
-                break;
-            case 's':
-                if (line.charAt(1) == 'm' && line.charAt(2) == 'e' && line.charAt(3) == 'l' && line.charAt(4) == 't')
-                {
-                    if (SignParser.CheckStorageCart(cart))
-                    {
-                        return ACTION.SMELT;
-                    }
-                    else
-                    {
-                        return ACTION.NULL;
-                    }
-                }
-                break;
-                */
             default:
                 return ACTION.NULL;
 
@@ -165,9 +136,91 @@ public class SignParser
         return line.substring(1, line.length() - 3);
     }
 
-    public static ACTION ParseSign(Sign sign, Minecart cart)
+    //TODO: ByteMap vullen.
+    public static boolean buildByteMap(String line, Minecart cart)
+    {
+        //Parse next line items ?
+        String temp = "";
+        SignParser.getInstance().ByteMap = new byte[512];
+
+        for (int b = 0; b <= line.length(); b++)
+        {
+            char c = line.charAt(b);
+
+            if (Character.isDigit(c))
+            {
+                temp += c;
+                continue;
+            }
+
+            //First letter can be a direction, because it isn't a digit.
+            if (b == 0)
+            {
+                //Check if the second Char is a + with indicates that the first is a direction
+                if (line.charAt(1) == '+')
+                {
+                    //Get cart current direction
+                    Direction d = Direction.getHorizontalDirection(cart.getVelocity());
+
+                    //Check if the cart has the desired direction, if not continue to the next line.
+                    switch (c)
+                    {
+                        case 'n':
+                            if (d != Direction.NORTH)
+                            {
+                                return false;
+                            }
+                            break;
+                        case 's':
+                            if (d != Direction.SOUTH)
+                            {
+                                return false;
+                            }
+                            break;
+                        case 'e':
+                            if (d != Direction.EAST)
+                            {
+                                return false;
+                            }
+                            break;
+                        case 'w':
+                            if (d != Direction.WEST)
+                            {
+                                return false;
+                            }
+                            break;
+                    }
+
+                    b = 1;
+                    continue;
+                }
+            }
+
+            switch (c)
+            {
+                case '!':
+                    break;
+                case ':':
+                    break;
+                case ';':
+                    break;
+                case '@':
+                    break;
+                case '-':
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return true;
+    }
+
+    //TODO: Hoe gaan we dat oplossen als er zo wel collect als deposit op 1 sign staat.......
+    public static void ParseSign(Sign sign, Minecart cart)
     {
         String[] lines = sign.getLines();
+        boolean running = true;
 
         short result = SignParser.getFirstAction(lines, cart);
         short index = Bitwise.getHighBits(result, (short) 2);
@@ -175,86 +228,36 @@ public class SignParser
 
         System.out.println("First result on index " + index + " ACTION: " + action.toString());
 
-        if (action == ACTION.COLLECT)
+        short a = (short) (index + 1);
+
+        do
         {
-            //Parse next line items ?
-            short i = (short) (index + 1);
-            String temp = "";
-            SignParser.getInstance().ByteMap = new byte[512];
-
-            for (int a = 0; a <= lines[i].length(); a++)
+            //TODO: Finish buildByteMap
+            if (!(SignParser.buildByteMap(SignParser.removeBracers(lines[a].toLowerCase()), cart)))
             {
-                char b = lines[i].charAt(a);
+                //Sign didn't match requirements.
+                //May by log this or not ?
+            }
+            else
+            {
+                //TODO: What to do XD ?
+                //ByteMap ready (SignParser.getInstance().ByteMap)
+                //Execute Action ? (Collect/Deposit)
+            }
 
-                if (Character.isDigit(b))
-                {
-                    temp += b;
-                    continue;
-                }
+            do
+            {
+                a++;
+                action = SignParser.ParseLine(SignParser.removeBracers(lines[a].toLowerCase()), cart);
+            }
+            while ((action != ACTION.NULL) || (a == (lines.length - 1)));
 
-                //First letter can be a direction, because it isn't a digit.
-                if (a == 0)
-                {
-                    //Check if the second Char is a + with indicates that the first is a direction
-                    if (lines[i].charAt(1) == '+')
-                    {
-                        //Get cart current direction
-                        Direction d = Direction.getHorizontalDirection(cart.getVelocity());
-
-                        //Check if the cart has the desired direction, if not continue to the next line.
-                        switch (b)
-                        {
-                            case 'n':
-                                if (d != Direction.NORTH)
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 's':
-                                if (d != Direction.SOUTH)
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 'e':
-                                if (d != Direction.EAST)
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 'w':
-                                if (d != Direction.WEST)
-                                {
-                                    continue;
-                                }
-                                break;
-                        }
-                    }
-                }
-
-                switch (b)
-                {
-                    case '!':
-                        break;
-                    case ':':
-                        break;
-                    case ';':
-                        break;
-                    case '@':
-                        break;
-                    case '-':
-                        break;
-                    default:
-                        break;
-                }
+            if (a == (lines.length - 1))
+            {
+                running = false;
             }
         }
-        else if (action == ACTION.DEPOSIT)
-        {
-            //Parse next line items ?
-        }
-
-        return ACTION.NULL;
+        while (running);
     }
 
     public static boolean CheckStorageCart(Minecart cart)
