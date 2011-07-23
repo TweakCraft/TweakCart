@@ -6,8 +6,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.PoweredMinecart;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockListener;
+
 
 import java.util.logging.Logger;
 
@@ -68,13 +71,13 @@ public class TweakCartBlockListener extends BlockListener {
                         Minecart cart = null;
                         switch (event.getItem().getTypeId()) {
                             case 328:
-                                cart = track.getWorld().spawnMinecart(track.getLocation());
+                                cart = track.getWorld().spawn(track.getLocation(), Minecart.class);
                                 break;
                             case 342:
-                                cart = track.getWorld().spawnStorageMinecart(track.getLocation());
+                                cart = track.getWorld().spawn(track.getLocation(), StorageMinecart.class);
                                 break;
                             case 343:
-                                cart = track.getWorld().spawnPoweredMinecart(track.getLocation());
+                                cart = track.getWorld().spawn(track.getLocation(),PoweredMinecart.class);
                                 break;
                             default:
                                 break;
