@@ -5,7 +5,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
-import org.jcp.xml.dsig.internal.dom.DOMEnvelopedTransform;
 
 /**
  * Created by IntelliJ IDEA.
