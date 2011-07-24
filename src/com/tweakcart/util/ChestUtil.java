@@ -1,5 +1,6 @@
 package com.tweakcart.util;
 
+
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,13 +21,16 @@ public class ChestUtil {
                     from[i1] = null;
                     break;
                 } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() ==  from[i1].getDurability() && to[i2].getAmount() < 64) {
-                    if ((from[i1].getAmount() + to[i2].getAmount()) > 64) {
+                	if ((from[i1].getAmount() + to[i2].getAmount()) > 64) {
                         from[i1].setAmount((to[i2].getAmount() + from[i1].getAmount()) - 64);
                         to[i2].setAmount(64);
+                      
                     } else {
                         to[i2].setAmount(to[i2].getAmount() + from[i1].getAmount());
                         from[i1] = null;
+                        
                     }
+                	break;
                 }
             }
         }
