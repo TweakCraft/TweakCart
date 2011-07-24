@@ -1,0 +1,10 @@
+name: TweakChat
+main: net.tweakcraft.tweakchat.TweakChat
+version: 0.1
+author: Edoxile
+website: https://github.com/Edoxile/TweakChat
+commands:
+    chatmode:
+        description: Setting chatmode or getting info of current chatmode.
+        usage: /chatmode <local|global|world|zone|region|group|list|listplayers>
+        aliases: cm
