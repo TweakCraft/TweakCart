@@ -1,5 +1,7 @@
 package com.tweakcart.model;
 
+import java.util.logging.Logger;
+
 import com.tweakcart.util.Bitwise;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
@@ -50,12 +52,8 @@ public class SignParser
 
     public byte[] ByteMap = null;
     private static SignParser _Instance;
-
-    public void SignParser()
-    {
-        //
-    }
-
+    private static final Logger log = Logger.getLogger("Minecraft");
+ 
     public static SignParser getInstance()
     {
         if (_Instance == null)
@@ -68,44 +66,48 @@ public class SignParser
 
     public static ACTION ParseLine(String line, Minecart cart)
     {
-        if (Character.isDigit(line.charAt(0)))
-        {
-            return ACTION.ITEM;
-        }
+    	if(line.length() > 0){
+    		if (Character.isDigit(line.charAt(0)))
+    		{
+    			return ACTION.ITEM;
+    		}
 
-        switch (line.charAt(0))
-        {
-            case 'c':
-                if (line.equals("collect items"))
-                {
-                    if (SignParser.CheckStorageCart(cart))
-                    {
-                        return ACTION.COLLECT;
-                    }
-                    else
-                    {
-                        return ACTION.NULL;
-                    }
-                }
-                break;
-            case 'd':
-                if (line.equals("deposit items"))
-                {
-                    if (SignParser.CheckStorageCart(cart))
-                    {
-                        return ACTION.DEPOSIT;
-                    }
-                    else
-                    {
-                        return ACTION.NULL;
-                    }
-                }
-                break;
-            default:
-                return ACTION.NULL;
+    		switch (line.charAt(0))
+    		{
+    		case 'c':
+    			if (line.equals("collect items"))
+    			{
+    				if (SignParser.CheckStorageCart(cart))
+    				{
+    					return ACTION.COLLECT;
+    				}
+    				else
+    				{
+    					return ACTION.NULL;
+    				}
+    			}
+    			break;
+    		case 'd':
+    			if (line.equals("deposit items"))
+    			{
+    				if (SignParser.CheckStorageCart(cart))
+    				{
+    					return ACTION.DEPOSIT;
+    				}
+    				else
+    				{
+    					return ACTION.NULL;
+    				}
+    			}
+    			break;
+    		default:
+    			return ACTION.NULL;
 
-        }
-        return ACTION.NULL;
+    		}
+    		return ACTION.NULL;
+    	}else{
+    		return ACTION.NULL;
+    	}
     }
 
     public static short getFirstAction(String[] lines, Minecart cart)
@@ -116,6 +118,7 @@ public class SignParser
         for (int a = 0; a < lines.length; a++)
         {
             first = ParseLine(SignParser.removeBracers(lines[a].toLowerCase()), cart);
+            log.info(first.toString());
             if (first != ACTION.NULL)
             {
                 return Bitwise.packBits((short) a, (short) first.getId(), (short) 2);
@@ -127,11 +130,11 @@ public class SignParser
 
     public static String removeBracers(String line)
     {
-        if ((line.charAt(0) != '[') && (line.charAt(line.length() - 2) != ']'))
+        if (line.length() < 3 || (line.charAt(0) != '[') && (line.charAt(line.length() - 2) != ']'))
         {
             return line;
         }
-
+        log.info(line);
         return line.substring(1, line.length() - 3);
     }
 
@@ -139,10 +142,10 @@ public class SignParser
     public static boolean buildByteMap(String line, Minecart cart)
     {
         //Parse next line items ?
+    	log.info("ik gaat maar eens bouwen " + line + ";");
         String temp = "";
         SignParser.getInstance().ByteMap = new byte[512];
-
-        for (int b = 0; b <= line.length(); b++)
+        for (int b = 0; b < line.length(); b++)
         {
             char c = line.charAt(b);
 
@@ -156,7 +159,7 @@ public class SignParser
             if (b == 0)
             {
                 //Check if the second Char is a + with indicates that the first is a direction
-                if (line.charAt(1) == '+')
+                if (line.length() >= 2 &&  line.charAt(1) == '+') //lazy evaluation is your friend
                 {
                     //Get cart current direction
                     Direction d = Direction.getHorizontalDirection(cart.getVelocity());
@@ -198,14 +201,40 @@ public class SignParser
             switch (c)
             {
                 case '!':
-                    break;
+                	temp += "!";
+                	break;
+                case ' ':
+                	if(!(b == line.length()-1)){
+                		break;
+                	}
+                	else{
+                		log.info("test");
+                	}
+                	
                 case ':':
+                	//hier moet dus wat gebeuren :)
+                	//ik ga er eerst even vanuit dat er niet meerdere operaties tegelijk kunnen gebeuren
+                	//temp zou er in pseudoregexnotatie zo uitzien: [\d* [lambda|;|@|-] \d* :])
+                	//combinaties als [14;1-14;3] kunnen dus niet
+                	
+                	String[] tempsplit = temp.split("-");
+                	//Oke nu zou het dus een range kunnen zijn
+                	if(tempsplit.length == 2){
+                		//Ah we hebben dus met een range te maken
+                		int startRange = Integer.parseInt(tempsplit[0]);
+                		int endRange = Integer.parseInt(tempsplit[1]);
+                		log.info("Range detected " + startRange + " " + endRange);
+                	}
+                	
                     break;
                 case ';':
+                	temp += ";";
                     break;
                 case '@':
+                	temp += "@";
                     break;
                 case '-':
+                	temp += "-";
                     break;
                 default:
                     break;
@@ -216,12 +245,15 @@ public class SignParser
     }
 
     //TODO: Hoe gaan we dat oplossen als er zo wel collect als deposit op 1 sign staat.......
+    
+    
     public static void ParseSign(Sign sign, Minecart cart)
     {
         String[] lines = sign.getLines();
         boolean running = true;
 
         short result = SignParser.getFirstAction(lines, cart);
+        log.info("" + result);
         short index = Bitwise.getHighBits(result, (short) 2);
         ACTION action = ACTION.fromId(Bitwise.getLowBits(result, (short) 2));
 
@@ -231,11 +263,16 @@ public class SignParser
 
         do
         {
+        	log.info("Entering Do loop");
             //TODO: Finish buildByteMap
             if (!(SignParser.buildByteMap(SignParser.removeBracers(lines[a].toLowerCase()), cart)))
             {
                 //Sign didn't match requirements.
                 //May by log this or not ?
+            	
+            	//Maybe altering the signs content, to attent the user on the error
+            	//problem: signs that where not meant for TweakCart
+            	
             }
             else
             {
@@ -249,7 +286,7 @@ public class SignParser
                 a++;
                 action = SignParser.ParseLine(SignParser.removeBracers(lines[a].toLowerCase()), cart);
             }
-            while ((action != ACTION.NULL) || (a == (lines.length - 1)));
+            while ((action != ACTION.NULL) || (a != (lines.length - 1)));
 
             if (a == (lines.length - 1))
             {

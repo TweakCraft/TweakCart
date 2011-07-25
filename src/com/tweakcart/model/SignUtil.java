@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
-
+@Deprecated
 public class SignUtil
 {
     private static final Logger log = Logger.getLogger("Minecraft");
