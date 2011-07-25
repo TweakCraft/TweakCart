@@ -26,18 +26,6 @@ public class TweakCartBlockListener extends BlockListener {
         this.plugin = plugin;
     }
 
-    /*
-	    public void onBlockRedstoneChange(BlockRedstoneEvent event) {
-	        if (event.getNewCurrent() == event.getOldCurrent() || event.getNewCurrent() > 0 & event.getOldCurrent() > 0)
-	            return;
-	    }
-    */
-
-    /**
-     * Called when a block is dispensing an item
-     *
-     * @param event Relevant event details
-     */
     public void onBlockDispense(BlockDispenseEvent event) {
         switch (event.getItem().getTypeId()) {
             case 328:

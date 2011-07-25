@@ -3,8 +3,7 @@ package com.tweakcart.model;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
-public enum Direction
-{
+public enum Direction {
     NORTH(-1, 0, 0),
     EAST(0, 0, -1),
     SOUTH(1, 0, 0),
@@ -24,20 +23,17 @@ public enum Direction
     private final int modY;
     private final int modZ;
 
-    static
-    {
+    static {
         for (Direction dir : values()) directions[dir.getModX() + 1][dir.getModY() + 1][dir.getModZ() + 1] = dir;
     }
 
-    private Direction(final int modX, final int modY, final int modZ)
-    {
+    private Direction(final int modX, final int modY, final int modZ) {
         this.modX = modX;
         this.modY = modY;
         this.modZ = modZ;
     }
 
-    private Direction(final Direction dir1, final Direction dir2)
-    {
+    private Direction(final Direction dir1, final Direction dir2) {
         this.modX = dir1.getModX() + dir2.getModX();
         this.modY = dir1.getModY() + dir2.getModY();
         this.modZ = dir1.getModZ() + dir2.getModZ();
@@ -48,8 +44,7 @@ public enum Direction
      *
      * @return Amount of X-coordinates to modify
      */
-    public int getModX()
-    {
+    public int getModX() {
         return modX;
     }
 
@@ -58,8 +53,7 @@ public enum Direction
      *
      * @return Amount of Y-coordinates to modify
      */
-    public int getModY()
-    {
+    public int getModY() {
         return modY;
     }
 
@@ -68,18 +62,15 @@ public enum Direction
      *
      * @return Amount of Z-coordinates to modify
      */
-    public int getModZ()
-    {
+    public int getModZ() {
         return modZ;
     }
 
-    public Vector mod(double mod)
-    {
+    public Vector mod(double mod) {
         return new Vector(getModX() * mod, getModY() * mod, getModZ() * mod);
     }
 
-    public static final Direction getDirection(int modx, int mody, int modz)
-    {
+    public static final Direction getDirection(int modx, int mody, int modz) {
         return directions[modx + 1][mody + 1][modz + 1];
     }
 
@@ -93,11 +84,9 @@ public enum Direction
      * @param track
      * @return direction.
      */
-    public static final Direction getHorizontalTrackDirection(Block track)
-    {
+    public static final Direction getHorizontalTrackDirection(Block track) {
         byte data = track.getData();
-        switch (track.getTypeId())
-        {
+        switch (track.getTypeId()) {
             case 27:
             case 66:
                 break;
@@ -106,8 +95,7 @@ public enum Direction
             default:
                 return SELF;
         }
-        switch (data)
-        {
+        switch (data) {
             case 0:
                 return EAST_WEST;
             case 1:
@@ -142,10 +130,8 @@ public enum Direction
      * @param track
      * @return direction
      */
-    public static final Direction getVerticalTrackDirection(Block track)
-    {
-        switch (track.getTypeId())
-        {
+    public static final Direction getVerticalTrackDirection(Block track) {
+        switch (track.getTypeId()) {
             case 27:
             case 66:
             case 28:
@@ -157,15 +143,13 @@ public enum Direction
         }
     }
 
-    public static final Direction getHorizontalDirection(Vector velocity)
-    {
+    public static final Direction getHorizontalDirection(Vector velocity) {
         int modx = (velocity.getX() == 0 ? 0 : velocity.getX() > 0 ? 1 : -1);
         int modz = (velocity.getZ() == 0 ? 0 : velocity.getZ() > 0 ? 1 : -1);
         return getDirection(modx, 0, modz);
     }
 
-    public static final Direction getVerticalDirection(Vector velocity)
-    {
+    public static final Direction getVerticalDirection(Vector velocity) {
         int mody = (velocity.getY() == 0 ? 0 : velocity.getY() > 0 ? 1 : -1);
         return getDirection(0, mody, 0);
     }
