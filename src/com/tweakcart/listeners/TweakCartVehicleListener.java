@@ -142,7 +142,7 @@ public class TweakCartVehicleListener extends VehicleListener
 
 //          String[] lines = sign.getLines();
             
-            SignParser.ParseSign(sign, storageCart);
+            SignParser.parseSign(sign, storageCart);
             
             
 //            for (int i = 0; i < lines.length; i++)

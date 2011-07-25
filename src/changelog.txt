@@ -1,0 +1,6 @@
+* de signparser kan nu overweg met signs die een bewerking per keer hebben, dingen als "12-14@21" kunnen nog niet, over te discussieren of dat moet :)
+* moeten signs die verkeerdom staan wel geparsed worden?
+* de geparste signs worden nog niet in de bytemap geplaatst
+
+
+* Optimalisatie is ver te zoeken, het werkt en dat is alles nu! Morgen ga ik daar weer mee verder, optimaliseren :)
