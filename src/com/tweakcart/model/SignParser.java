@@ -15,21 +15,21 @@ import java.util.logging.Logger;
  * Time: 20:45
  */
 public class SignParser {
-    public enum ACTION {
-        NULL((short) 0),
-        COLLECT((short) 1),
-        DEPOSIT((short) 2),
-        ITEM((short) 3);
+    public enum Action {
+        NULL((byte) 0),
+        COLLECT((byte) 1),
+        DEPOSIT((byte) 2),
+        ITEM((byte) 3);
 
-        private short id;
-        private static final ACTION[] actions = new ACTION[6];
+        private byte id;
+        private static final Action[] actions = new Action[6];
 
-        private ACTION(short id) {
+        private Action(byte id) {
             this.id = id;
         }
 
         static {
-            for (ACTION act : values()) {
+            for (Action act : values()) {
                 actions[act.getId()] = act;
             }
         }
@@ -38,7 +38,7 @@ public class SignParser {
             return id;
         }
 
-        public static ACTION fromId(short id) {
+        public static Action fromId(short id) {
             return actions[id];
         }
     }
@@ -55,49 +55,40 @@ public class SignParser {
         return _Instance;
     }
 
-    public static ACTION ParseLine(String line, Minecart cart) {
+    public static Action parseAction(String line) {
         if (line.length() > 0) {
-            if (Character.isDigit(line.charAt(0))) {
-                return ACTION.ITEM;
+            if (Character.isDigit(line.charAt(0)) || line.charAt(0) == '[') {
+                return Action.ITEM;
             }
 
             switch (line.charAt(0)) {
                 case 'c':
                     if (line.equals("collect items")) {
-                        if (SignParser.CheckStorageCart(cart)) {
-                            return ACTION.COLLECT;
-                        } else {
-                            return ACTION.NULL;
-                        }
+                        return Action.COLLECT;
                     }
-                    break;
+                    return Action.NULL;
                 case 'd':
                     if (line.equals("deposit items")) {
-                        if (SignParser.CheckStorageCart(cart)) {
-                            return ACTION.DEPOSIT;
-                        } else {
-                            return ACTION.NULL;
-                        }
+                        return Action.DEPOSIT;
                     }
-                    break;
+                    return Action.NULL;
                 default:
-                    return ACTION.NULL;
-
+                    return Action.NULL;
             }
-            return ACTION.NULL;
         } else {
-            return ACTION.NULL;
+            return Action.NULL;
         }
     }
 
+    @Deprecated
     public static short getFirstAction(String[] lines, Minecart cart) {
-        ACTION first;
+        Action first;
         short _return;
 
         for (int a = 0; a < lines.length; a++) {
             first = ParseLine(SignParser.removeBracers(lines[a].toLowerCase()), cart);
             log.info(first.toString());
-            if (first != ACTION.NULL) {
+            if (first != Action.NULL) {
                 return Bitwise.packBits((short) a, (short) first.getId(), (short) 2);
             }
         }
@@ -211,16 +202,42 @@ public class SignParser {
     //TODO: Hoe gaan we dat oplossen als er zo wel collect als deposit op 1 sign staat.......
 
 
-    public static void ParseSign(Sign sign, Minecart cart) {
+    public static void parseSign(Sign sign, Minecart cart) {
         String[] lines = sign.getLines();
+        Action oldAction = Action.NULL;
+        for (String line : sign.getLines()) {
+            Action newAction = SignParser.parseAction(line);
+            if(newAction == Action.NULL) {
+                continue;
+            } else if(newAction != Action.ITEM){
+                oldAction = newAction;
+                continue;
+            } else if(oldAction != Action.NULL) {
+                switch(oldAction){
+                    case DEPOSIT:
+                    case COLLECT:
+                        //TODO: fetch items for collecting or depositing;
+                        break;
+                    //case ELEVATE?
+                    default:
+                        //Weird stuff is going on!
+                        break;
+                }
+            } else {
+                //Oldaction == Null and newAction is Item, so don't do anything.
+                continue;
+            }
+        }
+
+        //TODO: Move this inside the switch above;
         boolean running = true;
 
         short result = SignParser.getFirstAction(lines, cart);
         log.info("" + result);
         short index = Bitwise.getHighBits(result, (short) 2);
-        ACTION action = ACTION.fromId(Bitwise.getLowBits(result, (short) 2));
+        Action action = Action.fromId(Bitwise.getLowBits(result, (short) 2));
 
-        System.out.println("First result on index " + index + " ACTION: " + action.toString());
+        System.out.println("First result on index " + index + " Action: " + action.toString());
 
         short a = (short) (index + 1);
 
@@ -244,7 +261,7 @@ public class SignParser {
                 a++;
                 action = SignParser.ParseLine(SignParser.removeBracers(lines[a].toLowerCase()), cart);
             }
-            while ((action != ACTION.NULL) || (a != (lines.length - 1)));
+            while ((action != Action.NULL) || (a != (lines.length - 1)));
 
             if (a == (lines.length - 1)) {
                 running = false;
