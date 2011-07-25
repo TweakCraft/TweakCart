@@ -2,12 +2,23 @@ package com.tweakcart.model;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Robert FH Groeneveld(rgroeneveld@rsdd.nl)
- * Date: 27-6-11
- * Time: 11:34
+ *
+ * @author TheSec, Edoxile
  */
-public final class IntMap {
-    private int[] mapData = new int[537];
+public class IntMap {
+    private int[] mapData;
+
+    public IntMap() {
+        mapData = new int[537];
+    }
+
+    private IntMap(int[] data) {
+        if (data.length != 538) {
+            mapData = new int[537];
+        } else {
+            mapData = data;
+        }
+    }
 
     public static boolean allowed(int id, byte data) {
         int byteLocation = IntMap.getByteIndex(id, data);
@@ -1138,5 +1149,35 @@ public final class IntMap {
                 return 537;
         }
         return -1;
+    }
+
+    public void combine(IntMap otherMap) {
+        for (int index = 0; index <= 537; index++) {
+            mapData[index] += otherMap.mapData[index];
+        }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof IntMap) {
+            IntMap otherMap = (IntMap) other;
+            for (int index = 0; index <= 537; index++) {
+                if (mapData[index] != otherMap.mapData[index])
+                    return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return mapData.hashCode();
+    }
+
+    @Override
+    public IntMap clone() {
+        return new IntMap(mapData.clone());
     }
 }
