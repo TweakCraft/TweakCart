@@ -3,7 +3,6 @@ package com.tweakcart.listeners;
 import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.SignParser;
-import com.tweakcart.model.SignUtil;
 import com.tweakcart.model.TweakCartConfig;
 import com.tweakcart.util.BlockMapper;
 import com.tweakcart.util.CartUtil;
