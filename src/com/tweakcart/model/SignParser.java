@@ -147,7 +147,7 @@ public class SignParser {
                     String[] tempsplit = temp.split("-");
                     //Oke nu zou het dus een range kunnen zijn
                     Bukkit.getServer().broadcastMessage("Searching for a range");
-<<<<<<< HEAD
+
                     if(tempsplit.length >= 2 && tempsplit.length % 2 == 0){
                     	
                     	try{
@@ -161,27 +161,13 @@ public class SignParser {
                     		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
                     		return null;
                     	}
-=======
-                    if (tempsplit.length >= 2 && tempsplit.length % 2 == 0) {
 
-                        try {
-                            int start = Integer.parseInt(tempsplit[0]);
-                            int end = Integer.parseInt(tempsplit[1]);
-                            Bukkit.getServer().broadcastMessage("er is een range van: " + start + " tot " + end + " " + isNegate);
-                            map.setRange(start, (byte) 0, start, (byte) 0, 0);
-                            break;
-                        } catch (NumberFormatException e) {
-                            log.severe("Er gaat was mis");
-                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                            return null;
-                        }
->>>>>>> 624cda65ba32f0aaa085a2bf3096f8d49f6750b2
                     }
 
 
                     tempsplit = temp.split(";");
                     Bukkit.getServer().broadcastMessage("Searching for a data value");
-<<<<<<< HEAD
+
                     if(tempsplit.length >= 2){
                     	try{
                     		int id = Integer.parseInt(tempsplit[0]);
@@ -194,25 +180,12 @@ public class SignParser {
                     		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
                     		return null;
                     	}
-=======
-                    if (tempsplit.length >= 2) {
-                        try {
-                            int id = Integer.parseInt(tempsplit[0]);
-                            byte datavalue = Byte.parseByte(tempsplit[1]);
-                            Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " en value " + datavalue + " " + isNegate);
-                            map.setInt(id, datavalue, 0);
-                            break;
-                        } catch (NumberFormatException e) {
-                            log.severe("Er gaat was mis");
-                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                            return null;
-                        }
->>>>>>> 624cda65ba32f0aaa085a2bf3096f8d49f6750b2
+
                     }
 
                     tempsplit = temp.split("@");
                     Bukkit.getServer().broadcastMessage("Searching for a amount");
-<<<<<<< HEAD
+
                     if(tempsplit.length >= 2){
                     	try{
                     		int id = Integer.parseInt(tempsplit[0]);
@@ -238,33 +211,7 @@ public class SignParser {
                 		return null;
                 	}
                     
-=======
-                    if (tempsplit.length >= 2) {
-                        try {
-                            int id = Integer.parseInt(tempsplit[0]);
-                            int amount = Integer.parseInt(tempsplit[1]);
-                            Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " amount " + amount + " " + isNegate);
-                            map.setInt(id, (byte) 0, amount);
-                            break;
-                        } catch (NumberFormatException e) {
-                            log.severe("Er gaat was mis");
-                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                            return null;
-                        }
-                    }
-                    Bukkit.getServer().broadcastMessage("Searching for not statements");
-                    try {
-                        int id = Integer.parseInt(temp);
-                        Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " " + isNegate);
 
-
-                    } catch (NumberFormatException e) {
-                        log.severe("Er gaat was mis");
-                        Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                        return null;
-                    }
-
->>>>>>> 624cda65ba32f0aaa085a2bf3096f8d49f6750b2
                     isNegate = false;
                     temp = "";
                     break;
