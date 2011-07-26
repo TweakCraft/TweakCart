@@ -1,11 +1,15 @@
 package com.tweakcart.model;
 
+import org.bukkit.Material;
+import org.bukkit.material.MaterialData;
+
 /**
  * Created by IntelliJ IDEA.
  *
  * @author TheSec, Edoxile
  */
 public class IntMap {
+    private static final int materialSize = Material.values().length - 1;
     private int[] mapData;
 
     public IntMap() {
@@ -48,6 +52,35 @@ public class IntMap {
         return true;
     }
 
+    private static int getIntIndex(int id, byte data) {
+        return getIntIndex(new MaterialData(id, data).getItemType(), data);
+    }
+
+    private static int getIntIndex(Material m, byte data) {
+        switch (data) {
+            case 0:
+                //Alle items waarop we .ordinal kunnen doen
+                return m.ordinal();
+            default:
+                //Alle andere gevallen
+                switch (m) {
+                    case SAPLING:
+                        return materialSize + (int)data;
+                    case LOG:
+                        return materialSize + (int)data + 2;
+                    case LEAVES:
+                        return materialSize + (int)data + 4;
+                    case WOOL:
+                        return materialSize + (int)data + 18;
+                    case INK_SACK:
+                        return materialSize + (int)data + 32;
+                    default:
+                        return m.ordinal();
+                }
+        }
+    }
+
+    @Deprecated
     private static int getByteIndex(int id, byte data) {
         switch (id) {
             case 1:
@@ -1153,8 +1186,8 @@ public class IntMap {
 
     public void combine(IntMap otherMap) {
         for (int index = 0; index <= 537; index++) {
-            if(otherMap.mapData[index] != 0)
-            mapData[index] = otherMap.mapData[index];
+            if (otherMap.mapData[index] != 0)
+                mapData[index] = otherMap.mapData[index];
         }
     }
 
