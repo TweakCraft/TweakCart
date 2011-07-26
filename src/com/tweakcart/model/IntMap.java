@@ -1152,9 +1152,9 @@ public class IntMap {
     }
 
     public void combine(IntMap otherMap) {
-        //TODO: nieuwe map heeft hogere priority. Als otherMap[i] != 0 dan mapData[i] = otherMap[i]?
         for (int index = 0; index <= 537; index++) {
-            mapData[index] += otherMap.mapData[index];
+            if(otherMap.mapData[index] != 0)
+            mapData[index] = otherMap.mapData[index];
         }
     }
 
