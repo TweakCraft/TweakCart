@@ -38,12 +38,12 @@ public class IntMap {
 
         return mapData[intLocation];
     }
+
     private boolean setInt(int mapIndex, int value, boolean isNegate){
     	mapData[mapIndex] = isNegate? 0 : value;
     	  	
     	return true; //
-    }
-    
+}
     public boolean setInt(int id, byte data) {
         return setInt(id, data, Integer.MAX_VALUE, false);
     }
@@ -76,15 +76,15 @@ public class IntMap {
                 //Alle andere gevallen
                 switch (m) {
                     case SAPLING:
-                        return materialSize + (int)data;
+                        return materialSize + (int) data;
                     case LOG:
-                        return materialSize + (int)data + 2;
+                        return materialSize + (int) data + 2;
                     case LEAVES:
-                        return materialSize + (int)data + 4;
+                        return materialSize + (int) data + 4;
                     case WOOL:
-                        return materialSize + (int)data + 18;
+                        return materialSize + (int) data + 18;
                     case INK_SACK:
-                        return materialSize + (int)data + 32;
+                        return materialSize + (int) data + 32;
                     default:
                         return m.ordinal();
                 }
@@ -97,7 +97,7 @@ public class IntMap {
                 mapData[index] = otherMap.mapData[index];
         }
     }
-    
+
     /**
      * Sets a range of the IntMap
      * prevents multiple calls to IntMap and back
@@ -120,6 +120,7 @@ public class IntMap {
     	}
     	
     	return result;
+
     }
 
     @Override
