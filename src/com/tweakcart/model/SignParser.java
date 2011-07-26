@@ -153,7 +153,7 @@ public class SignParser {
                     		int start = Integer.parseInt(tempsplit[0]);
                     		int end = Integer.parseInt(tempsplit[1]);
                     		Bukkit.getServer().broadcastMessage("er is een range van: " + start + " tot " + end + " " + isNegate);
-                    		map.setRange(start, (byte) 0, start, (byte) 0, 0);
+                    		map.setRange(start, (byte) 0, start, (byte) 0, 0, isNegate);
                     		break;
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
@@ -170,7 +170,7 @@ public class SignParser {
                     		int id = Integer.parseInt(tempsplit[0]);
                     		byte datavalue = Byte.parseByte(tempsplit[1]); 
                     		Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " en value " + datavalue + " " + isNegate);
-                    		map.setInt(id, datavalue, 0);
+                    		map.setInt(id, datavalue, 0, isNegate);
                     		break;
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
@@ -186,7 +186,7 @@ public class SignParser {
                     		int id = Integer.parseInt(tempsplit[0]);
                     		int amount = Integer.parseInt(tempsplit[1]);
                     		Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " amount " + amount + " " + isNegate);
-                    		map.setInt(id, (byte) 0, amount);
+                    		map.setInt(id, (byte) 0, amount, isNegate);
                     		break;
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
@@ -194,7 +194,7 @@ public class SignParser {
                     		return null;
                     	}
                     }
-                    Bukkit.getServer().broadcastMessage("Searching for not statements");
+                    Bukkit.getServer().broadcastMessage("Searching for numberic statements");
                     try{
                     	int id = Integer.parseInt(temp);
                     	Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " " + isNegate);

@@ -38,22 +38,28 @@ public class IntMap {
 
         return mapData[intLocation];
     }
-    private boolean setInt(int mapIndex, int value){
-    	mapData[mapIndex] = value;
+    private boolean setInt(int mapIndex, int value, boolean isNegate){
+    	mapData[mapIndex] = isNegate? 0 : value;
     	  	
     	return true; //
     }
     
     public boolean setInt(int id, byte data) {
-        return setInt(id, data, Integer.MAX_VALUE);
+        return setInt(id, data, Integer.MAX_VALUE, false);
     }
 
-    public boolean setInt(int id, byte data, int value) {
+    public boolean setInt(int id, byte data, int value, boolean isNegate) {
         int intLocation = IntMap.getIntIndex(id, data);
-        if (intLocation == -1) {
-            return false;
+        if(isNegate){
+        	mapData[intLocation] = 0;
         }
-        mapData[intLocation] = value;
+        else{
+            if (intLocation == -1) {
+                return false;
+            }
+            mapData[intLocation] = value;
+        }
+
         return true;
     }
 
@@ -96,7 +102,7 @@ public class IntMap {
      * Sets a range of the IntMap
      * prevents multiple calls to IntMap and back
      */
-    public boolean setRange(int startID, byte startdata, int endID, byte enddata, int value){
+    public boolean setRange(int startID, byte startdata, int endID, byte enddata, int value, boolean isNegate){
     	int startIndex = getIntIndex(startID, startdata);
     	int endIndex = getIntIndex(startID, startdata);
     	boolean result = true;
@@ -106,7 +112,7 @@ public class IntMap {
     		for(int i = startIndex; i <= endIndex && result; i++){
     			//de loop gaat stuk als het result ooit false is
     			//ja, dit kan ook met break statements, maar dat vind ik minder
-    			result = setInt(i, value != 0 ? value : Integer.MAX_VALUE); //Shorthands zijn <3
+    			result = setInt(i, value != 0 ? value : Integer.MAX_VALUE, isNegate); //Shorthands zijn <3
     		}
     	}else{
     		//Users maken echt ook alleen maar fouten :)
