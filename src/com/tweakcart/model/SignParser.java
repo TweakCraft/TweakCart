@@ -6,6 +6,7 @@ import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**
@@ -148,19 +149,19 @@ public class SignParser {
                     //Oke nu zou het dus een range kunnen zijn
                     Bukkit.getServer().broadcastMessage("Searching for a range");
 
-                    if(tempsplit.length >= 2 && tempsplit.length % 2 == 0){
-                    	
-                    	try{
-                    		int start = Integer.parseInt(tempsplit[0]);
-                    		int end = Integer.parseInt(tempsplit[1]);
-                    		Bukkit.getServer().broadcastMessage("er is een range van: " + start + " tot " + end + " " + isNegate);
-                    		map.setRange(start, (byte) 0, start, (byte) 0, 0, isNegate);
-                    		break;
-                    	}catch(NumberFormatException e){
-                    		log.severe("Er gaat was mis");
-                    		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                    		return null;
-                    	}
+                    if (tempsplit.length >= 2 && tempsplit.length % 2 == 0) {
+
+                        try {
+                            int start = Integer.parseInt(tempsplit[0]);
+                            int end = Integer.parseInt(tempsplit[1]);
+                            Bukkit.getServer().broadcastMessage("er is een range van: " + start + " tot " + end + " " + isNegate);
+                            map.setRange(start, (byte) 0, start, (byte) 0, 0, isNegate);
+                            break;
+                        } catch (NumberFormatException e) {
+                            log.severe("Er gaat was mis");
+                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
+                            return null;
+                        }
 
                     }
 
@@ -168,49 +169,49 @@ public class SignParser {
                     tempsplit = temp.split(";");
                     Bukkit.getServer().broadcastMessage("Searching for a data value");
 
-                    if(tempsplit.length >= 2){
-                    	try{
-                    		int id = Integer.parseInt(tempsplit[0]);
-                    		byte datavalue = Byte.parseByte(tempsplit[1]); 
-                    		Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " en value " + datavalue + " " + isNegate);
-                    		map.setInt(id, datavalue, 0, isNegate);
-                    		break;
-                    	}catch(NumberFormatException e){
-                    		log.severe("Er gaat was mis");
-                    		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                    		return null;
-                    	}
+                    if (tempsplit.length >= 2) {
+                        try {
+                            int id = Integer.parseInt(tempsplit[0]);
+                            byte datavalue = Byte.parseByte(tempsplit[1]);
+                            Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " en value " + datavalue + " " + isNegate);
+                            map.setInt(id, datavalue, 0, isNegate);
+                            break;
+                        } catch (NumberFormatException e) {
+                            log.severe("Er gaat was mis");
+                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
+                            return null;
+                        }
 
                     }
 
                     tempsplit = temp.split("@");
                     Bukkit.getServer().broadcastMessage("Searching for a amount");
 
-                    if(tempsplit.length >= 2){
-                    	try{
-                    		int id = Integer.parseInt(tempsplit[0]);
-                    		int amount = Integer.parseInt(tempsplit[1]);
-                    		Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " amount " + amount + " " + isNegate);
-                    		map.setInt(id, (byte) 0, amount, isNegate);
-                    		break;
-                    	}catch(NumberFormatException e){
-                    		log.severe("Er gaat was mis");
-                    		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                    		return null;
-                    	}
+                    if (tempsplit.length >= 2) {
+                        try {
+                            int id = Integer.parseInt(tempsplit[0]);
+                            int amount = Integer.parseInt(tempsplit[1]);
+                            Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " amount " + amount + " " + isNegate);
+                            map.setInt(id, (byte) 0, amount, isNegate);
+                            break;
+                        } catch (NumberFormatException e) {
+                            log.severe("Er gaat was mis");
+                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
+                            return null;
+                        }
                     }
                     Bukkit.getServer().broadcastMessage("Searching for numberic statements");
-                    try{
-                    	int id = Integer.parseInt(temp);
-                    	Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " " + isNegate);
+                    try {
+                        int id = Integer.parseInt(temp);
+                        Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " " + isNegate);
 
-                        
-                    }catch(NumberFormatException e){
-                		log.severe("Er gaat was mis");
-                		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                		return null;
-                	}
-                    
+
+                    } catch (NumberFormatException e) {
+                        log.severe("Er gaat was mis");
+                        Bukkit.getServer().broadcastMessage("Er gaat wat mis");
+                        return null;
+                    }
+
 
                     isNegate = false;
                     temp = "";
@@ -237,16 +238,16 @@ public class SignParser {
         return map;
     }
 
-    public static void parseSign(Sign sign, Minecart cart) {
+    public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart) {
         Bukkit.getServer().broadcastMessage("HALLO");
         Action oldAction = Action.NULL;
 
-        IntMap map = new IntMap();
+        HashMap<Action, IntMap> returnData = new HashMap<Action, IntMap>();
+        IntMap map;
 
         for (String line : sign.getLines()) {
 
             Action newAction = SignParser.parseAction(line);
-            Action retrieveAction = Action.NULL;
             Bukkit.getServer().broadcastMessage(newAction.toString());
             if (newAction == Action.NULL) {
                 continue;
@@ -256,18 +257,22 @@ public class SignParser {
             } else if (oldAction != Action.NULL) {
                 switch (oldAction) {
                     case DEPOSIT:
-                        retrieveAction = Action.DEPOSIT;
                     case COLLECT:
-                        retrieveAction = retrieveAction == Action.NULL ? Action.COLLECT : Action.DEPOSIT;
                         Bukkit.getServer().broadcastMessage("Action: " + oldAction.toString());
                         Bukkit.getServer().broadcastMessage("  -> " + line);
+
                         IntMap parsed = buildIntMap(line, cart);
+
                         if (parsed != null) {
                             // Mooi het is gelukt! Maps combinen dan maar!
-                            map.combine(parsed);
+                            if (returnData.containsKey(oldAction)) {
+                                map = returnData.get(oldAction);
+                                map.combine(parsed);
+                                returnData.put(oldAction, map);
+                            } else {
+                                returnData.put(oldAction, parsed);
+                            }
                         }
-
-                        //Fetching items
                         break;
                     //case ELEVATE?
                     default:
@@ -283,7 +288,7 @@ public class SignParser {
         //Yay, we hebben een IntMap
         //For simplicity sake, gaan we er vanuit dat het of collect of deposit is, oke :)
 
-
+        return returnData;
     }
 
     public static boolean checkStorageCart(Minecart cart) {
