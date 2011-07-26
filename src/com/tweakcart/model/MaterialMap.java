@@ -6,6 +6,7 @@ import com.tweakcart.TweakCartException;
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
+@Deprecated
 public class MaterialMap {
     private int size = 0;
 

@@ -1,7 +1,5 @@
 package com.tweakcart.model;
 
-import com.tweakcart.util.Bitwise;
-
 import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
@@ -12,9 +10,8 @@ import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Robert FH Groeneveld(rgroeneveld@rsdd.nl)
- * Date: 27-6-11
- * Time: 20:45
+ *
+ * @author TheSec, windwarrior, Edoxile
  */
 public class SignParser {
     public enum Action {
@@ -45,7 +42,6 @@ public class SignParser {
         }
     }
 
-    public int[] IntMap = null;
     private static SignParser _Instance;
     private static final Logger log = Logger.getLogger("Minecraft");
 
@@ -55,6 +51,10 @@ public class SignParser {
         }
 
         return _Instance;
+    }
+
+    private SignParser(){
+        //Private constructor because of singleton.
     }
 
     public static Action parseAction(String line) {
@@ -82,30 +82,13 @@ public class SignParser {
         }
     }
 
-//    @Deprecated
-//    public static short getFirstAction(String[] lines, Minecart cart) {
-//        Action first;
-//        short _return;
-//
-//        for (int a = 0; a < lines.length; a++) {
-//            //first = ParseLine(SignParser.removeBracers(lines[a].toLowerCase()), cart);
-//            log.info(first.toString());
-//            if (first != Action.NULL) {
-//                return Bitwise.packBits((short) a, (short) first.getId(), (short) 2);
-//            }
-//        }
-//
-//        return 255;
-//    }
-
-
-
     //TODO: ByteMap vullen.
-    public static boolean buildIntMap(String line, Minecart cart) {
+    public static IntMap buildIntMap(String line, Minecart cart) {
         //Parse next line items ?
         log.info("ik gaat maar eens bouwen " + line + ";");
+
         String temp = "";
-        SignParser.getInstance().IntMap = new int[512];
+        IntMap map = new IntMap();
         boolean isNegate = false;
         for (int b = 0; b < line.length(); b++) {
             char c = line.charAt(b);
@@ -127,22 +110,22 @@ public class SignParser {
                     switch (c) {
                         case 'n':
                             if (d != Direction.NORTH) {
-                                return false;
+                                return null;
                             }
                             break;
                         case 's':
                             if (d != Direction.SOUTH) {
-                                return false;
+                                return null;
                             }
                             break;
                         case 'e':
                             if (d != Direction.EAST) {
-                                return false;
+                                return null;
                             }
                             break;
                         case 'w':
                             if (d != Direction.WEST) {
-                                return false;
+                                return null;
                             }
                             break;
                     }
@@ -174,7 +157,7 @@ public class SignParser {
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
                     		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                    		return false;
+                    		return null;
                     	}
                     }
                     
@@ -190,7 +173,7 @@ public class SignParser {
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
                     		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                    		return false;
+                    		return null;
                     	}
                     }
                     
@@ -205,7 +188,7 @@ public class SignParser {
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
                     		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                    		return false;
+                    		return null;
                     	}
                     }
                     Bukkit.getServer().broadcastMessage("ik ben nu hier terecht gekomen");
@@ -217,7 +200,7 @@ public class SignParser {
                     }catch(NumberFormatException e){
                 		log.severe("Er gaat was mis");
                 		Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                		return false;
+                		return null;
                 	}
                     
                     isNegate = false;
@@ -242,15 +225,15 @@ public class SignParser {
             
         }
 
-        return true;
+        return map;
     }
-
-    //TODO: Hoe gaan we dat oplossen als er zo wel collect als deposit op 1 sign staat.......
-
 
     public static void parseSign(Sign sign, Minecart cart) {
     	Bukkit.getServer().broadcastMessage("HALLO");
         Action oldAction = Action.NULL;
+
+        IntMap map = new IntMap();
+
         for (String line : sign.getLines()) {
         	
             Action newAction = SignParser.parseAction(line);
@@ -265,9 +248,11 @@ public class SignParser {
                     case DEPOSIT:
                     case COLLECT:
                     	Bukkit.getServer().broadcastMessage("Action: " + oldAction.toString());
-                    	Bukkit.getServer().broadcastMessage(" " + line);
-                        if(buildIntMap(line, cart)){
-                        	// Mooi het is gelukt !
+                    	Bukkit.getServer().broadcastMessage("  -> " + line);
+                        IntMap parsed = buildIntMap(line, cart);
+                        if(parsed != null){
+                        	// Mooi het is gelukt! Maps combinen dan maar!
+                            map.combine(parsed);
                         }
                         
                         //Fetching items

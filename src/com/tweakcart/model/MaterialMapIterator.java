@@ -2,6 +2,7 @@ package com.tweakcart.model;
 
 import com.tweakcart.TweakCartException;
 
+@Deprecated
 public class MaterialMapIterator {
     private transient int[] _keys, _values;
     private int pointer = -1;

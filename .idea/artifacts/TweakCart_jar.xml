@@ -3,8 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/TweakCart_jar</output-path>
     <root id="archive" name="TweakCart.jar">
       <element id="module-output" name="TweakCart" />
-      <element id="module-test-output" name="TweakCart" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/libs/trove-2.1.0.jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
     </root>
   </artifact>
 </component>

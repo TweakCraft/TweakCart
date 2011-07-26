@@ -4,6 +4,12 @@ package com.tweakcart;
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
+
+/**
+ * Voor nu even @Deprecated, misschien later weer introduceren?
+ */
+
+@Deprecated
 public class TweakCartException extends Exception {
     private final ExceptionCause cause;
 
