@@ -25,30 +25,30 @@ public class IntMap {
     }
 
     public static boolean allowed(int id, byte data) {
-        int byteLocation = IntMap.getIntIndex(id, data);
-        return byteLocation != -1;
+        int intLocation = IntMap.getIntIndex(id, data);
+        return intLocation != -1;
     }
 
     public int amount(int id, byte data) {
-        int byteLocation = IntMap.getIntIndex(id, data);
+        int intLocation = IntMap.getIntIndex(id, data);
 
-        if (byteLocation == -1) {
+        if (intLocation == -1) {
             return 0;
         }
 
-        return mapData[byteLocation];
+        return mapData[intLocation];
     }
 
-    public boolean setByte(int id, byte data) {
-        return setByte(id, data, Integer.MAX_VALUE);
+    public boolean setInt(int id, byte data) {
+        return setInt(id, data, Integer.MIN_VALUE);
     }
 
-    public boolean setByte(int id, byte data, int value) {
-        int byteLocation = IntMap.getIntIndex(id, data);
-        if (byteLocation == -1) {
+    public boolean setInt(int id, byte data, int value) {
+        int intLocation = IntMap.getIntIndex(id, data);
+        if (intLocation == -1) {
             return false;
         }
-        mapData[byteLocation] = value;
+        mapData[intLocation] = value;
         return true;
     }
 
