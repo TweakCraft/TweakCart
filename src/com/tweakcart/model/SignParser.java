@@ -153,6 +153,7 @@ public class SignParser {
                     		int start = Integer.parseInt(tempsplit[0]);
                     		int end = Integer.parseInt(tempsplit[1]);
                     		Bukkit.getServer().broadcastMessage("er is een range van: " + start + " tot " + end + " " + isNegate);
+                    		map.setRange(start, (byte) 0, start, (byte) 0, 0);
                     		break;
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
@@ -169,6 +170,7 @@ public class SignParser {
                     		int id = Integer.parseInt(tempsplit[0]);
                     		byte datavalue = Byte.parseByte(tempsplit[1]); 
                     		Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " en value " + datavalue + " " + isNegate);
+                    		map.setInt(id, datavalue, 0);
                     		break;
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
@@ -182,8 +184,9 @@ public class SignParser {
                     if(tempsplit.length >= 2){
                     	try{
                     		int id = Integer.parseInt(tempsplit[0]);
-                    		int amount = Integer.parseInt(tempsplit[1]); 
+                    		int amount = Integer.parseInt(tempsplit[1]);
                     		Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " amount " + amount + " " + isNegate);
+                    		map.setInt(id, (byte) 0, amount);
                     		break;
                     	}catch(NumberFormatException e){
                     		log.severe("Er gaat was mis");
@@ -191,7 +194,7 @@ public class SignParser {
                     		return null;
                     	}
                     }
-                    Bukkit.getServer().broadcastMessage("ik ben nu hier terecht gekomen");
+                    Bukkit.getServer().broadcastMessage("Searching for not statements");
                     try{
                     	int id = Integer.parseInt(temp);
                     	Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " " + isNegate);
@@ -237,6 +240,7 @@ public class SignParser {
         for (String line : sign.getLines()) {
         	
             Action newAction = SignParser.parseAction(line);
+            Action retrieveAction = Action.NULL;
             Bukkit.getServer().broadcastMessage(newAction.toString());
             if(newAction == Action.NULL) {
                 continue;
@@ -246,7 +250,9 @@ public class SignParser {
             } else if(oldAction != Action.NULL) {
                 switch(oldAction){
                     case DEPOSIT:
+                    	retrieveAction = Action.DEPOSIT;
                     case COLLECT:
+                    	retrieveAction = retrieveAction == Action.NULL? Action.COLLECT : Action.DEPOSIT;
                     	Bukkit.getServer().broadcastMessage("Action: " + oldAction.toString());
                     	Bukkit.getServer().broadcastMessage("  -> " + line);
                         IntMap parsed = buildIntMap(line, cart);
@@ -267,46 +273,12 @@ public class SignParser {
                 continue;
             }
         }
+        
+        //Yay, we hebben een IntMap
+        //For simplicity sake, gaan we er vanuit dat het of collect of deposit is, oke :)
+        
 
-//        //TODO: Move this inside the switch above;
-//        boolean running = true;
-//
-//        short result = SignParser.getFirstAction(lines, cart);
-//        log.info("" + result);
-//        short index = Bitwise.getHighBits(result, (short) 2);
-//        Action action = Action.fromId(Bitwise.getLowBits(result, (short) 2));
-//
-//        System.out.println("First result on index " + index + " Action: " + action.toString());
-//
-//        short a = (short) (index + 1);
-//
-//        do {
-//            log.info("Entering Do loop");
-//            //TODO: Finish buildByteMap
-//            if (!(SignParser.buildByteMap(SignParser.removeBracers(lines[a].toLowerCase()), cart))) {
-//                //Sign didn't match requirements.
-//                //May by log this or not ?
-//
-//                //Maybe altering the signs content, to attent the user on the error
-//                //problem: signs that where not meant for TweakCart
-//
-//            } else {
-//                //TODO: What to do XD ?
-//                //ByteMap ready (SignParser.getInstance().ByteMap)
-//                //Execute Action ? (Collect/Deposit)
-//            }
-//
-//            do {
-//                a++;
-//                action = SignParser.parseLine(SignParser.removeBracers(lines[a].toLowerCase()), cart);
-//            }
-//            while ((action != Action.NULL) || (a != (lines.length - 1)));
-//
-//            if (a == (lines.length - 1)) {
-//                running = false;
-//            }
-//        }
-//        while (running);
+
     }
 
     public static boolean CheckStorageCart(Minecart cart) {

@@ -5,7 +5,9 @@ package com.tweakcart.util;
  * User: Robert FH Groeneveld(rgroeneveld@rsdd.nl)
  * Date: 28-6-11
  * Time: 13:44
+ * @deprecated of toch niet?
  */
+@Deprecated
 public final class Bitwise {
     public static short MaxBits = 8;
 

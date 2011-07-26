@@ -38,17 +38,22 @@ public class IntMap {
 
         return mapData[byteLocation];
     }
-
-    public boolean setByte(int id, byte data) {
-        return setByte(id, data, Integer.MAX_VALUE);
+    private boolean setInt(int mapIndex, int value){
+    	mapData[mapIndex] = value;
+    	  	
+    	return true; //
+    }
+    
+    public boolean setInt(int id, byte data) {
+        return setInt(id, data, Integer.MAX_VALUE);
     }
 
-    public boolean setByte(int id, byte data, int value) {
-        int byteLocation = IntMap.getIntIndex(id, data);
-        if (byteLocation == -1) {
+    public boolean setInt(int id, byte data, int value) {
+        int intLocation = IntMap.getIntIndex(id, data);
+        if (intLocation == -1) {
             return false;
         }
-        mapData[byteLocation] = value;
+        mapData[intLocation] = value;
         return true;
     }
 
@@ -85,6 +90,30 @@ public class IntMap {
             if (otherMap.mapData[index] != 0)
                 mapData[index] = otherMap.mapData[index];
         }
+    }
+    
+    /**
+     * Sets a range of the IntMap
+     * prevents multiple calls to IntMap and back
+     */
+    public boolean setRange(int startID, byte startdata, int endID, byte enddata, int value){
+    	int startIndex = getIntIndex(startID, startdata);
+    	int endIndex = getIntIndex(startID, startdata);
+    	boolean result = true;
+    	
+    	if(startIndex < endIndex){
+    		//endindex moet ook meegenomen worden :)
+    		for(int i = startIndex; i <= endIndex && result; i++){
+    			//de loop gaat stuk als het result ooit false is
+    			//ja, dit kan ook met break statements, maar dat vind ik minder
+    			result = setInt(i, value != 0 ? value : Integer.MAX_VALUE); //Shorthands zijn <3
+    		}
+    	}else{
+    		//Users maken echt ook alleen maar fouten :)
+    		result = false;
+    	}
+    	
+    	return result;
     }
 
     @Override

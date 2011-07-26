@@ -4,3 +4,16 @@
 
 
 * Optimalisatie is ver te zoeken, het werkt en dat is alles nu! Morgen ga ik daar weer mee verder, optimaliseren :)
+
+
+Alpha 0.2.0 features:
+* Collecting items, putting them into map.
+* Collecting or Depositing items.
+* Dispensing carts, recollecting carts.
+
+Future release:
+* Better parser, also parsing signs like "12-14@21"
+* Collection and Depositing on one sign.
+
+Known Issues:
+* Every command to be parsed should be appended by a ':', in the future that is fixed :)
