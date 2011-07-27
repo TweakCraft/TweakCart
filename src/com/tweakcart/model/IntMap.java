@@ -1,5 +1,6 @@
 package com.tweakcart.model;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
@@ -51,7 +52,7 @@ public class IntMap {
 
     private boolean setInt(int mapIndex, int value, boolean isNegate) {
         mapData[mapIndex] = isNegate ? 0 : value;
-
+        Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[mapIndex] + "!");
         return true; //
     }
 
@@ -65,14 +66,17 @@ public class IntMap {
 
     public boolean setInt(int id, byte data, int value, boolean isNegate) {
         int intLocation = IntMap.getIntIndex(id, data);
+        Bukkit.getServer().broadcastMessage("yay, ik ben hier, en nu?");
         if (intLocation == -1) {
             return false;
         }
 
         if (isNegate) {
             mapData[intLocation] = 0;
+            Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
         } else {
             mapData[intLocation] = value;
+            Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
         }
 
         return true;
