@@ -84,7 +84,7 @@ public class SignParser {
     }
 
     //TODO: ByteMap vullen.
-    public static IntMap buildIntMap(String line, Minecart cart) {
+    public static IntMap buildIntMap(String line, Minecart cart, Direction d) {
         //Parse next line items ?
         log.info("ik gaat maar eens bouwen " + line + ";");
 
@@ -102,11 +102,8 @@ public class SignParser {
             //First letter can be a direction, because it isn't a digit.
             if (b == 0) {
                 //Check if the second Char is a + with indicates that the first is a direction
-                if (line.length() >= 2 && line.charAt(1) == '+') //lazy evaluation is your friend
-                {
-                    //Get cart current direction
-                    Direction d = Direction.getHorizontalDirection(cart.getVelocity());
-
+                //lazy evaluation is your friend
+                if (line.length() >= 2 && line.charAt(1) == '+') {
                     //Check if the cart has the desired direction, if not continue to the next line.
                     switch (c) {
                         case 'n':
@@ -238,7 +235,7 @@ public class SignParser {
         return map;
     }
 
-    public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart) {
+    public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart, Direction direction) {
         Bukkit.getServer().broadcastMessage("HALLO");
         Action oldAction = Action.NULL;
 
@@ -261,7 +258,7 @@ public class SignParser {
                         Bukkit.getServer().broadcastMessage("Action: " + oldAction.toString());
                         Bukkit.getServer().broadcastMessage("  -> " + line);
 
-                        IntMap parsed = buildIntMap(line, cart);
+                        IntMap parsed = buildIntMap(line, cart, direction);
 
                         if (parsed != null) {
                             // Mooi het is gelukt! Maps combinen dan maar!
@@ -270,7 +267,8 @@ public class SignParser {
                                 map.combine(parsed);
                                 returnData.put(oldAction, map);
                             } else {
-                                returnData.put(oldAction, parsed);
+                                if (parsed != null)
+                                    returnData.put(oldAction, parsed);
                             }
                         }
                         break;

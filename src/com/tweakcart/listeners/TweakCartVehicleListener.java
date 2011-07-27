@@ -113,9 +113,9 @@ public class TweakCartVehicleListener extends VehicleListener {
     }
 
     private void parseSign(Sign sign, Minecart cart, Direction direction) {
+        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, cart, direction);
         if (SignParser.checkStorageCart(cart)) {
             StorageMinecart storageCart = (StorageMinecart) cart;
-            HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, storageCart);
             List<Chest> chests;
             for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
                 if (entry.getValue() == null)
@@ -125,14 +125,14 @@ public class TweakCartVehicleListener extends VehicleListener {
                         //Collect items (from chest to cart)
                         chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                         for (Chest c : chests) {
-                            c.getInventory().setContents(ChestUtil.putItems(c.getInventory().getContents(), (ContainerBlock) storageCart, entry.getValue()));
+                            ChestUtil.moveItems(c.getInventory(), storageCart.getInventory(), entry.getValue());
                         }
                         break;
                     case DEPOSIT:
                         //Deposit items (from cart to chest)
                         chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                         for (Chest c : chests) {
-                            storageCart.getInventory().setContents(ChestUtil.putItems(storageCart.getInventory().getContents(), (ContainerBlock) c, entry.getValue()));
+                            ChestUtil.moveItems(storageCart.getInventory(), c.getInventory(), entry.getValue());
                         }
                         break;
                 }

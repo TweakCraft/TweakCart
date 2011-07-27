@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.ContainerBlock;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -49,8 +50,9 @@ public class ChestUtil {
         return putItems(stacks, containerBlock);
     }
 
-    public static ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock, IntMap through) {
-        ItemStack[] to = containerBlock.getInventory().getContents();
+    public static void moveItems(Inventory iFrom, Inventory iTo, IntMap through) {
+        ItemStack[] from = iFrom.getContents();
+        ItemStack[] to = iTo.getContents();
         for (int i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null)
                 continue;
@@ -110,8 +112,8 @@ public class ChestUtil {
                 through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount);
             }
         }
-        containerBlock.getInventory().setContents(to);
-        return from;
+        iTo.setContents(to);
+        iFrom.setContents(from);
     }
 
     public static List<Chest> getChestsAroundBlock(Block block, int sw) {
