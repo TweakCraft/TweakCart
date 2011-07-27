@@ -56,9 +56,9 @@ public class ChestUtil {
         for (int i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null)
                 continue;
-            int mapAmount = through.amount(from[i1].getType(), (byte) from[i1].getDurability());
+            int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
             int startAmount = from[i1].getAmount();
-            if (mapAmount == 0)
+            if (mapAmount == 0 || mapAmount == Integer.MIN_VALUE)
                 continue;
 
             //MAX_VALUE && other values?

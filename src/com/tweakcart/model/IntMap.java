@@ -18,19 +18,19 @@ public class IntMap {
     }
 
     private IntMap(int[] data) {
-        if (data.length != 538) {
+        if (data.length != 537) {
             mapData = new int[537];
         } else {
             mapData = data;
         }
     }
 
-    public static boolean allowed(int id, byte data) {
+    public static boolean isAllowedMaterial(int id, byte data) {
         int intLocation = IntMap.getIntIndex(id, data);
         return intLocation != -1;
     }
 
-    public int amount(int id, byte data) {
+    public int getInt(int id, byte data) {
         int intLocation = IntMap.getIntIndex(id, data);
 
         if (intLocation == -1) {
@@ -40,7 +40,7 @@ public class IntMap {
         return mapData[intLocation];
     }
 
-    public int amount(Material m, byte data) {
+    public int getInt(Material m, byte data) {
         int intLocation = IntMap.getIntIndex(m, data);
 
         if (intLocation == -1) {
@@ -48,16 +48,6 @@ public class IntMap {
         }
 
         return mapData[intLocation];
-    }
-    private boolean setInt(int mapIndex, int value) {
-    	mapData[mapIndex] = value;
-        Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[mapIndex] + "!");
-        return true; //
-    }
-
-    public boolean setInt(int id, byte data) {
-        Bukkit.getServer().broadcastMessage("ik zet NU Integer.Max in de map");
-        return setInt(id, data, Integer.MAX_VALUE);
     }
 
     public boolean setInt(Material m, byte data, int value) {
@@ -90,23 +80,51 @@ public class IntMap {
                 //Alle andere gevallen
                 switch (m) {
                     case SAPLING:
-                        return materialSize + (int) data;
+                        if (data < 3)
+                            return materialSize + (int) data;
+                        else
+                            return -1;
                     case LOG:
-                        return materialSize + (int) data + 2;
+                        if (data < 3)
+                            return materialSize + (int) data + 2;
+                        else
+                            return -1;
                     case LEAVES:
-                        return materialSize + (int) data + 4;
+                        if (data < 3)
+                            return materialSize + (int) data + 4;
+                        else
+                            return -1;
                     case WOOL:
-                        return materialSize + (int) data + 18;
+                        if (data < 15)
+                            return materialSize + (int) data + 18;
+                        else
+                            return -1;
                     case INK_SACK:
-                        return materialSize + (int) data + 32;
+                        if (data < 15)
+                            return materialSize + (int) data + 32;
+                        else
+                            return -1;
                     default:
                         return m.ordinal();
                 }
         }
     }
 
+    private boolean hasDataValue(int id) {
+        switch (id) {
+            case 6:
+            case 17:
+            case 18:
+            case 35:
+            case 351:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public void combine(IntMap otherMap) {
-        for (int index = 0; index <= 537; index++) {
+        for (int index = 0; index < mapData.length; index++) {
             if (otherMap.mapData[index] != 0)
                 mapData[index] = otherMap.mapData[index];
         }
@@ -116,30 +134,72 @@ public class IntMap {
      * Sets a range of the IntMap
      * prevents multiple calls to IntMap and back
      */
-    public boolean setRange(int startID, byte startdata, int endID, byte enddata, int value, boolean isNegate) {
-        int startIndex = getIntIndex(startID, startdata);
-        int endIndex = getIntIndex(endID, startdata);
-        boolean result = true;
 
-        if (startIndex < endIndex) {
-            //endindex moet ook meegenomen worden :)
-            for (int i = startIndex; i <= endIndex && result; i++) {
-                //de loop gaat stuk als het result ooit false is
-                //ja, dit kan ook met break statements, maar dat vind ik minder
-                if (allowed(i, (byte) 0)) {
-                    result = setInt(i, Integer.MAX_VALUE);
-                } else {
-                    Bukkit.getServer().broadcastMessage("niet toegestaan?");
+    public boolean setRange(int startId, byte startdata, int endId, byte enddata, int value) {
+        int startIndex, endIndex;
+        if (startdata < 0 || enddata < 0)
+            return false;
+        if (startdata > 0 && !hasDataValue(startId))
+            startdata = 0;
+        if (enddata > 0 && !hasDataValue(endId))
+            enddata = 0;
+        if (startdata == 0 && enddata == 0) {
+            if (startId < endId) {
+                startIndex = getIntIndex(startId, startdata);
+                endIndex = getIntIndex(endId, startdata);
+
+                if (startIndex == -1 || endIndex == -1)
+                    return false;
+
+                for (int i = startIndex; i <= endIndex; i++) {
+                    mapData[i] = value;
                 }
-
             }
         } else {
-            //Users maken echt ook alleen maar fouten :)
-            result = false;
+            if (startId < endId) {
+                while (true) {
+                    int index = getIntIndex(startId, startdata);
+                    if (index == -1)
+                        break;
+                    mapData[index] = value;
+                    startdata++;
+                }
+
+                while (true) {
+                    int index = getIntIndex(endId, enddata);
+                    if (index == -1)
+                        break;
+                    mapData[index] = value;
+                    enddata--;
+                }
+
+                do {
+                    startId++;
+                } while (getIntIndex(startId, (byte) 0) != -1);
+
+                do {
+                    endId--;
+                } while (getIntIndex(endId, (byte) 0) != -1);
+
+                for (int id = startId; id <= endId; id++) {
+                    int index = getIntIndex(id, (byte) 0);
+                    if (index == -1)
+                        continue;
+                    mapData[index] = value;
+                    if (hasDataValue(id)) {
+                        byte data = 1;
+                        while (true) {
+                            index = getIntIndex(id, data);
+                            if (index == -1)
+                                break;
+                            mapData[index] = value;
+                            data++;
+                        }
+                    }
+                }
+            }
         }
-
-        return result;
-
+        return true;
     }
 
     @Override

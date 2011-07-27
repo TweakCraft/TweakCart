@@ -87,7 +87,6 @@ public class SignParser {
     public static IntMap buildIntMap(String line, Minecart cart, Direction d) {
         //Parse next line items ?
         log.info("ik gaat maar eens bouwen " + line + ";");
-
         IntMap map = new IntMap();
         boolean isNegate = false;
         
@@ -148,6 +147,7 @@ public class SignParser {
         		}
         	}
         	
+
         }
 
         return map;
