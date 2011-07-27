@@ -118,6 +118,9 @@ public class SignParser {
         				return null;
         			}
         		}
+        		else if(splitline.length != 1){
+        			return null;
+        		}
 
         		splitline = command.split("-");
 
