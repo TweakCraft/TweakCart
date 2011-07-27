@@ -52,16 +52,17 @@ public class IntMap {
 
     private boolean setInt(int mapIndex, int value, boolean isNegate) {
         mapData[mapIndex] = isNegate ? 0 : value;
-        Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[mapIndex] + "!");
+        Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[mapIndex] + ", negate: " + isNegate + "!");
         return true; //
     }
 
-    public boolean setInt(int id, byte data) {
-        return setInt(id, data, Integer.MAX_VALUE, false);
+    public boolean setInt(int id, byte data, boolean isNegate) {
+        return setInt(id, data, Integer.MAX_VALUE, isNegate);
     }
 
-    public boolean setInt(Material m, byte data, int value) {
-        return setInt(m.getId(), data, Integer.MAX_VALUE, false);
+    @Deprecated
+    public boolean setInt(Material m, byte data, int value, boolean isNegate) {
+        return setInt(m.getId(), data, value, isNegate);
     }
 
     public boolean setInt(int id, byte data, int value, boolean isNegate) {
