@@ -171,7 +171,7 @@ public class SignParser {
                             int id = Integer.parseInt(tempsplit[0]);
                             byte datavalue = Byte.parseByte(tempsplit[1]);
                             Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " en value " + datavalue + " " + isNegate);
-                            map.setInt(id, datavalue, isNegate);
+                            map.setInt(id, datavalue, (isNegate ? 0 : Integer.MAX_VALUE));
                             break;
                         } catch (NumberFormatException e) {
                             log.severe("Er gaat was mis");
@@ -189,7 +189,7 @@ public class SignParser {
                             int id = Integer.parseInt(tempsplit[0]);
                             int amount = Integer.parseInt(tempsplit[1]);
                             Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " amount " + amount + " " + isNegate);
-                            map.setInt(id, (byte) 0, amount, isNegate);
+                            map.setInt(id, (byte) 0, (isNegate ? 0 : amount));
                             break;
                         } catch (NumberFormatException e) {
                             log.severe("Er gaat was mis");
@@ -201,7 +201,7 @@ public class SignParser {
                     try {
                         int id = Integer.parseInt(temp);
                         Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " " + isNegate);
-                        map.setInt(id, (byte) 0, isNegate);
+                        map.setInt(id, (byte) 0, (isNegate ? 0 : Integer.MAX_VALUE));
 
                     } catch (NumberFormatException e) {
                         log.severe("Er gaat was mis");

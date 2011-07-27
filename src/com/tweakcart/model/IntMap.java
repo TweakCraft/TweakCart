@@ -50,40 +50,29 @@ public class IntMap {
         return mapData[intLocation];
     }
 
-    private boolean setInt(int mapIndex, int value, boolean isNegate) {
-        mapData[mapIndex] = isNegate ? 0 : value;
-        Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[mapIndex] + ", negate: " + isNegate + "!");
+    private boolean setInt(int mapIndex, int value) {
+        Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[mapIndex] + "!");
         return true; //
     }
 
-    public boolean setInt(int id, byte data, boolean isNegate) {
-    	Bukkit.getServer().broadcastMessage("ik zet NU Integer.Max in de map");
-        return setInt(id, data, Integer.MAX_VALUE, isNegate);
-    }
-
-    @Deprecated
-    public boolean setInt(Material m, byte data, int value, boolean isNegate) {
-        return setInt(m.getId(), data, value, isNegate);
+    public boolean setInt(int id, byte data) {
+        Bukkit.getServer().broadcastMessage("ik zet NU Integer.Max in de map");
+        return setInt(id, data, Integer.MAX_VALUE);
     }
 
     public boolean setInt(Material m, byte data, int value) {
-        return setInt(m.getId(), data, value, false);
+        return setInt(m.getId(), data, value);
     }
 
-    public boolean setInt(int id, byte data, int value, boolean isNegate) {
+    public boolean setInt(int id, byte data, int value) {
         int intLocation = IntMap.getIntIndex(id, data);
         Bukkit.getServer().broadcastMessage("yay, ik ben hier, en nu?");
         if (intLocation == -1) {
             return false;
         }
 
-        if (isNegate) {
-            mapData[intLocation] = 0;
-            Bukkit.getServer().broadcastMessage("NEGATE: heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
-        } else {
-            mapData[intLocation] = value;
-            Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
-        }
+        mapData[intLocation] = value;
+        Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
 
         return true;
     }
@@ -137,12 +126,12 @@ public class IntMap {
             for (int i = startIndex; i <= endIndex && result; i++) {
                 //de loop gaat stuk als het result ooit false is
                 //ja, dit kan ook met break statements, maar dat vind ik minder
-            	if(allowed(i, (byte) 0)){
-            		result = setInt(i, Integer.MAX_VALUE, isNegate);
-            	}else{
-            		Bukkit.getServer().broadcastMessage("niet toegestaan?");
-            	}
-            	
+                if (allowed(i, (byte) 0)) {
+                    result = setInt(i, (isNegate ? 0 : Integer.MAX_VALUE));
+                } else {
+                    Bukkit.getServer().broadcastMessage("niet toegestaan?");
+                }
+
             }
         } else {
             //Users maken echt ook alleen maar fouten :)
