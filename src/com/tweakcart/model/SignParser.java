@@ -87,10 +87,11 @@ public class SignParser {
     public static IntMap buildIntMap(String line, Minecart cart, Direction d) {
         //Parse next line items ?
         log.info("ik gaat maar eens bouwen " + line + ";");
-
+        line += ":";
         String temp = "";
         IntMap map = new IntMap();
         boolean isNegate = false;
+
         for (int b = 0; b < line.length(); b++) {
             char c = line.charAt(b);
 
@@ -146,8 +147,8 @@ public class SignParser {
                     //Oke nu zou het dus een range kunnen zijn
                     //Bukkit.getServer().broadcastMessage("Searching for a range");
 
-                    if (tempsplit.length >= 2 && tempsplit.length % 2 == 0) {
-
+                    if (tempsplit.length == 2) {
+                        //Kunnen niet 1-3-5 doen, dus lenght mag max. 2 zijn
                         try {
                             int start = Integer.parseInt(tempsplit[0]);
                             int end = Integer.parseInt(tempsplit[1]);
@@ -173,7 +174,7 @@ public class SignParser {
                             int id = Integer.parseInt(tempsplit[0]);
                             byte datavalue = Byte.parseByte(tempsplit[1]);
                             Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " en value " + datavalue + " " + isNegate);
-                            map.setInt(id, datavalue, (isNegate ? 0 : Integer.MAX_VALUE));
+                            map.setInt(id, datavalue, (isNegate ? Integer.MIN_VALUE : Integer.MAX_VALUE));
                             isNegate = false;
                             temp = "";
                             break;
@@ -193,7 +194,7 @@ public class SignParser {
                             int id = Integer.parseInt(tempsplit[0]);
                             int amount = Integer.parseInt(tempsplit[1]);
                             Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " amount " + amount + " " + isNegate);
-                            map.setInt(id, (byte) 0, (isNegate ? 0 : amount));
+                            map.setInt(id, (byte) 0, amount);
                             isNegate = false;
                             temp = "";
                             break;
@@ -207,7 +208,7 @@ public class SignParser {
                     try {
                         int id = Integer.parseInt(temp);
                         Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " " + isNegate);
-                        map.setInt(id, (byte) 0, (isNegate ? 0 : Integer.MAX_VALUE));
+                        map.setInt(id, (byte) 0, (isNegate ? Integer.MIN_VALUE : Integer.MAX_VALUE));
                         isNegate = false;
                         temp = "";
                         break;
@@ -216,7 +217,6 @@ public class SignParser {
                         Bukkit.getServer().broadcastMessage("Er gaat wat mis");
                         return null;
                     }
-
 
 
                 case ';':

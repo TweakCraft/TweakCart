@@ -106,7 +106,7 @@ public class IntMap {
     }
 
     public void combine(IntMap otherMap) {
-        for (int index = 0; index <= 537; index++) {
+        for (int index = 0; index < mapData.length; index++) {
             if (otherMap.mapData[index] != 0)
                 mapData[index] = otherMap.mapData[index];
         }
