@@ -39,24 +39,39 @@ public class IntMap {
         return mapData[intLocation];
     }
 
-    private boolean setInt(int mapIndex, int value, boolean isNegate){
-    	mapData[mapIndex] = isNegate? 0 : value;
-    	  	
-    	return true; //
-}
+    public int amount(Material m, byte data) {
+        int intLocation = IntMap.getIntIndex(m, data);
+
+        if (intLocation == -1) {
+            return 0;
+        }
+
+        return mapData[intLocation];
+    }
+
+    private boolean setInt(int mapIndex, int value, boolean isNegate) {
+        mapData[mapIndex] = isNegate ? 0 : value;
+
+        return true; //
+    }
+
     public boolean setInt(int id, byte data) {
         return setInt(id, data, Integer.MAX_VALUE, false);
     }
 
+    public boolean setInt(Material m, byte data, int value) {
+        return setInt(m.getId(), data, Integer.MAX_VALUE, false);
+    }
+
     public boolean setInt(int id, byte data, int value, boolean isNegate) {
         int intLocation = IntMap.getIntIndex(id, data);
-        if(isNegate){
-        	mapData[intLocation] = 0;
+        if (intLocation == -1) {
+            return false;
         }
-        else{
-            if (intLocation == -1) {
-                return false;
-            }
+
+        if (isNegate) {
+            mapData[intLocation] = 0;
+        } else {
             mapData[intLocation] = value;
         }
 
@@ -102,24 +117,24 @@ public class IntMap {
      * Sets a range of the IntMap
      * prevents multiple calls to IntMap and back
      */
-    public boolean setRange(int startID, byte startdata, int endID, byte enddata, int value, boolean isNegate){
-    	int startIndex = getIntIndex(startID, startdata);
-    	int endIndex = getIntIndex(startID, startdata);
-    	boolean result = true;
-    	
-    	if(startIndex < endIndex){
-    		//endindex moet ook meegenomen worden :)
-    		for(int i = startIndex; i <= endIndex && result; i++){
-    			//de loop gaat stuk als het result ooit false is
-    			//ja, dit kan ook met break statements, maar dat vind ik minder
-    			result = setInt(i, value != 0 ? value : Integer.MAX_VALUE, isNegate); //Shorthands zijn <3
-    		}
-    	}else{
-    		//Users maken echt ook alleen maar fouten :)
-    		result = false;
-    	}
-    	
-    	return result;
+    public boolean setRange(int startID, byte startdata, int endID, byte enddata, int value, boolean isNegate) {
+        int startIndex = getIntIndex(startID, startdata);
+        int endIndex = getIntIndex(startID, startdata);
+        boolean result = true;
+
+        if (startIndex < endIndex) {
+            //endindex moet ook meegenomen worden :)
+            for (int i = startIndex; i <= endIndex && result; i++) {
+                //de loop gaat stuk als het result ooit false is
+                //ja, dit kan ook met break statements, maar dat vind ik minder
+                result = setInt(i, value != 0 ? value : Integer.MAX_VALUE, isNegate); //Shorthands zijn <3
+            }
+        } else {
+            //Users maken echt ook alleen maar fouten :)
+            result = false;
+        }
+
+        return result;
 
     }
 
