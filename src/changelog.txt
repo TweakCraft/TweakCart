@@ -17,3 +17,9 @@ Future release:
 
 Known Issues:
 * Every command to be parsed should be appended by a ':', in the future that is fixed :)
+
+
+eerst splitsen op :
+dan op @
+dan op -
+dan op ;

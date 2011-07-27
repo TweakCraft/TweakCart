@@ -88,156 +88,126 @@ public class SignParser {
         //Parse next line items ?
         log.info("ik gaat maar eens bouwen " + line + ";");
 
-        String temp = "";
         IntMap map = new IntMap();
         boolean isNegate = false;
-        for (int b = 0; b < line.length(); b++) {
-            char c = line.charAt(b);
+        
+      
+        
+        if(checkDirection(line, d)){       	
+        	
+        	if(line.length() >= 2 && line.charAt(1) == '+'){
+        		line = line.substring(2);
+        	}
+        	if(line.charAt(0) == '!'){
+        		isNegate = true;
+        		line = line.substring(1);
+        	}
+        	
+        	String[] commands = line.split(":");
+        	
+        	for(String command : commands){
+        		int value = Integer.MAX_VALUE;
+        		
+        		String[] splitline = command.split("@");
+        		
+        		if(splitline.length == 2){
+        			try{
+        				value = Integer.parseInt(splitline[1]);
+        				command = splitline[0];
+        			}
+        			catch(NumberFormatException e){
+        				return null;
+        			}
+        		}
 
-            if (Character.isDigit(c)) {
-                temp += c;
-                continue;
-            }
+        		splitline = command.split("-");
 
-            //First letter can be a direction, because it isn't a digit.
-            if (b == 0) {
-                //Check if the second Char is a + with indicates that the first is a direction
-                //lazy evaluation is your friend
-                if (line.length() >= 2 && line.charAt(1) == '+') {
-                    //Check if the cart has the desired direction, if not continue to the next line.
-                    switch (c) {
-                        case 'n':
-                            if (d != Direction.NORTH) {
-                                return null;
-                            }
-                            break;
-                        case 's':
-                            if (d != Direction.SOUTH) {
-                                return null;
-                            }
-                            break;
-                        case 'e':
-                            if (d != Direction.EAST) {
-                                return null;
-                            }
-                            break;
-                        case 'w':
-                            if (d != Direction.WEST) {
-                                return null;
-                            }
-                            break;
-                    }
+        		if(splitline.length == 2){
+        			int[] startPair = checkIDData(splitline[0]);
+        			int[] endPair = checkIDData(splitline[1]);
+        			if(startPair != null && endPair != null){
+        				//tijd om het in de intmap te zetten
+        			}
+        			else{
+        				return null;
+        			}
+        		}
+        		else if(splitline.length == 1){
+        			int[] pair = checkIDData(splitline[0]);
+        			if(pair != null){
+        				//tijd om het in de intmap te zetten
+        			}
+        			else{
+        				return null;
+        			}
 
-                    b = 0;
-                    continue;
-                }
-            }
-
-            switch (c) {
-                case ' ':
-                case ':':
-                    //hier moet dus wat gebeuren :)
-                    //ik ga er eerst even vanuit dat er niet meerdere operaties tegelijk kunnen gebeuren
-                    //temp zou er in pseudoregexnotatie zo uitzien: [[!]? \d* [lambda|;|@|-] \d* :])
-                    //combinaties als [14;1-14;3] kunnen dus niet
-
-
-                    String[] tempsplit = temp.split("-");
-                    //Oke nu zou het dus een range kunnen zijn
-                    //Bukkit.getServer().broadcastMessage("Searching for a range");
-
-                    if (tempsplit.length >= 2 && tempsplit.length % 2 == 0) {
-
-                        try {
-                            int start = Integer.parseInt(tempsplit[0]);
-                            int end = Integer.parseInt(tempsplit[1]);
-                            Bukkit.getServer().broadcastMessage("er is een range van: " + start + " tot " + end + " " + isNegate);
-                            map.setRange(start, (byte) 0, end, (byte) 0, Integer.MAX_VALUE, isNegate);
-                            isNegate = false;
-                            temp = "";
-                            break;
-                        } catch (NumberFormatException e) {
-                            log.severe("Er gaat was mis");
-                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                            return null;
-                        }
-
-                    }
-
-
-                    tempsplit = temp.split(";");
-                    //Bukkit.getServer().broadcastMessage("Searching for a data value");
-
-                    if (tempsplit.length >= 2) {
-                        try {
-                            int id = Integer.parseInt(tempsplit[0]);
-                            byte datavalue = Byte.parseByte(tempsplit[1]);
-                            Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " en value " + datavalue + " " + isNegate);
-                            map.setInt(id, datavalue, (isNegate ? 0 : Integer.MAX_VALUE));
-                            isNegate = false;
-                            temp = "";
-                            break;
-                        } catch (NumberFormatException e) {
-                            log.severe("Er gaat was mis");
-                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                            return null;
-                        }
-
-                    }
-
-                    tempsplit = temp.split("@");
-                    //Bukkit.getServer().broadcastMessage("Searching for a amount");
-
-                    if (tempsplit.length >= 2) {
-                        try {
-                            int id = Integer.parseInt(tempsplit[0]);
-                            int amount = Integer.parseInt(tempsplit[1]);
-                            Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " amount " + amount + " " + isNegate);
-                            map.setInt(id, (byte) 0, (isNegate ? 0 : amount));
-                            isNegate = false;
-                            temp = "";
-                            break;
-                        } catch (NumberFormatException e) {
-                            log.severe("Er gaat was mis");
-                            Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                            return null;
-                        }
-                    }
-                    //Bukkit.getServer().broadcastMessage("Searching for numberic statements");
-                    try {
-                        int id = Integer.parseInt(temp);
-                        Bukkit.getServer().broadcastMessage("er is een item met id: " + id + " " + isNegate);
-                        map.setInt(id, (byte) 0, (isNegate ? 0 : Integer.MAX_VALUE));
-                        isNegate = false;
-                        temp = "";
-                        break;
-                    } catch (NumberFormatException e) {
-                        log.severe("Er gaat was mis");
-                        Bukkit.getServer().broadcastMessage("Er gaat wat mis");
-                        return null;
-                    }
-
-
-
-                case ';':
-                    temp += ";";
-                    break;
-                case '@':
-                    temp += "@";
-                    break;
-                case '-':
-                    temp += "-";
-                    break;
-                case '!':
-                    isNegate = true;
-                    break;
-                default:
-                    break;
-            }
-
+        		}
+        		else{
+        			//vanwaar de meerdere '-' jes :P
+        			return null;
+        		}
+        	}
+        	
         }
 
         return map;
+    }
+    
+    private static int[] checkIDData(String line){
+    	int[] result = new int[2];
+    	String[] linesplit = line.split(";");
+    	if(linesplit.length == 2){
+    		try{
+    			result[0] = Integer.parseInt(linesplit[0]);
+    			result[1] = Integer.parseInt(linesplit[1]);
+    		}
+    		catch(NumberFormatException e){
+    			
+    		}
+    	}
+    	else if(linesplit.length == 1){
+    		try{
+    			result[0] = Integer.parseInt(linesplit[0]);
+    			result[1] = 0;
+    		}
+    		catch(NumberFormatException e){
+    			
+    		}
+    	}
+
+    	return result;
+    	
+    }
+    
+    private static boolean checkDirection(String line, Direction d){
+    	if(line.length() >= 2 && line.charAt(1) == '+'){
+    		char c = line.charAt(0);
+    		switch (c) {
+    		case 'n':
+    			if (d != Direction.NORTH) {
+    				return false;
+    			}
+    			break;
+    		case 's':
+    			if (d != Direction.SOUTH) {
+    				return false;
+    			}
+    			break;
+    		case 'e':
+    			if (d != Direction.EAST) {
+    				return false;
+    			}
+    			break;
+    		case 'w':
+    			if (d != Direction.WEST) {
+    				return false;
+    			}
+    			break;
+    		}
+
+    	}
+    	return true;
+
     }
 
     public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart, Direction direction) {

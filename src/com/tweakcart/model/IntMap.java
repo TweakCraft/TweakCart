@@ -49,8 +49,8 @@ public class IntMap {
 
         return mapData[intLocation];
     }
-
     private boolean setInt(int mapIndex, int value) {
+    	mapData[mapIndex] = value;
         Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[mapIndex] + "!");
         return true; //
     }
@@ -127,7 +127,7 @@ public class IntMap {
                 //de loop gaat stuk als het result ooit false is
                 //ja, dit kan ook met break statements, maar dat vind ik minder
                 if (allowed(i, (byte) 0)) {
-                    result = setInt(i, (isNegate ? 0 : Integer.MAX_VALUE));
+                    result = setInt(i, Integer.MAX_VALUE);
                 } else {
                     Bukkit.getServer().broadcastMessage("niet toegestaan?");
                 }
