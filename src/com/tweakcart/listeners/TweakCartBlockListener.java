@@ -11,7 +11,6 @@ import org.bukkit.entity.StorageMinecart;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockListener;
 
-
 import java.util.logging.Logger;
 
 /**
@@ -65,7 +64,7 @@ public class TweakCartBlockListener extends BlockListener {
                                 cart = track.getWorld().spawn(track.getLocation(), StorageMinecart.class);
                                 break;
                             case 343:
-                                cart = track.getWorld().spawn(track.getLocation(),PoweredMinecart.class);
+                                cart = track.getWorld().spawn(track.getLocation(), PoweredMinecart.class);
                                 break;
                             default:
                                 break;

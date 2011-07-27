@@ -9,10 +9,7 @@ import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Sign;
+import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
@@ -23,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -118,13 +116,24 @@ public class TweakCartVehicleListener extends VehicleListener {
         if (SignParser.checkStorageCart(cart)) {
             StorageMinecart storageCart = (StorageMinecart) cart;
             HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, storageCart);
+            List<Chest> chests;
             for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
+                if (entry.getValue() == null)
+                    continue;
                 switch (entry.getKey()) {
                     case COLLECT:
                         //Collect items (from chest to cart)
+                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                        for (Chest c : chests) {
+                            c.getInventory().setContents(ChestUtil.putItems(c.getInventory().getContents(), (ContainerBlock) storageCart, entry.getValue()));
+                        }
                         break;
                     case DEPOSIT:
                         //Deposit items (from cart to chest)
+                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                        for (Chest c : chests) {
+                            storageCart.getInventory().setContents(ChestUtil.putItems(storageCart.getInventory().getContents(), (ContainerBlock) c, entry.getValue()));
+                        }
                         break;
                 }
             }

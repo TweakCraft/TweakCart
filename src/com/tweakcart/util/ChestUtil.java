@@ -2,15 +2,20 @@ package com.tweakcart.util;
 
 
 import com.tweakcart.model.IntMap;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
 public class ChestUtil {
-
     public static final ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
         ItemStack[] to = containerBlock.getInventory().getContents();
         for (int i1 = 0; i1 < from.length; i1++) {
@@ -107,5 +112,19 @@ public class ChestUtil {
         }
         containerBlock.getInventory().setContents(to);
         return from;
+    }
+
+    public static List<Chest> getChestsAroundBlock(Block block, int sw) {
+        int nsw = -sw;
+        List<Chest> chestList = new ArrayList<Chest>();
+        for (int dx = nsw; dx <= sw; dx++) {
+            for (int dy = nsw; dy <= sw; dy++) {
+                for (int dz = nsw; dz <= sw; dz++) {
+                    if (block.getRelative(dx, dy, dz).getTypeId() == Material.CHEST.getId())
+                        chestList.add((Chest) block.getRelative(dx, dy, dz).getState());
+                }
+            }
+        }
+        return chestList;
     }
 }
