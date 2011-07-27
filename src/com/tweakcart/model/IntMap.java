@@ -73,7 +73,7 @@ public class IntMap {
 
         if (isNegate) {
             mapData[intLocation] = 0;
-            Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
+            Bukkit.getServer().broadcastMessage("NEGATE: heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
         } else {
             mapData[intLocation] = value;
             Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
