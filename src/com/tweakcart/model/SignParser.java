@@ -152,7 +152,7 @@ public class SignParser {
                             int start = Integer.parseInt(tempsplit[0]);
                             int end = Integer.parseInt(tempsplit[1]);
                             Bukkit.getServer().broadcastMessage("er is een range van: " + start + " tot " + end + " " + isNegate);
-                            map.setRange(start, (byte) 0, start, (byte) 0, Integer.MAX_VALUE, isNegate);
+                            map.setRange(start, (byte) 0, end, (byte) 0, Integer.MAX_VALUE, isNegate);
                             break;
                         } catch (NumberFormatException e) {
                             log.severe("Er gaat was mis");

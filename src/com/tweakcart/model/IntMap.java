@@ -57,6 +57,7 @@ public class IntMap {
     }
 
     public boolean setInt(int id, byte data, boolean isNegate) {
+    	Bukkit.getServer().broadcastMessage("ik zet NU Integer.Max in de map");
         return setInt(id, data, Integer.MAX_VALUE, isNegate);
     }
 
@@ -128,7 +129,7 @@ public class IntMap {
      */
     public boolean setRange(int startID, byte startdata, int endID, byte enddata, int value, boolean isNegate) {
         int startIndex = getIntIndex(startID, startdata);
-        int endIndex = getIntIndex(startID, startdata);
+        int endIndex = getIntIndex(endID, startdata);
         boolean result = true;
 
         if (startIndex < endIndex) {
@@ -136,7 +137,12 @@ public class IntMap {
             for (int i = startIndex; i <= endIndex && result; i++) {
                 //de loop gaat stuk als het result ooit false is
                 //ja, dit kan ook met break statements, maar dat vind ik minder
-                result = setInt(i, value != 0 ? value : Integer.MAX_VALUE, isNegate); //Shorthands zijn <3
+            	if(allowed(i, (byte) 0)){
+            		result = setInt(i, Integer.MAX_VALUE, isNegate);
+            	}else{
+            		Bukkit.getServer().broadcastMessage("niet toegestaan?");
+            	}
+            	
             }
         } else {
             //Users maken echt ook alleen maar fouten :)
