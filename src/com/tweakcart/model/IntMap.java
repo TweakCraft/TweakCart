@@ -65,6 +65,10 @@ public class IntMap {
         return setInt(m.getId(), data, value, isNegate);
     }
 
+    public boolean setInt(Material m, byte data, int value) {
+        return setInt(m.getId(), data, value, false);
+    }
+
     public boolean setInt(int id, byte data, int value, boolean isNegate) {
         int intLocation = IntMap.getIntIndex(id, data);
         Bukkit.getServer().broadcastMessage("yay, ik ben hier, en nu?");
