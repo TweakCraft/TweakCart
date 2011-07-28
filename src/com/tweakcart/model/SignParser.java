@@ -128,7 +128,15 @@ public class SignParser {
         			int[] startPair = checkIDData(splitline[0]);
         			int[] endPair = checkIDData(splitline[1]);
         			if(startPair != null && endPair != null){
-        				//tijd om het in de intmap te zetten
+        				if(value == 0){
+        					if(isNegate){
+        						value = Integer.MIN_VALUE;
+        					}
+        					else{
+        						value = Integer.MAX_VALUE;
+        					}
+        				}
+        				map.setRange(startPair[0],(byte) (startPair[1] & 0xff),endPair[0],(byte) (endPair[1] & 0xff), value);
         			}
         			else{
         				return null;
@@ -137,15 +145,25 @@ public class SignParser {
         		else if(splitline.length == 1){
         			int[] pair = checkIDData(splitline[0]);
         			if(pair != null){
-        				//tijd om het in de intmap te zetten
+        				if(value == 0){
+        					if(isNegate){
+        						value = Integer.MIN_VALUE;
+        					}
+        					else{
+        						value = Integer.MAX_VALUE;
+        					}
+        					
+        				}
+        				map.setInt(pair[0], (byte) (pair[1] & 0xff), value); 
         			}
         			else{
+        				//Ah er is dus iets mis gegaan bij het parsen
         				return null;
         			}
 
         		}
         		else{
-        			//vanwaar de meerdere '-' jes :P
+        			//De gebruiker heeft meerdere '-' tekens aangegeven, en dat kan niet
         			return null;
         		}
         	}
