@@ -89,145 +89,133 @@ public class SignParser {
         log.info("ik gaat maar eens bouwen " + line + ";");
         IntMap map = new IntMap();
         boolean isNegate = false;
-        
-      
-        
-        if(checkDirection(line, d)){       	
-        	
-        	if(line.length() >= 2 && line.charAt(1) == '+'){
-        		line = line.substring(2);
-        	}
-        	if(line.charAt(0) == '!'){
-        		isNegate = true;
-        		line = line.substring(1);
-        	}
-        	
-        	String[] commands = line.split(":");
-        	
-        	for(String command : commands){
-        		int value = Integer.MAX_VALUE;
-        		
-        		String[] splitline = command.split("@");
-        		
-        		if(splitline.length == 2){
-        			try{
-        				value = Integer.parseInt(splitline[1]);
-        				command = splitline[0];
-        			}
-        			catch(NumberFormatException e){
-        				return null;
-        			}
-        		}
-        		else if(splitline.length != 1){
-        			return null;
-        		}
 
-        		splitline = command.split("-");
 
-        		if(splitline.length == 2){
-        			int[] startPair = checkIDData(splitline[0]);
-        			int[] endPair = checkIDData(splitline[1]);
-        			if(startPair != null && endPair != null){
-        				if(value == 0){
-        					if(isNegate){
-        						value = Integer.MIN_VALUE;
-        					}
-        					else{
-        						value = Integer.MAX_VALUE;
-        					}
-        				}
-        				map.setRange(startPair[0],(byte) (startPair[1] & 0xff),endPair[0],(byte) (endPair[1] & 0xff), value);
-        			}
-        			else{
-        				return null;
-        			}
-        		}
-        		else if(splitline.length == 1){
-        			int[] pair = checkIDData(splitline[0]);
-        			if(pair != null){
-        				if(value == 0){
-        					if(isNegate){
-        						value = Integer.MIN_VALUE;
-        					}
-        					else{
-        						value = Integer.MAX_VALUE;
-        					}
-        					
-        				}
-        				map.setInt(pair[0], (byte) (pair[1] & 0xff), value); 
-        			}
-        			else{
-        				//Ah er is dus iets mis gegaan bij het parsen
-        				return null;
-        			}
+        if (checkDirection(line, d)) {
 
-        		}
-        		else{
-        			//De gebruiker heeft meerdere '-' tekens aangegeven, en dat kan niet
-        			return null;
-        		}
-        	}
-        	
+            if (line.length() >= 2 && line.charAt(1) == '+') {
+                line = line.substring(2);
+            }
+            if (line.charAt(0) == '!') {
+                isNegate = true;
+                line = line.substring(1);
+            }
+
+            String[] commands = line.split(":");
+
+            for (String command : commands) {
+                int value = Integer.MAX_VALUE;
+
+                String[] splitline = command.split("@");
+
+                if (splitline.length == 2) {
+                    try {
+                        value = Integer.parseInt(splitline[1]);
+                        command = splitline[0];
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                } else if (splitline.length != 1) {
+                    return null;
+                }
+
+                splitline = command.split("-");
+
+                if (splitline.length == 2) {
+                    int[] startPair = checkIDData(splitline[0]);
+                    int[] endPair = checkIDData(splitline[1]);
+                    if (startPair != null && endPair != null) {
+                        if (value == 0) {
+                            if (isNegate) {
+                                value = Integer.MIN_VALUE;
+                            } else {
+                                value = Integer.MAX_VALUE;
+                            }
+                        }
+                        map.setRange(startPair[0], (byte) (startPair[1] & 0xff), endPair[0], (byte) (endPair[1] & 0xff), value);
+                    } else {
+                        return null;
+                    }
+                } else if (splitline.length == 1) {
+                    int[] pair = checkIDData(splitline[0]);
+                    if (pair != null) {
+                        if (value == 0) {
+                            if (isNegate) {
+                                value = Integer.MIN_VALUE;
+                            } else {
+                                value = Integer.MAX_VALUE;
+                            }
+
+                        }
+                        map.setInt(pair[0], (byte) (pair[1] & 0xff), value);
+                    } else {
+                        //Ah er is dus iets mis gegaan bij het parsen
+                        return null;
+                    }
+
+                } else {
+                    //De gebruiker heeft meerdere '-' tekens aangegeven, en dat kan niet
+                    return null;
+                }
+            }
+
 
         }
 
         return map;
     }
-    
-    private static int[] checkIDData(String line){
-    	int[] result = new int[2];
-    	String[] linesplit = line.split(";");
-    	if(linesplit.length == 2){
-    		try{
-    			result[0] = Integer.parseInt(linesplit[0]);
-    			result[1] = Integer.parseInt(linesplit[1]);
-    		}
-    		catch(NumberFormatException e){
-    			
-    		}
-    	}
-    	else if(linesplit.length == 1){
-    		try{
-    			result[0] = Integer.parseInt(linesplit[0]);
-    			result[1] = 0;
-    		}
-    		catch(NumberFormatException e){
-    			
-    		}
-    	}
 
-    	return result;
-    	
+    private static int[] checkIDData(String line) {
+        int[] result = new int[2];
+        String[] linesplit = line.split(";");
+        if (linesplit.length == 2) {
+            try {
+                result[0] = Integer.parseInt(linesplit[0]);
+                result[1] = Integer.parseInt(linesplit[1]);
+            } catch (NumberFormatException e) {
+
+            }
+        } else if (linesplit.length == 1) {
+            try {
+                result[0] = Integer.parseInt(linesplit[0]);
+                result[1] = 0;
+            } catch (NumberFormatException e) {
+
+            }
+        }
+
+        return result;
+
     }
-    
-    private static boolean checkDirection(String line, Direction d){
-    	if(line.length() >= 2 && line.charAt(1) == '+'){
-    		char c = line.charAt(0);
-    		switch (c) {
-    		case 'n':
-    			if (d != Direction.NORTH) {
-    				return false;
-    			}
-    			break;
-    		case 's':
-    			if (d != Direction.SOUTH) {
-    				return false;
-    			}
-    			break;
-    		case 'e':
-    			if (d != Direction.EAST) {
-    				return false;
-    			}
-    			break;
-    		case 'w':
-    			if (d != Direction.WEST) {
-    				return false;
-    			}
-    			break;
-    		}
 
-    	}
-    	return true;
+    private static boolean checkDirection(String line, Direction d) {
+        if (line.length() >= 2 && line.charAt(1) == '+') {
+            char c = line.charAt(0);
+            switch (c) {
+                case 'n':
+                    if (d != Direction.NORTH) {
+                        return false;
+                    }
+                    break;
+                case 's':
+                    if (d != Direction.SOUTH) {
+                        return false;
+                    }
+                    break;
+                case 'e':
+                    if (d != Direction.EAST) {
+                        return false;
+                    }
+                    break;
+                case 'w':
+                    if (d != Direction.WEST) {
+                        return false;
+                    }
+                    break;
+            }
+
+        }
+        return true;
 
     }
 
