@@ -136,68 +136,44 @@ public class IntMap {
      */
 
     public boolean setRange(int startId, byte startdata, int endId, byte enddata, int value) {
-        int startIndex, endIndex;
-        if (startdata < 0 || enddata < 0)
+        if (startdata < 0 || enddata < 0 || startId < endId
+                || (startdata > 0 && !hasDataValue(startId)) || (enddata > 0 && !hasDataValue(endId))
+                || !isAllowedMaterial(startId, startdata) || !isAllowedMaterial(endId, enddata))
             return false;
-        if (startdata > 0 && !hasDataValue(startId))
-            startdata = 0;
-        if (enddata > 0 && !hasDataValue(endId))
-            enddata = 0;
-        if (startdata == 0 && enddata == 0) {
-            if (startId < endId) {
-                startIndex = getIntIndex(startId, startdata);
-                endIndex = getIntIndex(endId, startdata);
-
-                if (startIndex == -1 || endIndex == -1)
-                    return false;
-
-                for (int i = startIndex; i <= endIndex; i++) {
-                    mapData[i] = value;
-                }
+        if (startId < endId) {
+            if (startdata != 0) {
+                setDataRange(startId, startdata, (byte) 15, value);
+                startId++;
             }
-        } else {
-            if (startId < endId) {
-                while (true) {
-                    int index = getIntIndex(startId, startdata);
-                    if (index == -1)
-                        break;
-                    mapData[index] = value;
-                    startdata++;
+            if (enddata != 0) {
+                setDataRange(endId, (byte) 0, enddata, value);
+                endId--;
+            }
+            while (startId <= endId) {
+                if (hasDataValue(startId)) {
+                    setDataRange(startId, (byte) 0, (byte) 15, value);
+                } else {
+                    setInt(startId, (byte) 0, value);
                 }
-
-                while (true) {
-                    int index = getIntIndex(endId, enddata);
-                    if (index == -1)
-                        break;
-                    mapData[index] = value;
-                    enddata--;
-                }
-
                 do {
                     startId++;
-                } while (getIntIndex(startId, (byte) 0) != -1);
-
-                do {
-                    endId--;
-                } while (getIntIndex(endId, (byte) 0) != -1);
-
-                for (int id = startId; id <= endId; id++) {
-                    int index = getIntIndex(id, (byte) 0);
-                    if (index == -1)
-                        continue;
-                    mapData[index] = value;
-                    if (hasDataValue(id)) {
-                        byte data = 1;
-                        while (true) {
-                            index = getIntIndex(id, data);
-                            if (index == -1)
-                                break;
-                            mapData[index] = value;
-                            data++;
-                        }
-                    }
-                }
+                } while (!isAllowedMaterial(startId, (byte) 0));
             }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean setDataRange(int id, byte start, byte end, int amount) {
+        if (!hasDataValue(id))
+            return false;
+
+        for (byte data = start; data <= end; data++) {
+            int key = getIntIndex(id, data);
+            if (key == -1)
+                break;
+            mapData[key] = amount;
         }
         return true;
     }
