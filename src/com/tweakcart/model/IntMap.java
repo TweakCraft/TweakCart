@@ -211,4 +211,16 @@ public class IntMap {
     public IntMap clone() {
         return new IntMap(mapData.clone());
     }
+
+    @Override
+    public String toString() {
+        String str = "{\n";
+        for (int i = 0; i < mapData.length; i++) {
+            if (mapData[i] != 0) {
+                str += "    [" + i + "] -> " + mapData[i] + "\n";
+            }
+        }
+        str += "}";
+        return str;
+    }
 }

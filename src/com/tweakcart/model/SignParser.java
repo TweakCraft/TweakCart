@@ -1,6 +1,5 @@
 package com.tweakcart.model;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
