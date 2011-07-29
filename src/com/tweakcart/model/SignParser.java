@@ -179,7 +179,7 @@ public class SignParser {
         } else if (linesplit.length == 1) {
             try {
                 result[0] = Integer.parseInt(linesplit[0]);
-                result[1] = 0;
+                result[1] = -1;
             } catch (NumberFormatException e) {
 
             }
