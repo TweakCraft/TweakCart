@@ -133,7 +133,7 @@ public class SignParser {
                                 value = Integer.MAX_VALUE;
                             }
                         }
-                        Bukkit.getServer().broadcastMessage("Setting a range");
+                        log.info("Setting a range");
                         map.setRange(startPair[0], (byte) (startPair[1] & 0xff), endPair[0], (byte) (endPair[1] & 0xff), value);
                     } else {
                         return null;
@@ -222,7 +222,7 @@ public class SignParser {
     }
 
     public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart, Direction direction) {
-        Bukkit.getServer().broadcastMessage("HALLO");
+        log.info("HALLO");
         Action oldAction = Action.NULL;
 
         HashMap<Action, IntMap> returnData = new HashMap<Action, IntMap>();
@@ -231,7 +231,7 @@ public class SignParser {
         for (String line : sign.getLines()) {
 
             Action newAction = SignParser.parseAction(line);
-            Bukkit.getServer().broadcastMessage(newAction.toString());
+            log.info(newAction.toString());
             if (newAction == Action.NULL) {
                 continue;
             } else if (newAction != Action.ITEM) {
@@ -241,8 +241,8 @@ public class SignParser {
                 switch (oldAction) {
                     case DEPOSIT:
                     case COLLECT:
-                        Bukkit.getServer().broadcastMessage("Action: " + oldAction.toString());
-                        Bukkit.getServer().broadcastMessage("  -> " + line);
+                        log.info("Action: " + oldAction.toString());
+                        log.info("  -> " + line);
 
                         IntMap parsed = buildIntMap(line, cart, direction);
 
