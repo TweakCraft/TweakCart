@@ -13,12 +13,12 @@ public class IntMap {
     private int[] mapData;
 
     public IntMap() {
-        mapData = new int[537];
+        mapData = new int[materialSize + 49];
     }
 
     private IntMap(int[] data) {
-        if (data.length != 537) {
-            mapData = new int[537];
+        if (data.length != (materialSize + 49)) {
+            mapData = new int[materialSize + 49];
         } else {
             mapData = data;
         }
@@ -94,13 +94,13 @@ public class IntMap {
                         else
                             return -1;
                     case WOOL:
-                        if (data < 15)
-                            return materialSize + (int) data + 18;
+                        if (data < 16)
+                            return materialSize + (int) data + 19;
                         else
                             return -1;
                     case INK_SACK:
-                        if (data < 15)
-                            return materialSize + (int) data + 32;
+                        if (data < 16)
+                            return materialSize + (int) data + 34;
                         else
                             return -1;
                     default:
