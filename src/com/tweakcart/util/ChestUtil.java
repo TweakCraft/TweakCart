@@ -1,6 +1,7 @@
 package com.tweakcart.util;
 
 import com.tweakcart.model.IntMap;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -89,11 +90,12 @@ public class ChestUtil {
             } else {
                 //When is the map 0? -> map has less than current stack
                 int amountToMove = from[i1].getAmount() - mapAmount;
+                Bukkit.getServer().broadcastMessage("I'm moving: " + amountToMove + "!");
                 for (i2 = 0; i2 < to.length; i2++) {
                     if (to[i2] == null) {
                         to[i2] = from[i1];
                         to[i2].setAmount(amountToMove);
-                        mapAmount = 0;
+                        amountToMove = 0;
                         break;
                     } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
                         if (amountToMove + to[i2].getAmount() > 64) {
@@ -108,6 +110,8 @@ public class ChestUtil {
                 }
                 if (amountToMove != 0) {
                     from[i1].setAmount(amountToMove);
+                } else {
+                    from[i1] = null;
                 }
                 through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
             }
