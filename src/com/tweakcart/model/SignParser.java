@@ -15,31 +15,11 @@ import java.util.logging.Logger;
  */
 public class SignParser {
     public enum Action {
-        NULL((byte) 0),
-        COLLECT((byte) 1),
-        DEPOSIT((byte) 2),
-        ITEM((byte) 3);
-
-        private byte id;
-        private static final Action[] actions = new Action[6];
-
-        private Action(byte id) {
-            this.id = id;
-        }
-
-        static {
-            for (Action act : values()) {
-                actions[act.getId()] = act;
-            }
-        }
-
-        public short getId() {
-            return id;
-        }
-
-        public static Action fromId(short id) {
-            return actions[id];
-        }
+        NULL,
+        COLLECT,
+        DEPOSIT,
+        ITEM,
+        ALL;
     }
 
     private static final Logger log = Logger.getLogger("Minecraft");
@@ -59,6 +39,11 @@ public class SignParser {
                 case 'd':
                     if (line.equals("deposit items")) {
                         return Action.DEPOSIT;
+                    }
+                    return Action.NULL;
+                case 'a':
+                    if (line.equals("all items")) {
+                        return Action.ALL;
                     }
                     return Action.NULL;
                 default:
@@ -85,10 +70,6 @@ public class SignParser {
             if (line.charAt(0) == '!') {
                 isNegate = true;
                 line = line.substring(1);
-            }
-            if (line.toLowerCase().contains("all items")){
-                map.fillAll();
-                return map;
             }
 
             String[] commands = line.split(":");
@@ -224,7 +205,7 @@ public class SignParser {
             log.info(newAction.toString());
             if (newAction == Action.NULL) {
                 continue;
-            } else if (newAction != Action.ITEM) {
+            } else if (newAction != Action.ITEM && newAction != Action.ALL) {
                 oldAction = newAction;
                 continue;
             } else if (oldAction != Action.NULL) {
@@ -234,18 +215,36 @@ public class SignParser {
                         log.info("Action: " + oldAction.toString());
                         log.info("  -> " + line);
 
-                        IntMap parsed = buildIntMap(line, cart, direction);
+                        switch (newAction) {
+                            case ALL:
+                                if (returnData.containsKey(oldAction)) {
+                                    map = returnData.get(oldAction);
+                                    map.fillAll();
+                                    returnData.put(oldAction, map);
+                                } else {
+                                    map = new IntMap();
+                                    map.fillAll();
+                                    returnData.put(oldAction, map);
+                                }
+                                break;
+                            case ITEM:
+                                IntMap parsed = buildIntMap(line, cart, direction);
 
-                        if (parsed != null) {
-                            // Mooi het is gelukt! Maps combinen dan maar!
-                            if (returnData.containsKey(oldAction)) {
-                                map = returnData.get(oldAction);
-                                map.combine(parsed);
-                                returnData.put(oldAction, map);
-                            } else {
-                                if (parsed != null)
-                                    returnData.put(oldAction, parsed);
-                            }
+                                if (parsed != null) {
+                                    // Mooi het is gelukt! Maps combinen dan maar!
+                                    if (returnData.containsKey(oldAction)) {
+                                        map = returnData.get(oldAction);
+                                        map.combine(parsed);
+                                        returnData.put(oldAction, map);
+                                    } else {
+                                        if (parsed != null)
+                                            returnData.put(oldAction, parsed);
+                                    }
+                                }
+                                break;
+                            default:
+                                //WTH?
+                                break;
                         }
                         break;
                     //case ELEVATE?
