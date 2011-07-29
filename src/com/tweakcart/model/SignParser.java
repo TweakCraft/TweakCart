@@ -104,7 +104,7 @@ public class SignParser {
             String[] commands = line.split(":");
 
             for (String command : commands) {
-                int value = Integer.MAX_VALUE;
+                int value = 0;
 
                 String[] splitline = command.split("@");
 
@@ -132,6 +132,7 @@ public class SignParser {
                                 value = Integer.MAX_VALUE;
                             }
                         }
+                        Bukkit.getServer().broadcastMessage("Setting a range");
                         map.setRange(startPair[0], (byte) (startPair[1] & 0xff), endPair[0], (byte) (endPair[1] & 0xff), value);
                     } else {
                         return null;
