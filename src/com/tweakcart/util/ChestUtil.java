@@ -69,7 +69,7 @@ public class ChestUtil {
             Bukkit.getServer().broadcastMessage("Atm, from has: " + from[i1].getAmount() + "!");
             for (i2 = 0; i2 < to.length; i2++) {
                 if (to[i2] == null) {
-                    to[i2] = from[i1];
+                    to[i2] = from[i1].clone();
                     to[i2].setAmount(amountToMove);
                     amountToMove = 0;
                     break;
@@ -84,6 +84,7 @@ public class ChestUtil {
                     break;
                 }
             }
+            Bukkit.getServer().broadcastMessage("According to me, leftover is: " + amountToMove + "!");
             from[i1].setAmount(from[i1].getAmount() + amountToMove);
             through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
         }
