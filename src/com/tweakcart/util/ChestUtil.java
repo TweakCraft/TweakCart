@@ -63,7 +63,7 @@ public class ChestUtil {
                 continue;
 
             //MAX_VALUE && other values? -> other values = from.amount < mapAmount (aka, the map has more than the current stack)
-            if (mapAmount == Integer.MAX_VALUE || from[i1].getAmount() < mapAmount) {
+            if (mapAmount == Integer.MAX_VALUE || from[i1].getAmount() <= mapAmount) {
                 for (i2 = 0; i2 < to.length; i2++) {
                     if (to[i2] == null) {
                         to[i2] = from[i1];
@@ -84,6 +84,7 @@ public class ChestUtil {
                     if (from[i1] == null) {
                         through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount - startAmount);
                     } else {
+                        //TODO: Incorrect, fix pl0x
                         through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount - startAmount + to[i2].getAmount());
                     }
                 }
@@ -109,10 +110,8 @@ public class ChestUtil {
                         break;
                     }
                 }
-                if (amountToMove != mapAmount) {
-                    from[i1].setAmount(from[i1].getAmount() + amountToMove);
-                    through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
-                }
+                from[i1].setAmount(from[i1].getAmount() + amountToMove);
+                through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
             }
         }
         iTo.setContents(to);
