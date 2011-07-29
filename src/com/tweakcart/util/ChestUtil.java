@@ -62,58 +62,30 @@ public class ChestUtil {
             if (mapAmount == 0 || mapAmount == Integer.MIN_VALUE)
                 continue;
 
-            //MAX_VALUE && other values? -> other values = from.amount < mapAmount (aka, the map has more than the current stack)
-            if (mapAmount == Integer.MAX_VALUE || from[i1].getAmount() <= mapAmount) {
-                for (i2 = 0; i2 < to.length; i2++) {
-                    if (to[i2] == null) {
-                        to[i2] = from[i1];
-                        from[i1] = null;
-                        break;
-                    } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
-                        if ((from[i1].getAmount() + to[i2].getAmount()) > 64) {
-                            from[i1].setAmount((to[i2].getAmount() + from[i1].getAmount()) - 64);
-                            to[i2].setAmount(64);
-                        } else {
-                            to[i2].setAmount(to[i2].getAmount() + from[i1].getAmount());
-                            from[i1] = null;
-                        }
-                        break;
-                    }
-                }
-                if (mapAmount != Integer.MAX_VALUE) {
-                    if (from[i1] == null) {
-                        through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount - startAmount);
+            //When is the map 0? -> map has less than current stack
+            int amountToMove = (mapAmount == Integer.MAX_VALUE ? from[i1].getAmount() : mapAmount);
+            from[i1].setAmount(from[i1].getAmount() - amountToMove);
+            Bukkit.getServer().broadcastMessage("I'm moving: " + amountToMove + "!");
+            Bukkit.getServer().broadcastMessage("Atm, from has: " + from[i1].getAmount() + "!");
+            for (i2 = 0; i2 < to.length; i2++) {
+                if (to[i2] == null) {
+                    to[i2] = from[i1];
+                    to[i2].setAmount(amountToMove);
+                    amountToMove = 0;
+                    break;
+                } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
+                    if (amountToMove + to[i2].getAmount() > 64) {
+                        amountToMove += to[i2].getAmount() - 64;
+                        to[i2].setAmount(64);
                     } else {
-                        //TODO: Incorrect, fix pl0x
-                        through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount - startAmount + to[i2].getAmount());
-                    }
-                }
-            } else {
-                //When is the map 0? -> map has less than current stack
-                int amountToMove = mapAmount;
-                from[i1].setAmount(from[i1].getAmount() - amountToMove);
-                Bukkit.getServer().broadcastMessage("I'm moving: " + amountToMove + "!");
-                Bukkit.getServer().broadcastMessage("Atm, from has: " + from[i1].getAmount() + "!");
-                for (i2 = 0; i2 < to.length; i2++) {
-                    if (to[i2] == null) {
-                        to[i2] = from[i1];
-                        to[i2].setAmount(amountToMove);
+                        to[i2].setAmount(amountToMove + to[i2].getAmount());
                         amountToMove = 0;
-                        break;
-                    } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
-                        if (amountToMove + to[i2].getAmount() > 64) {
-                            amountToMove += to[i2].getAmount() - 64;
-                            to[i2].setAmount(64);
-                        } else {
-                            to[i2].setAmount(amountToMove + to[i2].getAmount());
-                            amountToMove = 0;
-                        }
-                        break;
                     }
+                    break;
                 }
-                from[i1].setAmount(from[i1].getAmount() + amountToMove);
-                through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
             }
+            from[i1].setAmount(from[i1].getAmount() + amountToMove);
+            through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
         }
         iTo.setContents(to);
         iFrom.setContents(from);
