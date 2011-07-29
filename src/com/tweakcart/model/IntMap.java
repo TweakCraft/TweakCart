@@ -41,7 +41,7 @@ public class IntMap {
     }
 
     public int getInt(Material m, byte data) {
-        int intLocation = IntMap.getIntIndex(m, data);
+        int intLocation = IntMap.getIntIndex(m, data);// TODO Auto-generated method stub
 
         if (intLocation == -1) {
             return 0;
@@ -179,7 +179,7 @@ public class IntMap {
         } else {
             return false;
         }
-    }
+    }// TODO Auto-generated method stub
 
     private boolean setDataRange(int id, byte start, byte end, int amount) {
         if (!hasDataValue(id))
@@ -228,5 +228,12 @@ public class IntMap {
         }
         str += "}";
         return str;
+    }
+
+    public void fillAll() {
+        for(int i = 0; i<mapData.length; i++){
+            mapData[i] = Integer.MAX_VALUE;
+        }
+        
     }
 }

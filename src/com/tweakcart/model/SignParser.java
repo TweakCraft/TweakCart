@@ -86,6 +86,10 @@ public class SignParser {
                 isNegate = true;
                 line = line.substring(1);
             }
+            if (line.toLowerCase().contains("all items")){
+                map.fillAll();
+                return map;
+            }
 
             String[] commands = line.split(":");
 
