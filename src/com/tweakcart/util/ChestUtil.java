@@ -71,7 +71,7 @@ public class ChestUtil {
 
             //When is the map 0? -> map has less than current stack
             int amountToMove = (mapAmount == Integer.MAX_VALUE ? startAmount : mapAmount);
-            from[i1].setAmount(from[i1].getAmount() - amountToMove);
+            from[i1].setAmount(from[i1].getAmount() - amountToMove + 1);
             Bukkit.getServer().broadcastMessage("Start-amount: " + amountToMove + "!");
             Bukkit.getServer().broadcastMessage("I'm moving: " + amountToMove + "!");
             Bukkit.getServer().broadcastMessage("Atm, from has: " + from[i1].getAmount() + "!");
@@ -93,7 +93,7 @@ public class ChestUtil {
                 }
             }
             Bukkit.getServer().broadcastMessage("According to me, leftover is: " + amountToMove + "!");
-            from[i1].setAmount(from[i1].getAmount() + amountToMove);
+            from[i1].setAmount(from[i1].getAmount() + amountToMove - 1);
             Bukkit.getServer().broadcastMessage("End-amount: " + from[i1].getAmount() + "!");
             through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
         }
