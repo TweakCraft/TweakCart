@@ -51,6 +51,8 @@ public class ChestUtil {
     }
 
     public static void moveItems(Inventory iFrom, Inventory iTo, IntMap through) {
+        Bukkit.getServer().broadcastMessage("Dumping IntMap:");
+        Bukkit.getServer().broadcastMessage(through.toString());
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
         int i1, i2;
