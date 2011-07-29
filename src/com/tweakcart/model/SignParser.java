@@ -42,20 +42,7 @@ public class SignParser {
         }
     }
 
-    private static SignParser _Instance;
     private static final Logger log = Logger.getLogger("Minecraft");
-
-    public static SignParser getInstance() {
-        if (_Instance == null) {
-            _Instance = new SignParser();
-        }
-
-        return _Instance;
-    }
-
-    private SignParser() {
-        //Private constructor because of singleton.
-    }
 
     public static Action parseAction(String line) {
         if (line.length() > 0) {

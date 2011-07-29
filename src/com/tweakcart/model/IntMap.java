@@ -146,8 +146,8 @@ public class IntMap {
                 || (startdata > 0 && !hasDataValue(startId)) || (enddata > 0 && !hasDataValue(endId))
                 || !isAllowedMaterial(startId, startdata) || !isAllowedMaterial(endId, enddata))
             return false;
-        if (startId <= endId) {
-            if(startdata >= 0 && enddata >= 0) {
+        if (startId < endId) {
+            if (startdata >= 0 && enddata >= 0) {
                 setDataRange(startId, startdata, (byte) 15, value);
                 startId++;
                 setDataRange(endId, (byte) 0, enddata, value);
@@ -170,6 +170,12 @@ public class IntMap {
                 } while (!isAllowedMaterial(startId, (byte) 0));
             }
             return true;
+        } else if (startId == endId) {
+            if (startdata < enddata && hasDataValue(startId)) {
+                setDataRange(startId, startdata, enddata, value);
+                return true;
+            }
+            return false;
         } else {
             return false;
         }
