@@ -71,7 +71,7 @@ public class IntMap {
         return true;
     }
 
-    private static int getIntIndex(int id, byte data) {
+    public static int getIntIndex(int id, byte data) {
         return getIntIndex(new MaterialData(id, data).getItemType(), data);
     }
 

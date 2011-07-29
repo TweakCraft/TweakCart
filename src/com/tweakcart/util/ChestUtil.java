@@ -61,6 +61,7 @@ public class ChestUtil {
                 Bukkit.getServer().broadcastMessage("At index " + i1 + " from is null!");
                 continue;
             }
+            Bukkit.getServer().broadcastMessage("This stuff belongs at index " + IntMap.getIntIndex(from[i1].getTypeId(), (byte) from[i1].getDurability()) + "!");
             int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
             int startAmount = from[i1].getAmount();
             if (mapAmount == 0 || mapAmount == Integer.MIN_VALUE) {
