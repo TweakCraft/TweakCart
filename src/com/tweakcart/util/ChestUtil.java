@@ -89,7 +89,8 @@ public class ChestUtil {
                 }
             } else {
                 //When is the map 0? -> map has less than current stack
-                int amountToMove = from[i1].getAmount() - mapAmount;
+                int amountToMove = mapAmount;
+                from[i1].setAmount(from[i1].getAmount() - amountToMove);
                 Bukkit.getServer().broadcastMessage("I'm moving: " + amountToMove + "!");
                 for (i2 = 0; i2 < to.length; i2++) {
                     if (to[i2] == null) {
@@ -99,8 +100,8 @@ public class ChestUtil {
                         break;
                     } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
                         if (amountToMove + to[i2].getAmount() > 64) {
-                            to[i2].setAmount(64);
                             amountToMove += to[i2].getAmount() - 64;
+                            to[i2].setAmount(64);
                         } else {
                             to[i2].setAmount(amountToMove + to[i2].getAmount());
                             amountToMove = 0;
@@ -108,12 +109,10 @@ public class ChestUtil {
                         break;
                     }
                 }
-                if (amountToMove != 0) {
-                    from[i1].setAmount(amountToMove);
-                } else {
-                    from[i1] = null;
+                if (amountToMove != mapAmount) {
+                    from[i1].setAmount(from[i1].getAmount() + amountToMove);
+                    through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
                 }
-                through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
             }
         }
         iTo.setContents(to);
