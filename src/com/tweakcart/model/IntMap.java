@@ -147,21 +147,15 @@ public class IntMap {
                 || !isAllowedMaterial(startId, startdata) || !isAllowedMaterial(endId, enddata))
             return false;
         if (startId <= endId) {
-            if(startdata == -1){
-                setDataRange(startId, (byte) 0, (byte) 15, value);
-                startId++;
-            }else if(enddata == -1){
-                setDataRange(endId, (byte) 0, (byte) 15, value);
-                endId--;
-            }else if(startdata != 0 && enddata != 0) {
+            if(startdata >= 0 && enddata >= 0) {
                 setDataRange(startId, startdata, (byte) 15, value);
                 startId++;
                 setDataRange(endId, (byte) 0, enddata, value);
                 endId--;
-            } else if (startdata == 0 && enddata != 0) {
+            } else if (startdata == -1 && enddata >= 0) {
                 setDataRange(endId, (byte) 0, enddata, value);
                 endId--;
-            } else if (startdata != 0 && enddata == 0) {
+            } else if (startdata >= 0 && enddata == -1) {
                 setDataRange(startId, startdata, (byte) 15, value);
                 startId++;
             }
