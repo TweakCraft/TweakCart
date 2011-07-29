@@ -52,7 +52,8 @@ public class ChestUtil {
     public static void moveItems(Inventory iFrom, Inventory iTo, IntMap through) {
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
-        for (int i1 = 0; i1 < from.length; i1++) {
+        int i1, i2;
+        for (i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null)
                 continue;
             int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
@@ -60,9 +61,9 @@ public class ChestUtil {
             if (mapAmount == 0 || mapAmount == Integer.MIN_VALUE)
                 continue;
 
-            //MAX_VALUE && other values?
+            //MAX_VALUE && other values? -> other values = from.amount < mapAmount (aka, the map has more than the current stack)
             if (mapAmount == Integer.MAX_VALUE || from[i1].getAmount() < mapAmount) {
-                for (int i2 = 0; i2 < to.length; i2++) {
+                for (i2 = 0; i2 < to.length; i2++) {
                     if (to[i2] == null) {
                         to[i2] = from[i1];
                         from[i1] = null;
@@ -82,33 +83,33 @@ public class ChestUtil {
                     if (from[i1] == null) {
                         through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount - startAmount);
                     } else {
-                        through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount - startAmount + from[i1].getAmount());
+                        through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount - startAmount + to[i2].getAmount());
                     }
                 }
             } else {
-                //When is the map 0?
-                from[i1].setAmount(from[i1].getAmount() - mapAmount);
-                for (int i2 = 0; i2 < to.length; i2++) {
+                //When is the map 0? -> map has less than current stack
+                int amountToMove = from[i1].getAmount() - mapAmount;
+                for (i2 = 0; i2 < to.length; i2++) {
                     if (to[i2] == null) {
                         to[i2] = from[i1];
-                        to[i2].setAmount(mapAmount);
+                        to[i2].setAmount(amountToMove);
                         mapAmount = 0;
                         break;
                     } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
-                        if (mapAmount + to[i2].getAmount() > 64) {
+                        if (amountToMove + to[i2].getAmount() > 64) {
                             to[i2].setAmount(64);
-                            mapAmount = (mapAmount + to[i2].getAmount()) - 64;
+                            amountToMove += to[i2].getAmount() - 64;
                         } else {
-                            to[i2].setAmount(mapAmount + to[i2].getAmount());
-                            mapAmount = 0;
+                            to[i2].setAmount(amountToMove + to[i2].getAmount());
+                            amountToMove = 0;
                         }
                         break;
                     }
                 }
-                if (mapAmount != 0) {
-                    from[i1].setAmount(from[i1].getAmount() + mapAmount);
+                if (amountToMove != 0) {
+                    from[i1].setAmount(amountToMove);
                 }
-                through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), mapAmount);
+                through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
             }
         }
         iTo.setContents(to);
