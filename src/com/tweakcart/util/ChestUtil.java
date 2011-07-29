@@ -1,7 +1,6 @@
 package com.tweakcart.util;
 
 import com.tweakcart.model.IntMap;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -51,8 +50,6 @@ public class ChestUtil {
     }
 
     public static void moveItems(Inventory iFrom, Inventory iTo, IntMap through) {
-        Bukkit.getServer().broadcastMessage("Dumping IntMap:");
-        Bukkit.getServer().broadcastMessage(through.toString());
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
         int i1, i2;
@@ -60,7 +57,6 @@ public class ChestUtil {
             if (from[i1] == null) {
                 continue;
             }
-            Bukkit.getServer().broadcastMessage("This stuff belongs at index " + IntMap.getIntIndex(from[i1].getTypeId(), (byte) from[i1].getDurability()) + "!");
             int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
             int startAmount = from[i1].getAmount();
             if (mapAmount == 0 || mapAmount == Integer.MIN_VALUE) {
@@ -70,9 +66,6 @@ public class ChestUtil {
             //When is the map 0? -> map has less than current stack
             int amountToMove = (mapAmount == Integer.MAX_VALUE ? startAmount : mapAmount);
             from[i1].setAmount(from[i1].getAmount() - amountToMove + 1);
-            Bukkit.getServer().broadcastMessage("Start-amount: " + amountToMove + "!");
-            Bukkit.getServer().broadcastMessage("I'm moving: " + amountToMove + "!");
-            Bukkit.getServer().broadcastMessage("Atm, from has: " + from[i1].getAmount() + "!");
             for (i2 = 0; i2 < to.length; i2++) {
                 if (to[i2] == null) {
                     to[i2] = from[i1].clone();
@@ -90,9 +83,7 @@ public class ChestUtil {
                     break;
                 }
             }
-            Bukkit.getServer().broadcastMessage("According to me, leftover is: " + amountToMove + "!");
             from[i1].setAmount(from[i1].getAmount() + amountToMove - 1);
-            Bukkit.getServer().broadcastMessage("End-amount: " + from[i1].getAmount() + "!");
             through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
         }
         iTo.setContents(to);
