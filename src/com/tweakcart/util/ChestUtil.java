@@ -93,6 +93,7 @@ public class ChestUtil {
                 int amountToMove = mapAmount;
                 from[i1].setAmount(from[i1].getAmount() - amountToMove);
                 Bukkit.getServer().broadcastMessage("I'm moving: " + amountToMove + "!");
+                Bukkit.getServer().broadcastMessage("Atm, from has: " + from[i1].getAmount() + "!");
                 for (i2 = 0; i2 < to.length; i2++) {
                     if (to[i2] == null) {
                         to[i2] = from[i1];
