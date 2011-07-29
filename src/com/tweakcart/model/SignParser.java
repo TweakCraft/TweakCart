@@ -111,6 +111,7 @@ public class SignParser {
                 if (splitline.length == 2) {
                     try {
                         value = Integer.parseInt(splitline[1]);
+                        value = (value < 1 ? Integer.MAX_VALUE : value);
                         command = splitline[0];
                     } catch (NumberFormatException e) {
                         return null;

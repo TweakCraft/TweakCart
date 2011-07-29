@@ -57,11 +57,10 @@ public class IntMap {
     public boolean setInt(int id, byte data, int value) {
         Bukkit.getServer().broadcastMessage("yay, ik ben hier, en nu?");
         //levert dit geen problemen voor item 35;0?
-        if(hasDataValue(id) && data == (byte) 0){
-            setDataRange(id,(byte) 0,(byte) 15,value);
+        if (hasDataValue(id) && data == (byte) 0) {
+            setDataRange(id, (byte) 0, (byte) 15, value);
             Bukkit.getServer().broadcastMessage("ik heb een datarange in de intmap gezet voor: " + id);
-        }
-        else{
+        } else {
             int intLocation = IntMap.getIntIndex(id, data);
             if (intLocation == -1) {
                 return false;
@@ -113,8 +112,8 @@ public class IntMap {
                         return m.ordinal();
                 }
         }
-    	
-        
+
+
     }
 
     private boolean hasDataValue(int id) {
@@ -153,12 +152,10 @@ public class IntMap {
                 startId++;
                 setDataRange(endId, (byte) 0, enddata, value);
                 endId--;
-            }
-            else if (startdata == 0 && enddata != 0) {
+            } else if (startdata == 0 && enddata != 0) {
                 setDataRange(endId, (byte) 0, enddata, value);
                 endId--;
-            }
-            else if(startdata != 0 && enddata == 0){
+            } else if (startdata != 0 && enddata == 0) {
                 setDataRange(startId, startdata, (byte) 15, value);
                 startId++;
             }
