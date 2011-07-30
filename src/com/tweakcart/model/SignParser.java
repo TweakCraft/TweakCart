@@ -1,5 +1,6 @@
 package com.tweakcart.model;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
@@ -23,12 +24,39 @@ public class SignParser {
     }
 
     private static final Logger log = Logger.getLogger("Minecraft");
-
+    
+    public static String removeBrackets(String line) {
+        if(line.length() > 2 && line.charAt(0) == '[' && line.charAt(line.length() -1) == ']'){
+            return line.substring(1,line.length() - 1);
+        }
+        else{
+            return line;
+        }
+    }
+    
     public static Action parseAction(String line) {
         if (line.length() > 0) {
-            if (Character.isDigit(line.charAt(0)) || line.charAt(0) == '[' || line.charAt(0) == '!') {
+            if (Character.isDigit(line.charAt(0))) {
                 return Action.ITEM;
             }
+            else{
+
+                switch(line.charAt(0)){
+                case '[':
+                case '!':
+                case 'n':
+                case 's':
+                case 'w':
+                case 'e':
+                case 'N':
+                case 'S':
+                case 'W':
+                case 'E':
+                    return Action.ITEM;
+                default:
+                }
+            }              
+        
 
             switch (line.charAt(0)) {
                 case 'c':
@@ -53,7 +81,6 @@ public class SignParser {
             return Action.NULL;
         }
     }
-
     //TODO: ByteMap vullen.
     public static IntMap buildIntMap(String line, Minecart cart, Direction d) {
         //Parse next line items ?
@@ -63,9 +90,10 @@ public class SignParser {
 
 
         if (checkDirection(line, d)) {
-
+            Bukkit.getServer().broadcastMessage("Yay, ik zit in de loop <<" + line + ">>");
             if (line.length() >= 2 && line.charAt(1) == '+') {
                 line = line.substring(2);
+                Bukkit.getServer().broadcastMessage(line);
             }
             if (line.charAt(0) == '!') {
                 isNegate = true;
@@ -194,13 +222,14 @@ public class SignParser {
 
     public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart, Direction direction) {
         log.info("HALLO");
+        Bukkit.getServer().broadcastMessage("Direction " + direction.toString());
         Action oldAction = Action.NULL;
 
         HashMap<Action, IntMap> returnData = new HashMap<Action, IntMap>();
         IntMap map;
 
         for (String line : sign.getLines()) {
-
+            removeBrackets(line);
             Action newAction = SignParser.parseAction(line);
             log.info(newAction.toString());
             if (newAction == Action.NULL) {
@@ -263,6 +292,7 @@ public class SignParser {
 
         return returnData;
     }
+
 
     public static boolean checkStorageCart(Minecart cart) {
         return (cart instanceof StorageMinecart);
