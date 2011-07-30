@@ -85,10 +85,8 @@ public class SignParser {
     public static IntMap buildIntMap(String line, Direction d) {
         IntMap map = new IntMap();
         boolean isNegate = false;
-        System.out.println("yay");
 
         if (checkDirection(line, d)) {
-            Bukkit.getServer().broadcastMessage("Yay, ik zit in de loop <<" + line + ">>");
             if (line.length() >= 2 && line.charAt(1) == '+') {
                 line = line.substring(2);
                 Bukkit.getServer().broadcastMessage(line);
@@ -118,7 +116,6 @@ public class SignParser {
                 }
 
                 splitline = command.split("-");
-                System.out.println("yay");
                 if (splitline.length == 2) {
                     int[] startPair = checkIDData(splitline[0]);
                     int[] endPair = checkIDData(splitline[1]);
@@ -220,12 +217,12 @@ public class SignParser {
     public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart, Direction direction) {
 
         Action oldAction = Action.NULL;
-
+        
         HashMap<Action, IntMap> returnData = new HashMap<Action, IntMap>();
         IntMap map;
 
         for (String line : sign.getLines()) {
-            removeBrackets(line);
+            line = removeBrackets(line);
             Action newAction = SignParser.parseAction(line);
             if (newAction == Action.NULL) {
                 continue;
