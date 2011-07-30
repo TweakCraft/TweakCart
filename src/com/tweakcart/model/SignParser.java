@@ -20,7 +20,7 @@ public class SignParser {
         COLLECT,
         DEPOSIT,
         ITEM,
-        ALL;
+        ALL
     }
 
     private static final Logger log = Logger.getLogger("Minecraft");
@@ -33,8 +33,15 @@ public class SignParser {
             return line;
         }
     }
-    
+
     public static Action parseAction(String line) {
+        if(line == null)
+        {
+            return Action.NULL;
+        }
+
+        line = line.toLowerCase();
+
         if (line.length() > 0) {
             if (Character.isDigit(line.charAt(0))) {
                 return Action.ITEM;
