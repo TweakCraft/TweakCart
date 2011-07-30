@@ -40,6 +40,8 @@ public class SignParser {
             return Action.NULL;
         }
 
+        line = line.toLowerCase();
+
         if (line.length() > 0) {
             if (Character.isDigit(line.charAt(0))) {
                 return Action.ITEM;
