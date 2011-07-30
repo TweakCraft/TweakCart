@@ -122,17 +122,17 @@ public class TweakCartVehicleListener extends VehicleListener {
                     continue;
                 switch (entry.getKey()) {
                     case COLLECT:
-                        //Collect items (from chest to cart)
-                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
-                        for (Chest c : chests) {
-                            ChestUtil.moveItems(c.getInventory(), storageCart.getInventory(), entry.getValue());
-                        }
-                        break;
-                    case DEPOSIT:
-                        //Deposit items (from cart to chest)
+                        //Collect items (from cart to chest)
                         chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                         for (Chest c : chests) {
                             ChestUtil.moveItems(storageCart.getInventory(), c.getInventory(), entry.getValue());
+                        }
+                        break;
+                    case DEPOSIT:
+                        //Deposit items (from chest to cart)
+                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                        for (Chest c : chests) {
+                            ChestUtil.moveItems(c.getInventory(), storageCart.getInventory(), entry.getValue());
                         }
                         break;
                 }
