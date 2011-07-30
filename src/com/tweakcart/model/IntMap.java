@@ -1,6 +1,5 @@
 package com.tweakcart.model;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
@@ -14,12 +13,12 @@ public class IntMap {
     private int[] mapData;
 
     public IntMap() {
-        mapData = new int[537];
+        mapData = new int[materialSize + 49];
     }
 
     private IntMap(int[] data) {
-        if (data.length != 537) {
-            mapData = new int[537];
+        if (data.length != (materialSize + 49)) {
+            mapData = new int[materialSize + 49];
         } else {
             mapData = data;
         }
@@ -41,7 +40,7 @@ public class IntMap {
     }
 
     public int getInt(Material m, byte data) {
-        int intLocation = IntMap.getIntIndex(m, data);// TODO Auto-generated method stub
+        int intLocation = IntMap.getIntIndex(m, data);
 
         if (intLocation == -1) {
             return 0;
@@ -55,18 +54,14 @@ public class IntMap {
     }
 
     public boolean setInt(int id, byte data, int value) {
-        Bukkit.getServer().broadcastMessage("yay, ik ben hier, en nu?");
-        //levert dit geen problemen voor item 35;0?
         if (hasDataValue(id) && data == (byte) -1) {
             setDataRange(id, (byte) 0, (byte) 15, value);
-            Bukkit.getServer().broadcastMessage("ik heb een datarange in de intmap gezet voor: " + id);
         } else {
             int intLocation = IntMap.getIntIndex(id, data);
             if (intLocation == -1) {
                 return false;
             }
             mapData[intLocation] = value;
-            Bukkit.getServer().broadcastMessage("heb een waarde in de intmap gezet: " + mapData[intLocation] + "!");
         }
         return true;
     }
@@ -99,13 +94,13 @@ public class IntMap {
                         else
                             return -1;
                     case WOOL:
-                        if (data < 15)
-                            return materialSize + (int) data + 18;
+                        if (data < 16)
+                            return materialSize + (int) data + 19;
                         else
                             return -1;
                     case INK_SACK:
-                        if (data < 15)
-                            return materialSize + (int) data + 32;
+                        if (data < 16)
+                            return materialSize + (int) data + 34;
                         else
                             return -1;
                     default:
@@ -231,9 +226,9 @@ public class IntMap {
     }
 
     public void fillAll() {
-        for(int i = 0; i<mapData.length; i++){
+        for (int i = 0; i < mapData.length; i++) {
             mapData[i] = Integer.MAX_VALUE;
         }
-        
+
     }
 }
