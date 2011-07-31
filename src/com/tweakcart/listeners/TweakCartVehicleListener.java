@@ -47,17 +47,18 @@ public class TweakCartVehicleListener extends VehicleListener {
             Minecart cart = (Minecart) event.getVehicle();
 
             Vector cartSpeed = cart.getVelocity(); // We are gonna use this 1 object everywhere(a new Vector() is made on every call ;) ).
-            if (CartUtil.stoppedSlowCart(cart, cartSpeed)) {
+            Block toBlock = event.getTo().getBlock(); //Use this object everywhere as well.
+            Direction horizontalDirection = Direction.getHorizontalDirection(cartSpeed);
+            if (CartUtil.stoppedSlowCart(cart, cartSpeed, toBlock, horizontalDirection)) {
                 return;
             }
 
-            Direction horizontalDirection = Direction.getHorizontalDirection(cartSpeed);
             switch (horizontalDirection) {
                 case NORTH:
                 case SOUTH:
                     for (int dy = -1; dy <= 0; dy++) {
                         for (int dz = -1; dz <= 1; dz += 2) {
-                            Block tempBlock = event.getTo().getBlock().getRelative(0, dy, dz);
+                            Block tempBlock = toBlock.getRelative(0, dy, dz);
                             if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
                                     || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
                                 Sign s = (Sign) tempBlock.getState();
@@ -70,7 +71,7 @@ public class TweakCartVehicleListener extends VehicleListener {
                 case WEST:
                     for (int dy = -1; dy <= 0; dy++) {
                         for (int dx = -1; dx <= 1; dx += 2) {
-                            Block tempBlock = event.getTo().getBlock().getRelative(dx, dy, 0);
+                            Block tempBlock = toBlock.getRelative(dx, dy, 0);
                             if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
                                     || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
                                 Sign s = (Sign) tempBlock.getState();
