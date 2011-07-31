@@ -1,5 +1,6 @@
 package com.tweakcart.model;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
@@ -150,6 +151,7 @@ public enum Direction {
     }
 
     public static final Direction getVerticalDirection(Vector velocity) {
+        Bukkit.getServer().broadcastMessage("Velocity in y direction: " + velocity.getY());
         int mody = (velocity.getY() == 0 ? 0 : velocity.getY() > 0 ? 1 : -1);
         System.out.println("Direction: " + directions[1][mody + 1][1]);
         return getDirection(0, mody, 0);
