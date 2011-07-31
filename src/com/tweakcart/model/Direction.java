@@ -149,8 +149,8 @@ public enum Direction {
         return getDirection(modx, 0, modz);
     }
 
-    public static final Direction getVerticalDirection(Vector velocity) {
-        int mody = (velocity.getY() == 0 ? 0 : velocity.getY() > 0 ? 1 : -1);
+    public static final Direction getVerticalDirection(float yaw) {
+        int mody = (yaw == 0 ? 0 : yaw > 0 ? 1 : -1);
         System.out.println("Direction: " + directions[1][mody + 1][1]);
         return getDirection(0, mody, 0);
     }

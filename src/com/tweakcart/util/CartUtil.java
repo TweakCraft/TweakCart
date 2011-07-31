@@ -24,7 +24,7 @@ public class CartUtil {
      * @return true if the cart was stopped, false if nothing was changed.
      */
     public static final boolean stoppedSlowCart(Minecart cart, Vector velocity) {
-        switch (Direction.getVerticalDirection(velocity)) {
+        switch (Direction.getVerticalDirection(cart.getLocation().getYaw())) {
             case DOWN:
             case UP:
                 return false;
