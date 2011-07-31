@@ -1,5 +1,6 @@
 package com.tweakcart.model;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
@@ -150,6 +151,7 @@ public enum Direction {
     }
 
     public static final Direction getVerticalDirection(float yaw) {
+        Bukkit.getServer().broadcastMessage("Yaw: " + yaw);
         int mody = (yaw == 0 ? 0 : yaw > 0 ? -1 : 1);
         return getDirection(0, mody, 0);
     }
