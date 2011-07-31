@@ -150,8 +150,7 @@ public enum Direction {
     }
 
     public static final Direction getVerticalDirection(float yaw) {
-        int mody = (yaw == 0 ? 0 : yaw > 0 ? 1 : -1);
-        System.out.println("Direction: " + directions[1][mody + 1][1]);
+        int mody = (yaw == 0 ? 0 : yaw > 0 ? -1 : 1);
         return getDirection(0, mody, 0);
     }
 }

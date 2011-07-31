@@ -8,7 +8,6 @@ import com.tweakcart.model.TweakCartConfig;
 import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -48,7 +47,6 @@ public class TweakCartVehicleListener extends VehicleListener {
             Minecart cart = (Minecart) event.getVehicle();
 
             Vector cartSpeed = cart.getVelocity(); // We are gonna use this 1 object everywhere(a new Vector() is made on every call ;) ).
-            Bukkit.getServer().broadcastMessage("Current pitch: " + cart.getLocation().getPitch() + ", current yaw: " + cart.getLocation().getYaw());
             if (CartUtil.stoppedSlowCart(cart, cartSpeed)) {
                 return;
             }
