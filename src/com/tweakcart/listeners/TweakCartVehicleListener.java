@@ -56,7 +56,7 @@ public class TweakCartVehicleListener extends VehicleListener {
                 case NORTH:
                 case SOUTH:
                     for (int dy = -1; dy <= 0; dy++) {
-                        for (int dz = -1; dz <= 1; dz++) {
+                        for (int dz = -1; dz <= 1; dz += 2) {
                             Block tempBlock = event.getTo().getBlock().getRelative(0, dy, dz);
                             if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
                                     || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
@@ -69,7 +69,7 @@ public class TweakCartVehicleListener extends VehicleListener {
                 case EAST:
                 case WEST:
                     for (int dy = -1; dy <= 0; dy++) {
-                        for (int dx = -1; dx <= 1; dx++) {
+                        for (int dx = -1; dx <= 1; dx += 2) {
                             Block tempBlock = event.getTo().getBlock().getRelative(dx, dy, 0);
                             if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
                                     || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
