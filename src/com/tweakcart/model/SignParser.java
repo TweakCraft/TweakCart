@@ -96,7 +96,6 @@ public class SignParser {
         if (checkDirection(line, d)) {
             if (line.length() >= 2 && line.charAt(1) == '+') {
                 line = line.substring(2);
-                Bukkit.getServer().broadcastMessage(line);
             }
             if (line.charAt(0) == '!') {
                 isNegate = true;
