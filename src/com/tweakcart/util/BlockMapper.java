@@ -9,8 +9,10 @@ import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Edoxile
+ *
+ * @author Edoxile
  */
+@Deprecated
 public class BlockMapper {
     public static ArrayList<BlockState> mapBlockStates(Block startBlock, Direction direction, Material type) {
         ArrayList<BlockState> bagList = new ArrayList<BlockState>();

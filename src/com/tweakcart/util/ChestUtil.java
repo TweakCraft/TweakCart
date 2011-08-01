@@ -13,7 +13,8 @@ import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Edoxile
+ *
+ * @author Edoxile
  */
 public class ChestUtil {
     public static final ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
@@ -63,7 +64,6 @@ public class ChestUtil {
                 continue;
             }
 
-            //When is the map 0? -> map has less than current stack
             int amountToMove = (mapAmount == Integer.MAX_VALUE ? startAmount : mapAmount);
             from[i1].setAmount(from[i1].getAmount() - amountToMove + 1);
             for (i2 = 0; i2 < to.length; i2++) {
