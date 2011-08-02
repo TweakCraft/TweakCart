@@ -1,13 +1,17 @@
 package com.tweakcart;
 
-import java.util.logging.Logger;
-
+import com.tweakcart.listeners.TweakCartBlockListener;
+import com.tweakcart.listeners.TweakCartVehicleListener;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+<<<<<<< HEAD
 import com.tweakcart.listeners.TweakCartBlockListener;
 import com.tweakcart.listeners.TweakCartVehicleListener;
+=======
+import java.util.logging.Logger;
+>>>>>>> 3c045928f79d01fede0255447d6759f4392fbacc
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,5 +40,8 @@ public class TweakCart extends JavaPlugin {
     public void onDisable() {
         log.info("[" + getDescription().getName() + "] Disabled!");
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3c045928f79d01fede0255447d6759f4392fbacc
 }
