@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /**
  * Created by IntelliJ IDEA.
  *
- * @authors TheSec, windwarrior, Edoxile
+ * @author TheSec, windwarrior, Edoxile
  */
 public class SignParser {
     public enum Action {
@@ -100,23 +100,23 @@ public class SignParser {
         for (String command : commands) {
             int value = 0;
 
-            String[] splitline = command.split("@");
+            String[] splitLine = command.split("@");
 
-            if (splitline.length == 2) {
+            if (splitLine.length == 2) {
                 try {
-                    value = Integer.parseInt(splitline[1]);
+                    value = Integer.parseInt(splitLine[1]);
                     value = (value < 1 ? Integer.MAX_VALUE : value);
-                    command = splitline[0];
+                    command = splitLine[0];
                 } catch (NumberFormatException e) {
                     return null;
                 }
-            } else if (splitline.length != 1) {
+            } else if (splitLine.length != 1) {
                 return null;
             }
-            splitline = command.split("-");
-            if (splitline.length == 2) {
-                int[] startPair = checkIdData(splitline[0]);
-                int[] endPair = checkIdData(splitline[1]);
+            splitLine = command.split("-");
+            if (splitLine.length == 2) {
+                int[] startPair = checkIdData(splitLine[0]);
+                int[] endPair = checkIdData(splitLine[1]);
                 if (startPair != null && endPair != null) {
                     if (value == 0) {
                         if (isNegate) {
@@ -129,8 +129,8 @@ public class SignParser {
                 } else {
                     return null;
                 }
-            } else if (splitline.length == 1) {
-                int[] pair = checkIdData(splitline[0]);
+            } else if (splitLine.length == 1) {
+                int[] pair = checkIdData(splitLine[0]);
                 if (pair != null) {
                     if (value == 0) {
                         if (isNegate) {
@@ -153,20 +153,18 @@ public class SignParser {
 
     private static int[] checkIdData(String line) {
         int[] result = new int[2];
-        String[] linesplit = line.split(";");
-        if (linesplit.length == 2) {
+        String[] splitLine = line.split(";");
+        if (splitLine.length == 2) {
             try {
-                result[0] = Integer.parseInt(linesplit[0]);
-                result[1] = Integer.parseInt(linesplit[1]);
+                result[0] = Integer.parseInt(splitLine[0]);
+                result[1] = Integer.parseInt(splitLine[1]);
             } catch (NumberFormatException e) {
-
             }
-        } else if (linesplit.length == 1) {
+        } else if (splitLine.length == 1) {
             try {
-                result[0] = Integer.parseInt(linesplit[0]);
+                result[0] = Integer.parseInt(splitLine[0]);
                 result[1] = -1;
             } catch (NumberFormatException e) {
-
             }
         }
 
@@ -237,16 +235,13 @@ public class SignParser {
                                         map.combine(parsed);
                                         returnData.put(oldAction, map);
                                     } else {
-                                        if (parsed != null)
-                                            returnData.put(oldAction, parsed);
+                                        returnData.put(oldAction, parsed);
                                     }
                                 }
                                 break;
                         }
                         break;
                 }
-            } else {
-                continue;
             }
         }
 
