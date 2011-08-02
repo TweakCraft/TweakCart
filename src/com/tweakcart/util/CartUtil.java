@@ -1,10 +1,8 @@
 package com.tweakcart.util;
 
 import com.tweakcart.model.Direction;
-
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Minecart;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.util.Vector;
 
 
@@ -26,7 +24,7 @@ public class CartUtil {
      * @param cart
      * @return true if the cart was stopped, false if nothing was changed.
      */
-    public static final boolean stoppedSlowCart(Minecart cart, Vector velocity, Block to, Direction horizontalDirection) {
+    public static final boolean stoppedSlowCart(StorageMinecart cart, Vector velocity, Block to, Direction horizontalDirection) {
         switch (Direction.getVerticalDirection(to, horizontalDirection)) {
             case DOWN:
             case UP:

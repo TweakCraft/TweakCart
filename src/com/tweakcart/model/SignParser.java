@@ -216,7 +216,7 @@ public class SignParser {
 
     }
 
-    public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart, Direction direction) {
+    public static HashMap<Action, IntMap> parseSign(Sign sign, Direction direction) {
 
         Action oldAction = Action.NULL;
 

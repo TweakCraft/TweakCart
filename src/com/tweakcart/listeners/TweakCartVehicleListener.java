@@ -7,6 +7,7 @@ import com.tweakcart.model.SignParser;
 import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -36,12 +37,11 @@ public class TweakCartVehicleListener extends VehicleListener {
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
-        if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) {
-            return;
-        }
-
-        if (event.getVehicle() instanceof Minecart) {
-            Minecart cart = (Minecart) event.getVehicle();
+        if (event.getVehicle() instanceof StorageMinecart) {
+            if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) {
+                return;
+            }
+            StorageMinecart cart = (StorageMinecart) event.getVehicle();
 
             Vector cartSpeed = cart.getVelocity(); // We are gonna use this 1 object everywhere(a new Vector() is made on every call ;) ).
             Block toBlock = event.getTo().getBlock(); //Use this object everywhere as well.
@@ -78,42 +78,55 @@ public class TweakCartVehicleListener extends VehicleListener {
                     }
                     break;
             }
+            Block tempBlock = toBlock.getRelative(0, 1, 0);
+            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                Sign s = (Sign) tempBlock.getState();
+                parseSign(s, cart, horizontalDirection);
+            }
         }
     }
 
     public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-        if (event.getBlock().getRelative(BlockFace.UP).getTypeId() == 23 && event.getVehicle() instanceof Minecart) {
-            ItemStack item;
-            if (event.getVehicle() instanceof PoweredMinecart) {
-                item = new ItemStack(Material.POWERED_MINECART, 1);
-            } else if (event.getVehicle() instanceof StorageMinecart) {
-                item = new ItemStack(Material.STORAGE_MINECART, 1);
-            } else {
-                item = new ItemStack(Material.MINECART, 1);
-            }
-            Dispenser dispenser = (Dispenser) event.getBlock().getRelative(BlockFace.UP).getState();
-            ItemStack cartItemStack = ChestUtil.putItems(item, dispenser)[0];
-            if (cartItemStack == null) {
-                if (event.getVehicle() instanceof StorageMinecart) {
-                    StorageMinecart cart = (StorageMinecart) event.getVehicle();
-                    ItemStack[] leftovers = ChestUtil.putItems(cart.getInventory().getContents(), dispenser);
-                    cart.getInventory().clear();
-                    for (ItemStack i : leftovers) {
-                        if (i == null)
-                            continue;
-                        cart.getWorld().dropItem(cart.getLocation(), i);
+        if (event.getVehicle() instanceof Minecart) {
+            switch (event.getBlock().getRelative(BlockFace.UP).getType()) {
+                case DISPENSER:
+                    ItemStack item;
+                    if (event.getVehicle() instanceof PoweredMinecart) {
+                        item = new ItemStack(Material.POWERED_MINECART, 1);
+                    } else if (event.getVehicle() instanceof StorageMinecart) {
+                        item = new ItemStack(Material.STORAGE_MINECART, 1);
+                    } else {
+                        item = new ItemStack(Material.MINECART, 1);
                     }
-                }
-                event.getVehicle().remove();
-                return;
+                    Dispenser dispenser = (Dispenser) event.getBlock().getRelative(BlockFace.UP).getState();
+                    ItemStack cartItemStack = ChestUtil.putItems(item, dispenser)[0];
+                    if (cartItemStack == null) {
+                        if (event.getVehicle() instanceof StorageMinecart) {
+                            StorageMinecart cart = (StorageMinecart) event.getVehicle();
+                            ItemStack[] leftovers = ChestUtil.putItems(cart.getInventory().getContents(), dispenser);
+                            cart.getInventory().clear();
+                            for (ItemStack i : leftovers) {
+                                if (i == null)
+                                    continue;
+                                cart.getWorld().dropItem(cart.getLocation(), i);
+                            }
+                        }
+                        event.getVehicle().remove();
+                        return;
+                    }
+                    break;
+                case WALL_SIGN:
+                case SIGN_POST:
+                    Bukkit.getServer().broadcastMessage("Collision with sign!");
+                    break;
             }
         }
     }
 
-    private void parseSign(Sign sign, Minecart cart, Direction direction) {
-        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, cart, direction);
+    private void parseSign(Sign sign, StorageMinecart cart, Direction direction) {
+        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, direction);
         if (SignParser.checkStorageCart(cart)) {
-            StorageMinecart storageCart = (StorageMinecart) cart;
             List<Chest> chests;
             for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
                 if (entry.getValue() == null)
@@ -123,14 +136,14 @@ public class TweakCartVehicleListener extends VehicleListener {
                         //Collect items (from cart to chest)
                         chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                         for (Chest c : chests) {
-                            ChestUtil.moveItems(storageCart.getInventory(), c.getInventory(), entry.getValue());
+                            ChestUtil.moveItems(cart.getInventory(), c.getInventory(), entry.getValue());
                         }
                         break;
                     case DEPOSIT:
                         //Deposit items (from chest to cart)
                         chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                         for (Chest c : chests) {
-                            ChestUtil.moveItems(c.getInventory(), storageCart.getInventory(), entry.getValue());
+                            ChestUtil.moveItems(c.getInventory(), cart.getInventory(), entry.getValue());
                         }
                         break;
                 }
