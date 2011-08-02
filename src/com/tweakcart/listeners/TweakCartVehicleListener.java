@@ -4,7 +4,6 @@ import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
 import com.tweakcart.model.SignParser;
-import com.tweakcart.model.TweakCartConfig;
 import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
@@ -31,11 +30,9 @@ import java.util.logging.Logger;
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
-    private TweakCartConfig config = null;
 
     public TweakCartVehicleListener(TweakCart instance) {
         plugin = instance;
-        config = plugin.getConfig();
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
