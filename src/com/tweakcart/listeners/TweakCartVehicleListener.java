@@ -3,11 +3,14 @@ package com.tweakcart.listeners;
 import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
+import com.tweakcart.model.SignLocation;
 import com.tweakcart.model.SignParser;
-import com.tweakcart.model.TweakCartConfig;
 import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
+import com.tweakcart.util.SoftSignMap;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -31,11 +34,11 @@ import java.util.logging.Logger;
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
-    private TweakCartConfig config = null;
-
+    private SoftSignMap signmap;
+    
     public TweakCartVehicleListener(TweakCart instance) {
         plugin = instance;
-        config = plugin.getConfig();
+        signmap = new SoftSignMap();
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
@@ -114,6 +117,10 @@ public class TweakCartVehicleListener extends VehicleListener {
     }
 
     private void parseSign(Sign sign, Minecart cart, Direction direction) {
+        SignLocation signloc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
+        if(signmap.getIntMap(signloc) != null){
+            log.info("i have found an entry in the softmap");
+        }
         HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, cart, direction);
         if (SignParser.checkStorageCart(cart)) {
             StorageMinecart storageCart = (StorageMinecart) cart;

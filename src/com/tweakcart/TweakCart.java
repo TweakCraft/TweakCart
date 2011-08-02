@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.tweakcart.listeners.TweakCartBlockListener;
 import com.tweakcart.listeners.TweakCartVehicleListener;
-import com.tweakcart.model.TweakCartConfig;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,11 +17,9 @@ public class TweakCart extends JavaPlugin {
     private static Logger log = Logger.getLogger("Minecraft");
     private TweakCartVehicleListener vehicleListener = null;
     private TweakCartBlockListener blockListener = null;
-    private TweakCartConfig config = null;
 
     public void onEnable() {
         // Initialising variables
-        config = new TweakCartConfig(this);
         vehicleListener = new TweakCartVehicleListener(this);
         blockListener = new TweakCartBlockListener(this);
 
@@ -40,7 +37,4 @@ public class TweakCart extends JavaPlugin {
         log.info("[" + getDescription().getName() + "] Disabled!");
     }
 
-    public TweakCartConfig getConfig(){
-        return config;
-    }
 }
