@@ -174,7 +174,7 @@ public class IntMap {
         } else {
             return false;
         }
-    }// TODO Auto-generated method stub
+    }
 
     private boolean setDataRange(int id, byte start, byte end, int amount) {
         if (!hasDataValue(id))

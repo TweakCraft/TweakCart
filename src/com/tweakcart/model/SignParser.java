@@ -1,6 +1,5 @@
 package com.tweakcart.model;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
@@ -24,19 +23,17 @@ public class SignParser {
     }
 
     private static final Logger log = Logger.getLogger("Minecraft");
-    
+
     public static String removeBrackets(String line) {
-        if(line.length() > 2 && line.charAt(0) == '[' && line.charAt(line.length() -1) == ']'){
-            return line.substring(1,line.length() - 1);
-        }
-        else{
+        if (line.length() > 2 && line.charAt(0) == '[' && line.charAt(line.length() - 1) == ']') {
+            return line.substring(1, line.length() - 1);
+        } else {
             return line;
         }
     }
 
     public static Action parseAction(String line) {
-        if(line == null)
-        {
+        if (line == null) {
             return Action.NULL;
         }
 
@@ -45,25 +42,24 @@ public class SignParser {
         if (line.length() > 0) {
             if (Character.isDigit(line.charAt(0))) {
                 return Action.ITEM;
-            }
-            else{
+            } else {
 
-                switch(line.charAt(0)){
-                case '[':
-                case '!':
-                case 'n':
-                case 's':
-                case 'w':
-                case 'e':
-                case 'N':
-                case 'S':
-                case 'W':
-                case 'E':
-                    return Action.ITEM;
-                default:
+                switch (line.charAt(0)) {
+                    case '[':
+                    case '!':
+                    case 'n':
+                    case 's':
+                    case 'w':
+                    case 'e':
+                    case 'N':
+                    case 'S':
+                    case 'W':
+                    case 'E':
+                        return Action.ITEM;
+                    default:
                 }
-            }              
-        
+            }
+
 
             switch (line.charAt(0)) {
                 case 'c':
@@ -88,7 +84,7 @@ public class SignParser {
             return Action.NULL;
         }
     }
-    //TODO: ByteMap vullen.
+
     public static IntMap buildIntMap(String line, Direction d) {
         IntMap map = new IntMap();
         boolean isNegate = false;
@@ -223,7 +219,7 @@ public class SignParser {
     public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart, Direction direction) {
 
         Action oldAction = Action.NULL;
-        
+
         HashMap<Action, IntMap> returnData = new HashMap<Action, IntMap>();
         IntMap map;
 
