@@ -7,7 +7,6 @@ import com.tweakcart.model.SignParser;
 import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -26,7 +25,8 @@ import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Edoxile
+ *
+ * @author Edoxile
  */
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
@@ -50,104 +50,111 @@ public class TweakCartVehicleListener extends VehicleListener {
                 return;
             }
 
-            switch (horizontalDirection) {
-                case NORTH:
-                case SOUTH:
-                    for (int dy = -1; dy <= 0; dy++) {
-                        for (int dz = -1; dz <= 1; dz += 2) {
-                            Block tempBlock = toBlock.getRelative(0, dy, dz);
-                            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                                Sign s = (Sign) tempBlock.getState();
-                                parseSign(s, cart, horizontalDirection);
+            switch (toBlock.getType()) {
+                case RAILS:
+                case POWERED_RAIL:
+                case DETECTOR_RAIL:
+                    switch (horizontalDirection) {
+                        case NORTH:
+                        case SOUTH:
+                            for (int dy = -1; dy <= 0; dy++) {
+                                for (int dz = -1; dz <= 1; dz += 2) {
+                                    Block tempBlock = toBlock.getRelative(0, dy, dz);
+                                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                        Sign s = (Sign) tempBlock.getState();
+                                        parseItemSign(s, cart, horizontalDirection);
+                                    }
+                                }
                             }
-                        }
+                            break;
+                        case EAST:
+                        case WEST:
+                            for (int dy = -1; dy <= 0; dy++) {
+                                for (int dx = -1; dx <= 1; dx += 2) {
+                                    Block tempBlock = toBlock.getRelative(dx, dy, 0);
+                                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                        Sign s = (Sign) tempBlock.getState();
+                                        parseItemSign(s, cart, horizontalDirection);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                    Block tempBlock = toBlock.getRelative(0, 1, 0);
+                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                        Sign s = (Sign) tempBlock.getState();
+                        parseItemSign(s, cart, horizontalDirection);
                     }
                     break;
-                case EAST:
-                case WEST:
-                    for (int dy = -1; dy <= 0; dy++) {
-                        for (int dx = -1; dx <= 1; dx += 2) {
-                            Block tempBlock = toBlock.getRelative(dx, dy, 0);
-                            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                                Sign s = (Sign) tempBlock.getState();
-                                parseSign(s, cart, horizontalDirection);
-                            }
-                        }
-                    }
+                case SIGN_POST:
+                case WALL_SIGN:
+
                     break;
-            }
-            Block tempBlock = toBlock.getRelative(0, 1, 0);
-            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                Sign s = (Sign) tempBlock.getState();
-                parseSign(s, cart, horizontalDirection);
             }
         }
     }
 
     public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-        if (event.getVehicle() instanceof Minecart) {
-            switch (event.getBlock().getRelative(BlockFace.UP).getType()) {
-                case DISPENSER:
-                    ItemStack item;
-                    if (event.getVehicle() instanceof PoweredMinecart) {
-                        item = new ItemStack(Material.POWERED_MINECART, 1);
-                    } else if (event.getVehicle() instanceof StorageMinecart) {
-                        item = new ItemStack(Material.STORAGE_MINECART, 1);
-                    } else {
-                        item = new ItemStack(Material.MINECART, 1);
+        if (event.getVehicle() instanceof Minecart && event.getBlock().getRelative(BlockFace.UP).getTypeId() == Material.DISPENSER.getId()) {
+            ItemStack item;
+            if (event.getVehicle() instanceof PoweredMinecart) {
+                item = new ItemStack(Material.POWERED_MINECART, 1);
+            } else if (event.getVehicle() instanceof StorageMinecart) {
+                item = new ItemStack(Material.STORAGE_MINECART, 1);
+            } else {
+                item = new ItemStack(Material.MINECART, 1);
+            }
+            Dispenser dispenser = (Dispenser) event.getBlock().getRelative(BlockFace.UP).getState();
+            ItemStack cartItemStack = ChestUtil.putItems(item, dispenser)[0];
+            if (cartItemStack == null) {
+                if (event.getVehicle() instanceof StorageMinecart) {
+                    StorageMinecart cart = (StorageMinecart) event.getVehicle();
+                    ItemStack[] leftovers = ChestUtil.putItems(cart.getInventory().getContents(), dispenser);
+                    cart.getInventory().clear();
+                    for (ItemStack i : leftovers) {
+                        if (i == null)
+                            continue;
+                        cart.getWorld().dropItem(cart.getLocation(), i);
                     }
-                    Dispenser dispenser = (Dispenser) event.getBlock().getRelative(BlockFace.UP).getState();
-                    ItemStack cartItemStack = ChestUtil.putItems(item, dispenser)[0];
-                    if (cartItemStack == null) {
-                        if (event.getVehicle() instanceof StorageMinecart) {
-                            StorageMinecart cart = (StorageMinecart) event.getVehicle();
-                            ItemStack[] leftovers = ChestUtil.putItems(cart.getInventory().getContents(), dispenser);
-                            cart.getInventory().clear();
-                            for (ItemStack i : leftovers) {
-                                if (i == null)
-                                    continue;
-                                cart.getWorld().dropItem(cart.getLocation(), i);
-                            }
-                        }
-                        event.getVehicle().remove();
-                        return;
+                }
+                event.getVehicle().remove();
+                return;
+            }
+        }
+    }
+
+    private void parseItemSign(Sign sign, StorageMinecart cart, Direction direction) {
+        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseItemSign(sign, direction);
+        List<Chest> chests;
+        for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
+            if (entry.getValue() == null)
+                continue;
+            switch (entry.getKey()) {
+                case COLLECT:
+                    //Collect items (from cart to chest)
+                    chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                    for (Chest c : chests) {
+                        ChestUtil.moveItems(cart.getInventory(), c.getInventory(), entry.getValue());
                     }
                     break;
-                case WALL_SIGN:
-                case SIGN_POST:
-                    Bukkit.getServer().broadcastMessage("Collision with sign!");
+                case DEPOSIT:
+                    //Deposit items (from chest to cart)
+                    chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                    for (Chest c : chests) {
+                        ChestUtil.moveItems(c.getInventory(), cart.getInventory(), entry.getValue());
+                    }
                     break;
             }
         }
     }
 
-    private void parseSign(Sign sign, StorageMinecart cart, Direction direction) {
-        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, direction);
-        if (SignParser.checkStorageCart(cart)) {
-            List<Chest> chests;
-            for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
-                if (entry.getValue() == null)
-                    continue;
-                switch (entry.getKey()) {
-                    case COLLECT:
-                        //Collect items (from cart to chest)
-                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
-                        for (Chest c : chests) {
-                            ChestUtil.moveItems(cart.getInventory(), c.getInventory(), entry.getValue());
-                        }
-                        break;
-                    case DEPOSIT:
-                        //Deposit items (from chest to cart)
-                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
-                        for (Chest c : chests) {
-                            ChestUtil.moveItems(c.getInventory(), cart.getInventory(), entry.getValue());
-                        }
-                        break;
-                }
-            }
-        }
+    /**
+     * TODO: write this function.
+     */
+    private void parseRouteSign(Sign sign, Minecart cart, Direction direction) {
+        //fill this
     }
 }
