@@ -1,6 +1,7 @@
 package com.tweakcart.model;
 
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Minecart;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -217,6 +218,13 @@ public class SignParser {
         return true;
     }
 
+    /**
+     * TODO: implement this function. It automatically teleports the cart to the correct location and in the correct direction (this is why cart is an argument).
+     */
+    public static boolean parseRouteSign(Sign sign, Direction direction, Minecart cart) {
+        return true;
+    }
+
     public static HashMap<Action, IntMap> parseItemSign(Sign sign, Direction direction) {
         Action oldAction = Action.NULL;
 
@@ -265,7 +273,6 @@ public class SignParser {
                 }
             }
         }
-
         return returnData;
     }
 }
