@@ -3,6 +3,8 @@ package com.tweakcart.model;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
+import com.tweakcart.model.SignParser.Action;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -11,6 +13,8 @@ import org.bukkit.material.MaterialData;
 public class IntMap {
     private static final int materialSize = Material.values().length - 1;
     private int[] mapData;
+    private Direction dir;
+    private Action act;
 
     public IntMap() {
         mapData = new int[materialSize + 49];
@@ -231,4 +235,18 @@ public class IntMap {
         }
 
     }
+
+    public void setDirection(Direction dir) {
+        this.dir = dir;
+    }
+    
+    public Direction getDirection(){
+        return dir;
+    }
+
+    public void setAction(Action act) {
+        this.act = act;
+        
+    }
+    
 }

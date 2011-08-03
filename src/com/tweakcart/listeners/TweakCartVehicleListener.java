@@ -29,7 +29,8 @@ import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Edoxile
+ *
+ * @author Edoxile
  */
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
@@ -42,12 +43,11 @@ public class TweakCartVehicleListener extends VehicleListener {
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
-        if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) {
-            return;
-        }
-
-        if (event.getVehicle() instanceof Minecart) {
-            Minecart cart = (Minecart) event.getVehicle();
+        if (event.getVehicle() instanceof StorageMinecart) {
+            if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) {
+                return;
+            }
+            StorageMinecart cart = (StorageMinecart) event.getVehicle();
 
             Vector cartSpeed = cart.getVelocity(); // We are gonna use this 1 object everywhere(a new Vector() is made on every call ;) ).
             Block toBlock = event.getTo().getBlock(); //Use this object everywhere as well.
@@ -56,39 +56,55 @@ public class TweakCartVehicleListener extends VehicleListener {
                 return;
             }
 
-            switch (horizontalDirection) {
-                case NORTH:
-                case SOUTH:
-                    for (int dy = -1; dy <= 0; dy++) {
-                        for (int dz = -1; dz <= 1; dz += 2) {
-                            Block tempBlock = toBlock.getRelative(0, dy, dz);
-                            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                                Sign s = (Sign) tempBlock.getState();
-                                parseSign(s, cart, horizontalDirection);
+            switch (toBlock.getType()) {
+                case RAILS:
+                case POWERED_RAIL:
+                case DETECTOR_RAIL:
+                    switch (horizontalDirection) {
+                        case NORTH:
+                        case SOUTH:
+                            for (int dy = -1; dy <= 0; dy++) {
+                                for (int dz = -1; dz <= 1; dz += 2) {
+                                    Block tempBlock = toBlock.getRelative(0, dy, dz);
+                                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                        Sign s = (Sign) tempBlock.getState();
+                                        parseItemSign(s, cart, horizontalDirection);
+                                    }
+                                }
                             }
-                        }
+                            break;
+                        case EAST:
+                        case WEST:
+                            for (int dy = -1; dy <= 0; dy++) {
+                                for (int dx = -1; dx <= 1; dx += 2) {
+                                    Block tempBlock = toBlock.getRelative(dx, dy, 0);
+                                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                        Sign s = (Sign) tempBlock.getState();
+                                        parseItemSign(s, cart, horizontalDirection);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                    Block tempBlock = toBlock.getRelative(0, 1, 0);
+                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                        Sign s = (Sign) tempBlock.getState();
+                        parseItemSign(s, cart, horizontalDirection);
                     }
                     break;
-                case EAST:
-                case WEST:
-                    for (int dy = -1; dy <= 0; dy++) {
-                        for (int dx = -1; dx <= 1; dx += 2) {
-                            Block tempBlock = toBlock.getRelative(dx, dy, 0);
-                            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                                Sign s = (Sign) tempBlock.getState();
-                                parseSign(s, cart, horizontalDirection);
-                            }
-                        }
-                    }
+                case SIGN_POST:
+                case WALL_SIGN:
+
                     break;
             }
         }
     }
 
     public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-        if (event.getBlock().getRelative(BlockFace.UP).getTypeId() == 23 && event.getVehicle() instanceof Minecart) {
+        if (event.getVehicle() instanceof Minecart && event.getBlock().getRelative(BlockFace.UP).getTypeId() == Material.DISPENSER.getId()) {
             ItemStack item;
             if (event.getVehicle() instanceof PoweredMinecart) {
                 item = new ItemStack(Material.POWERED_MINECART, 1);
@@ -116,35 +132,36 @@ public class TweakCartVehicleListener extends VehicleListener {
         }
     }
 
-    private void parseSign(Sign sign, Minecart cart, Direction direction) {
-        SignLocation signloc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
-        if(signmap.getIntMap(signloc) != null){
-            log.info("i have found an entry in the softmap");
-        }
-        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, cart, direction);
-        if (SignParser.checkStorageCart(cart)) {
-            StorageMinecart storageCart = (StorageMinecart) cart;
-            List<Chest> chests;
-            for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
-                if (entry.getValue() == null)
-                    continue;
-                switch (entry.getKey()) {
-                    case COLLECT:
-                        //Collect items (from cart to chest)
-                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
-                        for (Chest c : chests) {
-                            ChestUtil.moveItems(storageCart.getInventory(), c.getInventory(), entry.getValue());
-                        }
-                        break;
-                    case DEPOSIT:
-                        //Deposit items (from chest to cart)
-                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
-                        for (Chest c : chests) {
-                            ChestUtil.moveItems(c.getInventory(), storageCart.getInventory(), entry.getValue());
-                        }
-                        break;
-                }
+
+    private void parseItemSign(Sign sign, StorageMinecart cart, Direction direction) {
+        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseItemSign(sign, direction);
+        List<Chest> chests;
+        for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
+            if (entry.getValue() == null)
+                continue;
+            switch (entry.getKey()) {
+                case COLLECT:
+                    //Collect items (from cart to chest)
+                    chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                    for (Chest c : chests) {
+                        ChestUtil.moveItems(cart.getInventory(), c.getInventory(), entry.getValue());
+                    }
+                    break;
+                case DEPOSIT:
+                    //Deposit items (from chest to cart)
+                    chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                    for (Chest c : chests) {
+                        ChestUtil.moveItems(c.getInventory(), cart.getInventory(), entry.getValue());
+                    }
+                    break;
             }
         }
+    }
+
+    /**
+     * TODO: write this function.
+     */
+    private void parseRouteSign(Sign sign, Minecart cart, Direction direction) {
+        //fill this
     }
 }

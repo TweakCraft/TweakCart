@@ -1,16 +1,14 @@
 package com.tweakcart.util;
 
 import com.tweakcart.model.Direction;
-
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Minecart;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.util.Vector;
-
 
 /**
  * Created by IntelliJ IDEA.
- * User: Edoxile
+ *
+ * @author Edoxile, Meaglin
  */
 public class CartUtil {
 
@@ -20,13 +18,10 @@ public class CartUtil {
     private static final double min_movement = 0.04d;
 
     /**
-     * Checks whereather the cart is moving at a very small pace
-     * and needs to be stopped to prevent unnececary server load.
-     *
-     * @param cart
-     * @return true if the cart was stopped, false if nothing was changed.
+     * Checks whether the cart is moving at a very small pace
+     * and needs to be stopped to prevent unnecessary server load.
      */
-    public static final boolean stoppedSlowCart(Minecart cart, Vector velocity, Block to, Direction horizontalDirection) {
+    public static final boolean stoppedSlowCart(StorageMinecart cart, Vector velocity, Block to, Direction horizontalDirection) {
         switch (Direction.getVerticalDirection(to, horizontalDirection)) {
             case DOWN:
             case UP:
