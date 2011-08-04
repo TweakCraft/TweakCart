@@ -40,7 +40,8 @@ public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
     private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
-
+    private static int softMapHits = 0;
+    private static int softMapMisses = 0;
     public TweakCartVehicleListener(TweakCart instance) {
         plugin = instance;
         softmap = new MapMaker().concurrencyLevel(4).softKeys().makeMap();
@@ -142,11 +143,13 @@ public class TweakCartVehicleListener extends VehicleListener {
         List<Chest> chests;
         SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
         if(softmap.containsKey(loc) && containsDirection(softmap.get(loc), direction)){
-            intmaps = softmap.get(loc);            
+            intmaps = softmap.get(loc);  
+            softMapHits++;
         }
         else{
             intmaps = SignParser.parseItemSign(sign, direction);
             softmap.put(loc, intmaps);
+            softMapMisses++;
         }
         for (IntMap map: intmaps) {
             if (map == null)
@@ -179,11 +182,19 @@ public class TweakCartVehicleListener extends VehicleListener {
         return false;
          
     }
-
+    
+    public int getSoftMapHits(){
+        return softMapHits;
+    }
+    
+    public int getSoftMapMisses(){
+        return softMapMisses;
+    }
+    
     /**
      * TODO: write this function.
      */
-    private void parseRouteSign(Sign sign, Minecart cart, Direction direction) {
+    public void parseRouteSign(Sign sign, Minecart cart, Direction direction) {
         //fill this
     }
 }
