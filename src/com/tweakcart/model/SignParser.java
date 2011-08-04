@@ -3,7 +3,10 @@ package com.tweakcart.model;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -225,10 +228,10 @@ public class SignParser {
         return true;
     }
 
-    public static HashMap<Action, IntMap> parseItemSign(Sign sign, Direction direction) {
+    public static List<IntMap> parseItemSign(Sign sign, Direction direction) {
         Action oldAction = Action.NULL;
 
-        HashMap<Action, IntMap> returnData = new HashMap<Action, IntMap>();
+        List<IntMap> returndata = new ArrayList<IntMap>();
         IntMap map;
 
         for (String line : sign.getLines()) {
@@ -245,26 +248,54 @@ public class SignParser {
                     case COLLECT:
                         switch (newAction) {
                             case ALL:
-                                if (returnData.containsKey(oldAction)) {
-                                    map = returnData.get(oldAction);
+                                IntMap tempmap = null;
+                                int maplocation = -1;
+                                boolean running = true;
+                                for(int i = 0; i < returndata.size() && running; i++){
+                                    IntMap nextmap = returndata.get(i);
+                                    if(nextmap.getAction().equals(oldAction)){
+                                        tempmap = nextmap;
+                                        maplocation = i;
+                                        running = false;
+                                    }
+                                }
+                                if (tempmap != null) {
+                                    map = tempmap;
                                     map.fillAll();
-                                    returnData.put(oldAction, map);
+                                    map.setAction(oldAction);
+                                    returndata.set(maplocation, map);
                                 } else {
                                     map = new IntMap();
                                     map.fillAll();
-                                    returnData.put(oldAction, map);
+                                    map.setAction(oldAction);                                    
+                                    returndata.add(map);
                                 }
                                 break;
                             case ITEM:
                                 IntMap parsed = buildIntMap(line);
                                 if (parsed != null) {
-                                    if (returnData.containsKey(oldAction)) {
-                                        map = returnData.get(oldAction);
+                                    //OEEEH, daar gebruikte ik control v, dat moet toch netter kunen :)
+                                    IntMap tempmap2 = null;
+                                    int maplocation2 = -1;
+                                    boolean running2 = true;
+                                    for(int i = 0; i < returndata.size() && running2; i++){
+                                        IntMap nextmap = returndata.get(i);
+                                        if(nextmap.getAction().equals(oldAction)){
+                                            tempmap2 = nextmap;
+                                            maplocation2 = i;
+                                            running2 = false;
+                                        }
+                                    }
+                                    
+                                    
+                                    if (tempmap2 != null) {
+                                        map = tempmap2;
                                         map.combine(parsed);
-                                        returnData.put(oldAction, map);
+                                        map.setAction(oldAction);
+                                        returndata.set(maplocation2, map);
                                     } else {
                                         parsed.setAction(oldAction);
-                                        returnData.put(oldAction, parsed);
+                                        returndata.add(parsed);
                                     }
                                 }
                                 break;
@@ -273,6 +304,6 @@ public class SignParser {
                 }
             }
         }
-        return returnData;
+        return returndata;
     }
 }

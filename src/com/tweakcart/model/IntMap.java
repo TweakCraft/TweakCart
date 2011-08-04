@@ -249,4 +249,8 @@ public class IntMap {
         
     }
     
+    public Action getAction(){
+        return act;
+    }
+    
 }

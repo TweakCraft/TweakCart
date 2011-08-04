@@ -134,24 +134,24 @@ public class TweakCartVehicleListener extends VehicleListener {
 
 
     private void parseItemSign(Sign sign, StorageMinecart cart, Direction direction) {
-        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseItemSign(sign, direction);
+        List<IntMap> intmaps = SignParser.parseItemSign(sign, direction);
         List<Chest> chests;
-        for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
-            if (entry.getValue() == null)
+        for (IntMap map: intmaps) {
+            if (map == null)
                 continue;
-            switch (entry.getKey()) {
+            switch (map.getAction()) {
                 case COLLECT:
                     //Collect items (from cart to chest)
                     chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                     for (Chest c : chests) {
-                        ChestUtil.moveItems(cart.getInventory(), c.getInventory(), entry.getValue());
+                        ChestUtil.moveItems(cart.getInventory(), c.getInventory(), map);
                     }
                     break;
                 case DEPOSIT:
                     //Deposit items (from chest to cart)
                     chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                     for (Chest c : chests) {
-                        ChestUtil.moveItems(c.getInventory(), cart.getInventory(), entry.getValue());
+                        ChestUtil.moveItems(c.getInventory(), cart.getInventory(), map);
                     }
                     break;
             }
