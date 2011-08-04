@@ -35,11 +35,10 @@ import java.util.logging.Logger;
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
-    private SoftSignMap signmap;
-    
+
+
     public TweakCartVehicleListener(TweakCart instance) {
         plugin = instance;
-        signmap = new SoftSignMap();
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
@@ -144,14 +143,14 @@ public class TweakCartVehicleListener extends VehicleListener {
                     //Collect items (from cart to chest)
                     chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                     for (Chest c : chests) {
-                        ChestUtil.moveItems(cart.getInventory(), c.getInventory(), map);
+                        ChestUtil.moveItems(cart.getInventory(), c.getInventory(), map, true);
                     }
                     break;
                 case DEPOSIT:
                     //Deposit items (from chest to cart)
                     chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
                     for (Chest c : chests) {
-                        ChestUtil.moveItems(c.getInventory(), cart.getInventory(), map);
+                        ChestUtil.moveItems(c.getInventory(), cart.getInventory(), map, false);
                     }
                     break;
             }

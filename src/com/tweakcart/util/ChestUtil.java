@@ -17,7 +17,7 @@ import java.util.List;
  * @author Edoxile
  */
 public class ChestUtil {
-    public static final ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
+    public static ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
         ItemStack[] to = containerBlock.getInventory().getContents();
         for (int i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null)
@@ -50,12 +50,15 @@ public class ChestUtil {
         return putItems(stacks, containerBlock);
     }
 
-    public static void moveItems(Inventory iFrom, Inventory iTo, IntMap through) {
+    public static boolean moveItems(Inventory iFrom, Inventory iTo, IntMap through, boolean toChest) {
+        int slots = 0;
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
         int i1, i2;
         for (i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null) {
+                if (!toChest)
+                    slots++;
                 continue;
             }
             int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
@@ -71,11 +74,15 @@ public class ChestUtil {
                     to[i2] = from[i1].clone();
                     to[i2].setAmount(amountToMove);
                     amountToMove = 0;
+                    if (!toChest || to[i2].getAmount() == 64)
+                        slots++;
                     break;
                 } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
                     if (amountToMove + to[i2].getAmount() > 64) {
                         amountToMove += to[i2].getAmount() - 64;
                         to[i2].setAmount(64);
+                        if (toChest)
+                            slots++;
                     } else {
                         to[i2].setAmount(amountToMove + to[i2].getAmount());
                         amountToMove = 0;
@@ -84,10 +91,13 @@ public class ChestUtil {
                 }
             }
             from[i1].setAmount(from[i1].getAmount() + amountToMove - 1);
+            if (!toChest && from[i1] == null || from[i1].getAmount() == 0 || from[i1].getTypeId() == Material.AIR.getId())
+                slots++;
             through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
         }
         iTo.setContents(to);
         iFrom.setContents(from);
+        return (toChest ? slots == to.length : slots == from.length);
     }
 
     public static List<Chest> getChestsAroundBlock(Block block, int sw) {
