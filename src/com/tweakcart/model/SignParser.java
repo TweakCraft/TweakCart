@@ -2,10 +2,7 @@ package com.tweakcart.model;
 
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -267,7 +264,8 @@ public class SignParser {
                                 } else {
                                     map = new IntMap();
                                     map.fillAll();
-                                    map.setAction(oldAction);                                    
+                                    map.setAction(oldAction);  
+                                    map.setDirection(direction);
                                     returndata.add(map);
                                 }
                                 break;
@@ -295,6 +293,7 @@ public class SignParser {
                                         returndata.set(maplocation2, map);
                                     } else {
                                         parsed.setAction(oldAction);
+                                        parsed.setDirection(direction);
                                         returndata.add(parsed);
                                     }
                                 }

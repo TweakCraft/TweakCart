@@ -1,5 +1,6 @@
 package com.tweakcart.listeners;
 
+import com.google.common.collect.MapMaker;
 import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
@@ -23,8 +24,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 
 /**
@@ -35,10 +39,11 @@ import java.util.logging.Logger;
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
-
+    private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
 
     public TweakCartVehicleListener(TweakCart instance) {
         plugin = instance;
+        softmap = new MapMaker().concurrencyLevel(4).softKeys().makeMap();
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
@@ -133,8 +138,16 @@ public class TweakCartVehicleListener extends VehicleListener {
 
 
     private void parseItemSign(Sign sign, StorageMinecart cart, Direction direction) {
-        List<IntMap> intmaps = SignParser.parseItemSign(sign, direction);
+        List<IntMap> intmaps;
         List<Chest> chests;
+        SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
+        if(softmap.containsKey(loc) && containsDirection(softmap.get(loc), direction)){
+            intmaps = softmap.get(loc);            
+        }
+        else{
+            intmaps = SignParser.parseItemSign(sign, direction);
+            softmap.put(loc, intmaps);
+        }
         for (IntMap map: intmaps) {
             if (map == null)
                 continue;
@@ -155,6 +168,16 @@ public class TweakCartVehicleListener extends VehicleListener {
                     break;
             }
         }
+    }
+
+    private boolean containsDirection(List<IntMap> list, Direction dir) {
+        for(Iterator<IntMap> it = list.iterator(); it.hasNext();){
+            if(it.next().getDirection() == dir){
+                return true;
+            }
+        }
+        return false;
+         
     }
 
     /**
