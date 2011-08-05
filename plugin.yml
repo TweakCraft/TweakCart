@@ -3,4 +3,8 @@ main: com.tweakcart.TweakCart
 authors: [Meaglin, The-Sec, windwarrior, Edoxile]
 website: https://github.com/Edoxile/TweakCart
 version: 0.3.0
-
+commands:
+    cartdebug:
+        description: Show TweakCart debug info
+        usage: /cartdebug
+        aliases: [cd]
