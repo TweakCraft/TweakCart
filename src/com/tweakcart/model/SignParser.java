@@ -112,6 +112,9 @@ public class SignParser {
 
             line = line.substring(2);
         }
+        else{
+            map.setDirection(Direction.SELF); 
+        }
         if (line.charAt(0) == '!') {
             isNegate = true;
             line = line.substring(1);
@@ -231,7 +234,6 @@ public class SignParser {
 
         List<IntMap> returndata = new ArrayList<IntMap>();
         IntMap map;
-
         for (String line : sign.getLines()) {
             line = removeBrackets(line);
             Action newAction = SignParser.parseAction(line, direction);
@@ -261,13 +263,11 @@ public class SignParser {
                                     map = tempmap;
                                     map.fillAll();
                                     map.setAction(oldAction);
-                                    map.setDirection(direction);
                                     returndata.set(maplocation, map);
                                 } else {
                                     map = new IntMap();
                                     map.fillAll();
-                                    map.setAction(oldAction);  
-                                    map.setDirection(direction);
+                                    map.setAction(oldAction);
                                     returndata.add(map);
                                 }
                                 break;
@@ -290,13 +290,11 @@ public class SignParser {
                                     
                                     if (tempmap2 != null) {
                                         map = tempmap2;
-                                        tempmap2.setDirection(direction);
                                         map.combine(parsed);
                                         map.setAction(oldAction);
                                         returndata.set(maplocation2, map);
                                     } else {
                                         parsed.setAction(oldAction);
-                                        parsed.setDirection(direction);
                                         returndata.add(parsed);
                                     }
                                 }
