@@ -146,13 +146,13 @@ public class TweakCartVehicleListener extends VehicleListener {
         List<Chest> chests;
         SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
         List<IntMap> temp = softmap.get(loc);
-        if(temp != null && containsDirection(temp, direction)){
+        if(temp != null && (containsDirection(temp, direction) || direction == Direction.SELF)){
             intmaps = temp;
             softMapHits++;
         }
         else{
             intmaps = SignParser.parseItemSign(sign, direction);
-            Bukkit.getServer().broadcastMessage(ChatColor.AQUA + "Op locatie: " + loc.toString() + ", met Hash:" + loc.hashCode() + "is een freaking miss");
+            Bukkit.getServer().broadcastMessage(ChatColor.AQUA + "Op locatie: " + loc.toString() + ", met Hash:" + loc.hashCode() + "is een freaking miss" + ChatColor.GOLD + direction.toString());
             softmap.put(loc, intmaps);
             softMapMisses++;
         }
