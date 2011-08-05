@@ -32,8 +32,7 @@ public class SignParser {
     }
 
     public static Action parseAction(String line, Direction direction) {
-        if (line == null || line == "") {
-            Bukkit.getServer().broadcastMessage("IK heb een lege string");
+        if (line == null || line.equals("")) {
             return Action.NULL;
         }
 
@@ -262,6 +261,7 @@ public class SignParser {
                                     map = tempmap;
                                     map.fillAll();
                                     map.setAction(oldAction);
+                                    map.setDirection(direction);
                                     returndata.set(maplocation, map);
                                 } else {
                                     map = new IntMap();
@@ -290,6 +290,7 @@ public class SignParser {
                                     
                                     if (tempmap2 != null) {
                                         map = tempmap2;
+                                        tempmap2.setDirection(direction);
                                         map.combine(parsed);
                                         map.setAction(oldAction);
                                         returndata.set(maplocation2, map);

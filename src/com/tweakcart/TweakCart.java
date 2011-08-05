@@ -41,6 +41,7 @@ public class TweakCart extends JavaPlugin {
         log.info("[" + getDescription().getName() + "] Disabled!");
     }
     
+    
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if(cmd.getName().toLowerCase().equals("cartdebug")){
             sender.sendMessage("SoftMap peformance, Hits:" + vehicleListener.getSoftMapHits() + ", Misses:" + vehicleListener.getSoftMapMisses() + ", Average:" + (float) vehicleListener.getSoftMapHits() / ((float) vehicleListener.getSoftMapHits() + (float) vehicleListener.getSoftMapMisses()) + "%");

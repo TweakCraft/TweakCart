@@ -12,6 +12,7 @@ import com.tweakcart.util.MathUtil;
 import com.tweakcart.util.SoftSignMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -39,12 +40,14 @@ import java.util.logging.Logger;
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
+    //private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
     private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
     private static int softMapHits = 0;
     private static int softMapMisses = 0;
     public TweakCartVehicleListener(TweakCart instance) {
         plugin = instance;
-        softmap = new MapMaker().concurrencyLevel(4).softKeys().makeMap();
+        softmap = new MapMaker().concurrencyLevel(4).softValues().makeMap();
+        //softmap = new HashMap<SignLocation,List<IntMap>>();
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
@@ -142,12 +145,14 @@ public class TweakCartVehicleListener extends VehicleListener {
         List<IntMap> intmaps;
         List<Chest> chests;
         SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
-        if(softmap.containsKey(loc) && containsDirection(softmap.get(loc), direction)){
-            intmaps = softmap.get(loc);  
+        List<IntMap> temp = softmap.get(loc);
+        if(temp != null && containsDirection(temp, direction)){
+            intmaps = temp;
             softMapHits++;
         }
         else{
             intmaps = SignParser.parseItemSign(sign, direction);
+            Bukkit.getServer().broadcastMessage(ChatColor.AQUA + "Op locatie: " + loc.toString() + ", met Hash:" + loc.hashCode() + "is een freaking miss");
             softmap.put(loc, intmaps);
             softMapMisses++;
         }
