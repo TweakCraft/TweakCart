@@ -1,5 +1,6 @@
 package com.tweakcart.model;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import java.util.ArrayList;
@@ -31,13 +32,14 @@ public class SignParser {
     }
 
     public static Action parseAction(String line, Direction direction) {
-        if (line == null) {
+        if (line == null || line == "") {
+            Bukkit.getServer().broadcastMessage("IK heb een lege string");
             return Action.NULL;
         }
 
         line = line.toLowerCase();
 
-        char firstChar = Character.toLowerCase(line.charAt(0));
+        char firstChar = line.charAt(0);
 
         if (line.length() > 0) {
             if (Character.isDigit(firstChar) || firstChar == '!') {
