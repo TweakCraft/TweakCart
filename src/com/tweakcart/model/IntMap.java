@@ -197,11 +197,16 @@ public class IntMap {
     public boolean equals(Object other) {
         if (other instanceof IntMap) {
             IntMap otherMap = (IntMap) other;
-            for (int index = 0; index <= 537; index++) {
-                if (mapData[index] != otherMap.mapData[index])
-                    return false;
+            if(otherMap.getDirection() == this.getDirection()){
+                for (int index = 0; index < mapData.length; index++) {
+                    if (mapData[index] != otherMap.mapData[index])
+                        return false;
+                }
+                return true;
             }
-            return true;
+            else{
+                return false;
+            }
         } else {
             return false;
         }

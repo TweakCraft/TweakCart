@@ -236,6 +236,7 @@ public class SignParser {
         IntMap map;
         for (String line : sign.getLines()) {
             line = removeBrackets(line);
+            line = line.toLowerCase();
             Action newAction = SignParser.parseAction(line, direction);
             if (newAction == Action.NULL) {
                 continue;

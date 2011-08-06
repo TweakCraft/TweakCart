@@ -44,6 +44,7 @@ public class TweakCartVehicleListener extends VehicleListener {
     private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
     private static int softMapHits = 0;
     private static int softMapMisses = 0;
+    private int softMapPartialMisses = 0;
     public TweakCartVehicleListener(TweakCart instance) {
         plugin = instance;
         softmap = new MapMaker().concurrencyLevel(4).softValues().makeMap();
@@ -146,15 +147,31 @@ public class TweakCartVehicleListener extends VehicleListener {
         List<Chest> chests;
         SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
         List<IntMap> temp = softmap.get(loc);
-        if(temp != null && (containsDirection(temp, direction) || direction == Direction.SELF)){
+        if(temp != null && containsDirection(temp, direction)){
             intmaps = temp;
             softMapHits++;
         }
         else{
             intmaps = SignParser.parseItemSign(sign, direction);
             Bukkit.getServer().broadcastMessage(ChatColor.AQUA + "Op locatie: " + loc.toString() + ", met Hash:" + loc.hashCode() + "is een freaking miss" + ChatColor.GOLD + direction.toString());
-            softmap.put(loc, intmaps);
-            softMapMisses++;
+            if(softmap.get(loc) != null){
+                //Aha, er was dus wel een lijstje softmaps, miss dat we ze dan maar samen moeten voegen
+                List<IntMap> prevresult = softmap.get(loc);
+                for(int i = 0; i < prevresult.size(); i++){
+                    if(!intmaps.contains(prevresult.get(i))){
+                        Bukkit.getServer().broadcastMessage(ChatColor.RED + "Ik ben twee maps aan't samenvoegen");
+                        intmaps.add(prevresult.get(i));
+                    }
+                }
+                softmap.put(loc, intmaps);
+                softMapPartialMisses ++;
+            }
+            else{
+                //Dit was dus een volledige miss
+                softmap.put(loc, intmaps);
+                softMapMisses++;
+            }
+
         }
         for (IntMap map: intmaps) {
             if (map == null)
@@ -180,8 +197,13 @@ public class TweakCartVehicleListener extends VehicleListener {
 
     private boolean containsDirection(List<IntMap> list, Direction dir) {
         for(Iterator<IntMap> it = list.iterator(); it.hasNext();){
-            if(it.next().getDirection() == dir){
+            Direction dir2 = it.next().getDirection();
+            if(dir2 == dir){
+                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "Contains direction is gelukt");
                 return true;
+            }
+            else{
+                Bukkit.getServer().broadcastMessage(ChatColor.DARK_PURPLE + "Direction niet gelukt " + "Expected: " + dir.toString() + ", Got: "  + dir2.toString());
             }
         }
         return false;
@@ -194,6 +216,10 @@ public class TweakCartVehicleListener extends VehicleListener {
     
     public int getSoftMapMisses(){
         return softMapMisses;
+    }
+    
+    public int getPartialMisses(){
+        return softMapPartialMisses;
     }
     
     /**
