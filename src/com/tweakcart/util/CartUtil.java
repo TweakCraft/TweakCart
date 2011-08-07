@@ -12,9 +12,9 @@ import org.bukkit.util.Vector;
  */
 public class CartUtil {
 
-    /*
-      * The minimal speed needed for a cart to be able to reach the next block.
-      */
+    /**
+    * The minimal speed needed for a cart to be able to reach the next block.
+    */
     private static final double min_movement = 0.04d;
 
     /**

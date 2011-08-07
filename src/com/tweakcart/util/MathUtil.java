@@ -4,7 +4,7 @@ import org.bukkit.Location;
 
 public class MathUtil {
 
-    public static final int floor(double d) {
+    private static final int floor(double d) {
         int rt = (int) d;
         return rt > d ? rt - 1 : rt;
     }

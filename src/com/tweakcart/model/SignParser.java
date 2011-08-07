@@ -1,11 +1,9 @@
 package com.tweakcart.model;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,7 +19,6 @@ public class SignParser {
         ALL
     }
 
-    private static final Logger log = Logger.getLogger("Minecraft");
 
     public static String removeBrackets(String line) {
         if (line.length() > 2 && line.charAt(0) == '[' && line.charAt(line.length() - 1) == ']') {
@@ -35,8 +32,6 @@ public class SignParser {
         if (line == null || line.equals("")) {
             return Action.NULL;
         }
-
-        line = line.toLowerCase();
 
         char firstChar = line.charAt(0);
 

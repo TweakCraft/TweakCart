@@ -9,10 +9,7 @@ import com.tweakcart.model.SignParser;
 import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
-import com.tweakcart.util.SoftSignMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -25,13 +22,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,14 +32,13 @@ import java.util.logging.Logger;
  * @author Edoxile
  */
 public class TweakCartVehicleListener extends VehicleListener {
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private static TweakCart plugin = null;
+    //private static TweakCart plugin = null;
     private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
     private static int softMapHits = 0;
     private static int softMapMisses = 0;
     private int softMapPartialMisses = 0;
     public TweakCartVehicleListener(TweakCart instance) {
-        plugin = instance;
+        //plugin = instance;
         softmap = new MapMaker().concurrencyLevel(4).softValues().makeMap();
     }
 
@@ -147,20 +139,15 @@ public class TweakCartVehicleListener extends VehicleListener {
         SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
         List<IntMap> temp = softmap.get(loc);
         if(temp != null && containsDirection(temp, direction)){
-            //Omdat we slechts een aantal directions nodig hebben strippen we de andere eraf
-            //We veranderen de enty in de softmap natuurlijk niet
             intmaps = stripDirection(temp, direction);
             softMapHits++;
         }
         else{
             intmaps = SignParser.parseItemSign(sign, direction);
-            Bukkit.getServer().broadcastMessage(ChatColor.AQUA + "Op locatie: " + loc.toString() + ", met Hash:" + loc.hashCode() + "is een freaking miss" + ChatColor.GOLD + direction.toString());
             if(softmap.get(loc) != null){
-                //Aha, er was dus wel een lijstje softmaps, miss dat we ze dan maar samen moeten voegen
                 List<IntMap> prevresult = softmap.get(loc);
                 for(int i = 0; i < prevresult.size(); i++){
                     if(!intmaps.contains(prevresult.get(i))){
-                        Bukkit.getServer().broadcastMessage(ChatColor.RED + "Ik ben twee maps aan't samenvoegen");
                         intmaps.add(prevresult.get(i));
                     }
                 }
@@ -168,7 +155,6 @@ public class TweakCartVehicleListener extends VehicleListener {
                 softMapPartialMisses ++;
             }
             else{
-                //Dit was dus een volledige miss
                 softmap.put(loc, intmaps);
                 softMapMisses++;
             }
@@ -211,11 +197,7 @@ public class TweakCartVehicleListener extends VehicleListener {
         for(Iterator<IntMap> it = list.iterator(); it.hasNext();){
             Direction dir2 = it.next().getDirection();
             if(dir2 == dir){
-                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "Contains direction is gelukt");
                 return true;
-            }
-            else{
-                Bukkit.getServer().broadcastMessage(ChatColor.DARK_PURPLE + "Direction niet gelukt " + "Expected: " + dir.toString() + ", Got: "  + dir2.toString());
             }
         }
         return false;
