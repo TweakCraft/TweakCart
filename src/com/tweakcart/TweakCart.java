@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +34,7 @@ public class TweakCart extends JavaPlugin {
         pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_DISPENSE, blockListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.VEHICLE_COLLISION_BLOCK, vehicleListener, Event.Priority.Normal, this);
+        pm.registerEvent(Event.Type.SIGN_CHANGE, blockListener , Event.Priority.Normal, this);
         // Loaded!
         log.info("[" + getDescription().getName() + "] Enabled! version:" + getDescription().getVersion());
     }
@@ -47,5 +49,13 @@ public class TweakCart extends JavaPlugin {
             sender.sendMessage("SoftMap peformance," + ChatColor.GREEN + " Hits: " + vehicleListener.getSoftMapHits() + ChatColor.YELLOW + ", Partial misses: " + vehicleListener.getPartialMisses() + ChatColor.RED + ", Misses: " + vehicleListener.getSoftMapMisses() + ChatColor.GOLD + ", Average Full hits: " + (float) vehicleListener.getSoftMapHits() / ((float) vehicleListener.getSoftMapHits() + (float) vehicleListener.getSoftMapMisses())  * 100.0f + "%");
         }
         return false;
+    }
+    
+    public TweakCartBlockListener getBlockListener(){
+        return blockListener;
+    }
+    
+    public TweakCartVehicleListener getVehicleListener(){
+        return vehicleListener;
     }
 }

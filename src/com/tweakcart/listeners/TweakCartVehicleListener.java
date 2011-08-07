@@ -240,4 +240,8 @@ public class TweakCartVehicleListener extends VehicleListener {
     public void parseRouteSign(Sign sign, Minecart cart, Direction direction) {
         //fill this
     }
+
+    public void removeEntry(SignLocation loc) {
+        softmap.remove(loc);      
+    }
 }

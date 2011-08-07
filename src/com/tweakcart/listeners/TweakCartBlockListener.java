@@ -2,6 +2,10 @@ package com.tweakcart.listeners;
 
 import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
+import com.tweakcart.model.SignLocation;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
@@ -10,6 +14,7 @@ import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.block.SignChangeEvent;
 
 import java.util.logging.Logger;
 
@@ -23,6 +28,13 @@ public class TweakCartBlockListener extends BlockListener {
 
     public TweakCartBlockListener(TweakCart plugin) {
         this.plugin = plugin;
+    }
+    
+    public void onSignChange(SignChangeEvent event){
+        Block b = event.getBlock();
+        SignLocation loc = new SignLocation(b.getX(), b.getY(), b.getZ());
+        Bukkit.getServer().broadcastMessage(ChatColor.DARK_GREEN + "I have killed a signlocation");
+        plugin.getVehicleListener().removeEntry(loc);
     }
 
     public void onBlockDispense(BlockDispenseEvent event) {
