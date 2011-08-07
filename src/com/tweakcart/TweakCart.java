@@ -44,7 +44,7 @@ public class TweakCart extends JavaPlugin {
     
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if(cmd.getName().toLowerCase().equals("cartdebug")){
-            sender.sendMessage("SoftMap peformance, Hits: " + vehicleListener.getSoftMapHits() + ", Misses: " + vehicleListener.getSoftMapMisses() + ", Partial misses: " + vehicleListener.getPartialMisses() + ", Average Full hits: " + (float) vehicleListener.getSoftMapHits() / ((float) vehicleListener.getSoftMapHits() + (float) vehicleListener.getSoftMapMisses())  * 100.0f + "%");
+            sender.sendMessage("SoftMap peformance," + ChatColor.GREEN + " Hits: " + vehicleListener.getSoftMapHits() + ChatColor.YELLOW + ", Partial misses: " + vehicleListener.getPartialMisses() + ChatColor.RED + ", Misses: " + vehicleListener.getSoftMapMisses() + ChatColor.GOLD + ", Average Full hits: " + (float) vehicleListener.getSoftMapHits() / ((float) vehicleListener.getSoftMapHits() + (float) vehicleListener.getSoftMapMisses())  * 100.0f + "%");
         }
         return false;
     }

@@ -24,6 +24,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +41,6 @@ import java.util.logging.Logger;
 public class TweakCartVehicleListener extends VehicleListener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static TweakCart plugin = null;
-    //private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
     private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
     private static int softMapHits = 0;
     private static int softMapMisses = 0;
@@ -48,7 +48,6 @@ public class TweakCartVehicleListener extends VehicleListener {
     public TweakCartVehicleListener(TweakCart instance) {
         plugin = instance;
         softmap = new MapMaker().concurrencyLevel(4).softValues().makeMap();
-        //softmap = new HashMap<SignLocation,List<IntMap>>();
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
@@ -148,7 +147,9 @@ public class TweakCartVehicleListener extends VehicleListener {
         SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
         List<IntMap> temp = softmap.get(loc);
         if(temp != null && containsDirection(temp, direction)){
-            intmaps = temp;
+            //Omdat we slechts een aantal directions nodig hebben strippen we de andere eraf
+            //We veranderen de enty in de softmap natuurlijk niet
+            intmaps = stripDirection(temp, direction);
             softMapHits++;
         }
         else{
@@ -193,6 +194,17 @@ public class TweakCartVehicleListener extends VehicleListener {
                     break;
             }
         }
+    }
+
+    private List<IntMap> stripDirection(List<IntMap> temp, Direction dir) {
+       List<IntMap> result = new ArrayList<IntMap>();
+       for(int i = 0; i < temp.size(); i++){
+           if(temp.get(i).getDirection() == dir || temp.get(i).getDirection() == Direction.SELF){
+               result.add(temp.get(i));
+           }
+       }
+       
+       return result;
     }
 
     private boolean containsDirection(List<IntMap> list, Direction dir) {
