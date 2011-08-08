@@ -1,5 +1,7 @@
 package com.tweakcart.model;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
@@ -17,12 +19,12 @@ public class IntMap {
     private Action act;
 
     public IntMap() {
-        mapData = new int[materialSize + 49];
+        mapData = new int[materialSize + 50];
     }
 
     private IntMap(int[] data) {
-        if (data.length != (materialSize + 49)) {
-            mapData = new int[materialSize + 49];
+        if (data.length != (materialSize + 50)) {
+            mapData = new int[materialSize + 50];
         } else {
             mapData = data;
         }
@@ -181,11 +183,13 @@ public class IntMap {
     }
 
     private boolean setDataRange(int id, byte start, byte end, int amount) {
+        Bukkit.getServer().broadcastMessage("" + ChatColor.RED + materialSize);
         if (!hasDataValue(id))
             return false;
 
         for (byte data = start; data <= end; data++) {
             int key = getIntIndex(id, data);
+            Bukkit.getServer().broadcastMessage(id + " " + data + " " + key);
             if (key == -1)
                 break;
             mapData[key] = amount;
