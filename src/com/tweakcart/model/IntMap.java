@@ -13,7 +13,7 @@ public class IntMap {
     private int[] mapData;
 
     public IntMap() {
-        mapData = new int[materialSize + 49];
+        mapData = new int[materialSize + 53];
     }
 
     private IntMap(int[] data) {
