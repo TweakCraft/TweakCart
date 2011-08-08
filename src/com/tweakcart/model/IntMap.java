@@ -9,16 +9,16 @@ import org.bukkit.material.MaterialData;
  * @author TheSec, Edoxile
  */
 public class IntMap {
-    private static final int materialSize = Material.values().length - 1;
+    private static final int materialSize = Material.values().length;
     private int[] mapData;
 
     public IntMap() {
-        mapData = new int[materialSize + 53];
+        mapData = new int[materialSize + 50];
     }
 
     private IntMap(int[] data) {
-        if (data.length != (materialSize + 49)) {
-            mapData = new int[materialSize + 49];
+        if (data.length != (materialSize + 50)) {
+            mapData = new int[materialSize + 50];
         } else {
             mapData = data;
         }
