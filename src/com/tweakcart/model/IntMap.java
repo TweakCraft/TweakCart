@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
 /**
- * Created by IntelliJ IDEA.
+ * Created by Eclipse.
  *
  * @author TheSec, Edoxile
  */
@@ -13,12 +13,12 @@ public class IntMap {
     private int[] mapData;
 
     public IntMap() {
-        mapData = new int[materialSize + 50];
+        mapData = new int[materialSize + 52];
     }
 
     private IntMap(int[] data) {
-        if (data.length != (materialSize + 50)) {
-            mapData = new int[materialSize + 50];
+        if (data.length != (materialSize + 52)) {
+            mapData = new int[materialSize + 52];
         } else {
             mapData = data;
         }
@@ -103,6 +103,9 @@ public class IntMap {
                             return materialSize + (int) data + 34;
                         else
                             return -1;
+                    case COAL:
+                        if (data < 2)
+                            return materialSize + (int) data + 50;
                     default:
                         return m.ordinal();
                 }
@@ -117,6 +120,7 @@ public class IntMap {
             case 17:
             case 18:
             case 35:
+            case 263:
             case 351:
                 return true;
             default:
