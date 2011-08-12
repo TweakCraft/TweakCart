@@ -31,6 +31,7 @@ public class ChestUtil {
                     if ((from[i1].getAmount() + to[i2].getAmount()) > 64) {
                         from[i1].setAmount((to[i2].getAmount() + from[i1].getAmount()) - 64);
                         to[i2].setAmount(64);
+                        i1--;
 
                     } else {
                         to[i2].setAmount(to[i2].getAmount() + from[i1].getAmount());
