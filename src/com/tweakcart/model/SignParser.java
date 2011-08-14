@@ -2,6 +2,9 @@ package com.tweakcart.model;
 
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.PoweredMinecart;
+import org.bukkit.entity.StorageMinecart;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,25 +89,7 @@ public class SignParser {
         boolean isNegate = false;
         if (line.length() >= 2 && line.charAt(1) == '+') {
             //TODO Eigenlijk is dit niet net, gezien we deze opvraag net ook al gedaan hebben
-            switch(line.charAt(0)){
-            case 'n':
-                map.setDirection(Direction.NORTH);
-                break;
-            case 's':
-                map.setDirection(Direction.SOUTH);
-                break;
-            case 'e':
-                map.setDirection(Direction.EAST);
-                break;
-            case 'w':
-                map.setDirection(Direction.WEST);
-                break;   
-            default:
-                map.setDirection(Direction.SELF);
-                break;   
-
-            }
-
+            map.setDirection(getDirection(line.charAt(1)));
             line = line.substring(2);
         }
         else{
@@ -193,36 +178,108 @@ public class SignParser {
     }
 
     private static boolean checkDirection(char c, Direction d) {
-        switch (c) {
-            case 'n':
-                if (d != Direction.NORTH) {
-                    return false;
-                }
-                break;
-            case 's':
-                if (d != Direction.SOUTH) {
-                    return false;
-                }
-                break;
-            case 'e':
-                if (d != Direction.EAST) {
-                    return false;
-                }
-                break;
-            case 'w':
-                if (d != Direction.WEST) {
-                    return false;
-                }
-        }
-        return true;
+        return (getDirection(c) == d || getDirection(c) == Direction.SELF); //Yay, 10 keer zo kort ofzo :)
     }
 
     /**
      * TODO: implement this function. It automatically teleports the cart to the correct location and in the correct direction (this is why cart is an argument).
      */
     public static boolean parseRouteSign(Sign sign, Direction direction, Minecart cart) {
-        return true;
+        //BASIC syntax: [Direction from <N,S,E,W>];[Type of cart <S,M,P>],[Full/Empty <F,E>];[Direction to go <N,S,E,W>]
+        //Example: S,F;N: makes storagecarts that are full go north :)        
+        String[] lines = sign.getLines();
+        
+        for(int i = 0; i < lines.length; i++){
+            String line = lines[i];
+            Minecart type;
+            
+            String[] temp = line.split(":");
+            for(String partline: temp){
+                String[] directionalparts = partline.split(";");
+                if(directionalparts.length == 3){
+                    //deel 1 is een direction
+                    Direction from = getDirection(directionalparts[0].toLowerCase().charAt(0));
+                    if(from != direction && direction != Direction.SELF){
+                        continue;
+                    }
+                    Direction to = getDirection(directionalparts[2].toLowerCase().charAt(0));
+                    String[] cartTypeFullness = directionalparts[1].split(";");
+                    if(cartTypeFullness.length == 2 && checkCartType(cartTypeFullness[0], cart)){
+                        boolean fullcart = getFull(cartTypeFullness[1].toLowerCase().charAt(0));
+                        if(cart instanceof StorageMinecart){
+                            StorageMinecart storecart = (StorageMinecart) cart;
+                            if(storecart.isEmpty() == !fullcart){
+                                //oke moven dan maar ;)
+                            }
+                        }else if(cart instanceof PoweredMinecart){
+                            PoweredMinecart powcart = (PoweredMinecart) cart;
+                            if(powcart.isEmpty() == !fullcart){
+                                //ook maar moven
+                            }
+                        }else{
+                            if(cart.isEmpty() == !fullcart){
+                                //whatever :)
+                            }
+                        }
+                    }
+                    else{
+                        continue;
+                    }
+                    
+                }else if(directionalparts.length == 2){
+                    Direction to = getDirection(directionalparts[1].toLowerCase().charAt(0));
+                    String[] cartTypeFullness = directionalparts[1].split(";");
+                }else{
+                    //User fail
+                }
+                
+            }
+        }
+        
+        return false;
     }
+    
+    /**
+     * Langste methode EVURR!
+     * @param c
+     * @return
+     */
+    private static boolean getFull(char c) {        
+        return c == 'f';
+    }
+
+    private static boolean checkCartType(String type, Minecart cart) {
+        char carttypechar = type.toLowerCase().charAt(0);
+        switch(carttypechar){
+        case 's':
+            if(cart instanceof StorageMinecart) return true;
+            break;
+        case 'p':
+            if(cart instanceof PoweredMinecart) return true;
+            break;
+        case 'm':
+            if(cart instanceof Minecart) return true;
+            break;        
+        }
+        return false;
+    }
+
+    private static Direction getDirection(char c){
+        switch(c){
+        case 'n':
+            return Direction.NORTH;
+        case 's':
+            return Direction.SOUTH;
+        case 'e':
+            return Direction.EAST;
+        case 'w':
+            return Direction.WEST;
+        default:
+            return Direction.SELF;
+
+        }
+    }
+    
 
     public static List<IntMap> parseItemSign(Sign sign, Direction direction) {
         Action oldAction = Action.NULL;

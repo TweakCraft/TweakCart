@@ -101,6 +101,9 @@ public class TweakCartVehicleListener extends VehicleListener {
                     break;
             }
         }
+        else{
+            
+        }
     }
 
     public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
@@ -152,7 +155,7 @@ public class TweakCartVehicleListener extends VehicleListener {
                     }
                 }
                 softmap.put(loc, intmaps);
-                softMapPartialMisses ++;
+                softMapPartialMisses++;
             }
             else{
                 softmap.put(loc, intmaps);
