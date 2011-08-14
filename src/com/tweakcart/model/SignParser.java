@@ -89,7 +89,7 @@ public class SignParser {
         boolean isNegate = false;
         if (line.length() >= 2 && line.charAt(1) == '+') {
             //TODO Eigenlijk is dit niet net, gezien we deze opvraag net ook al gedaan hebben
-            map.setDirection(getDirection(line.charAt(1)));
+            map.setDirection(getDirection(line.charAt(0)));
             line = line.substring(2);
         }
         else{
