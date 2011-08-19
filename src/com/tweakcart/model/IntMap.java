@@ -9,16 +9,17 @@ import org.bukkit.material.MaterialData;
  * @author TheSec, Edoxile
  */
 public class IntMap {
-    private static final int materialSize = Material.values().length;
+    public static final int materialSize = Material.values().length;
+    public static final int mapSize = materialSize + 53;
     private int[] mapData;
 
     public IntMap() {
-        mapData = new int[materialSize + 53];
+        mapData = new int[mapSize];
     }
 
     private IntMap(int[] data) {
-        if (data.length != (materialSize + 53)) {
-            mapData = new int[materialSize + 53];
+        if (data.length != (mapSize + 53)) {
+            mapData = new int[mapSize];
         } else {
             mapData = data;
         }
@@ -105,7 +106,9 @@ public class IntMap {
                             return -1;
                     case COAL:
                         if (data < 2)
-                            return materialSize + (int) data + 50;
+                            return materialSize + (int) data + 49;
+                        else
+                            return -1;
                     default:
                         return m.ordinal();
                 }
@@ -181,13 +184,14 @@ public class IntMap {
     }
 
     private boolean setDataRange(int id, byte start, byte end, int amount) {
-        if (!hasDataValue(id))
+        if (!hasDataValue(id)){
             return false;
-
+        }
         for (byte data = start; data <= end; data++) {
             int key = getIntIndex(id, data);
-            if (key == -1)
+            if (key == -1){
                 break;
+            }
             mapData[key] = amount;
         }
         return true;
@@ -197,7 +201,7 @@ public class IntMap {
     public boolean equals(Object other) {
         if (other instanceof IntMap) {
             IntMap otherMap = (IntMap) other;
-            for (int index = 0; index <= 537; index++) {
+            for (int index = 0; index <= mapData.length; index++) {
                 if (mapData[index] != otherMap.mapData[index])
                     return false;
             }
