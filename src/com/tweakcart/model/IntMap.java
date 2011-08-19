@@ -13,12 +13,12 @@ public class IntMap {
     private int[] mapData;
 
     public IntMap() {
-        mapData = new int[materialSize + 52];
+        mapData = new int[materialSize + 53];
     }
 
     private IntMap(int[] data) {
-        if (data.length != (materialSize + 52)) {
-            mapData = new int[materialSize + 52];
+        if (data.length != (materialSize + 53)) {
+            mapData = new int[materialSize + 53];
         } else {
             mapData = data;
         }
