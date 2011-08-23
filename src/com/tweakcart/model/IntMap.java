@@ -10,7 +10,7 @@ import org.bukkit.material.MaterialData;
  */
 public class IntMap {
     public static final int materialSize = Material.values().length;
-    public static final int mapSize = materialSize + 53;
+    public static final int mapSize = materialSize + 54;
     private int[] mapData;
 
     public IntMap() {
@@ -33,7 +33,7 @@ public class IntMap {
     public int getInt(int id, byte data) {
         int intLocation = IntMap.getIntIndex(id, data);
 
-        if (intLocation == -1) {
+        if (intLocation == -1 || intLocation >= mapSize) {
             return 0;
         }
 
@@ -72,6 +72,9 @@ public class IntMap {
     }
 
     private static int getIntIndex(Material m, byte data) {
+        if(m == null){
+            return -1;
+        }
         switch (data) {
             case 0:
                 //Alle items waarop we .ordinal kunnen doen
@@ -109,6 +112,12 @@ public class IntMap {
                             return materialSize + (int) data + 49;
                         else
                             return -1;
+                    case STEP:
+                        if (data < 4)
+                            return materialSize + (int) data + 50;
+                        else
+                            return -1;
+                        
                     default:
                         return m.ordinal();
                 }

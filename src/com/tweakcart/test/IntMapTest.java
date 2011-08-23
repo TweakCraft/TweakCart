@@ -3,10 +3,13 @@ package com.tweakcart.test;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
+import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
+import com.tweakcart.model.SignParser;
 
 public class IntMapTest {
     public static void main(String[] args){
+        System.out.println(IntMap.getIntIndex(0, (byte) 0));
         System.out.println(IntMap.getIntIndex(1, (byte)0));
         System.out.println(IntMap.getIntIndex(2, (byte)0));
         System.out.println(IntMap.getIntIndex(3, (byte)0));
@@ -71,6 +74,7 @@ public class IntMapTest {
         System.out.println(IntMap.getIntIndex(41, (byte)0));
         System.out.println(IntMap.getIntIndex(42, (byte)0));
         System.out.println(IntMap.getIntIndex(43, (byte)0));//doubleslabs, only inventory edit
+        System.out.println("STEPS");
         System.out.println(IntMap.getIntIndex(44, (byte)0));//slabs <----- DIT IS SOWIESO FOUT
         System.out.println(IntMap.getIntIndex(44, (byte)1));//slabs <----- DIT IS SOWIESO FOUT
         System.out.println(IntMap.getIntIndex(44, (byte)2));//slabs <----- DIT IS SOWIESO FOUT
@@ -251,10 +255,12 @@ public class IntMapTest {
         System.out.println(IntMap.getIntIndex(358, (byte) 0));
         System.out.println(IntMap.getIntIndex(359, (byte) 0));
         System.out.println(IntMap.getIntIndex(2256, (byte) 0));
-        System.out.println(IntMap.getIntIndex(2257, (byte) 0));
+        System.out.println(IntMap.getIntIndex(3333, (byte) 0));
         
-        System.out.println("Material Size: " + Material.values().length + " Total: " + (Material.values().length + 53));
+        System.out.println("Material Size: " + Material.values().length + " Total: " + (Material.values().length + 54));
         System.out.println("IntMap reporting size: " + IntMap.mapSize);
         System.out.println("Wol data 4: " + new MaterialData(351, (byte)4));
+        
+        System.out.println(SignParser.buildIntMap("44,0", Direction.SELF));
     }
 }
