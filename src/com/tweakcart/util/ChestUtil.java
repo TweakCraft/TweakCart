@@ -61,12 +61,12 @@ public class ChestUtil {
                 continue;
             }
             int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
-            int startAmount = from[i1].getAmount();
+            int startAmount = from[i1].getAmount(); //De hoeveelheid die in de cart of chest zit
             if (mapAmount == 0 || mapAmount == Integer.MIN_VALUE) {
                 continue;
             }
 
-            int amountToMove = (mapAmount == Integer.MAX_VALUE ? startAmount : mapAmount);
+            int amountToMove = (mapAmount == Integer.MAX_VALUE ? startAmount : mapAmount); //de hoeveelheid die te moven is
             from[i1].setAmount(from[i1].getAmount() - amountToMove + 1);
             for (i2 = 0; i2 < to.length; i2++) {
                 if (to[i2] == null) {
@@ -77,9 +77,10 @@ public class ChestUtil {
                 } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
                     if (amountToMove + to[i2].getAmount() > 64) {
                         //hier gaat iets mis
+                        
                         amountToMove += to[i2].getAmount() - 64;
                         to[i2].setAmount(64);
-                        i1--; //ik DENK dat dit dat fixt, maar even naar kjiken @Edoxile
+                        
                     } else {
                         to[i2].setAmount(amountToMove + to[i2].getAmount());
                         amountToMove = 0;
