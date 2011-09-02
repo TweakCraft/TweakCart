@@ -57,6 +57,7 @@ public class ChestUtil {
         int i1, i2;
         for (i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null) {
+                //Dat betekent dus dat er geen item in dat slot zit :)
                 continue;
             }
             int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
@@ -75,8 +76,10 @@ public class ChestUtil {
                     break;
                 } else if (to[i2].getTypeId() == from[i1].getTypeId() && to[i2].getDurability() == from[i1].getDurability() && to[i2].getAmount() < 64) {
                     if (amountToMove + to[i2].getAmount() > 64) {
+                        //hier gaat iets mis
                         amountToMove += to[i2].getAmount() - 64;
                         to[i2].setAmount(64);
+                        i1--; //ik DENK dat dit dat fixt, maar even naar kjiken @Edoxile
                     } else {
                         to[i2].setAmount(amountToMove + to[i2].getAmount());
                         amountToMove = 0;
