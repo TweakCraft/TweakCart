@@ -3,6 +3,7 @@ package com.tweakcart.util;
 import com.tweakcart.model.IntMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -56,6 +57,7 @@ public class ChestUtil {
     public static void moveItems(Inventory iFrom, Inventory iTo, IntMap through) {
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
+        ItemStack[] temp = new ItemStack[64];
         int i1, i2;
         for (i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null) {
@@ -70,7 +72,8 @@ public class ChestUtil {
             }
 
             int amountToMove = (mapAmount == Integer.MAX_VALUE ? startAmount : mapAmount); //de hoeveelheid die te moven is
-            from[i1].setAmount(from[i1].getAmount() - amountToMove + 1);// hier kan zo hard iets stuk gaan
+            from[i1].setAmount(from[i1].getAmount() - amountToMove + 1);
+            boolean hasPutSomethingIn = true;
             for (i2 = 0; i2 < to.length; i2++) {
                 if (to[i2] == null) {
                     to[i2] = from[i1].clone();
@@ -91,11 +94,21 @@ public class ChestUtil {
                     }
                     break; //even een dif maken?
                 }
+                
+                if(i2 == to.length -1){
+                    //OEEH, we konden dus niets terug plaatsen
+                    hasPutSomethingIn = false;
+                    Bukkit.getServer().broadcastMessage("vol is vol");
+                }
+                
+                
             }
             int amountToPlaceBack = from[i1].getAmount() + amountToMove - 1;
+            Bukkit.getServer().broadcastMessage(ChatColor.AQUA + "" + amountToPlaceBack);
             from[i1].setAmount(amountToPlaceBack);
             through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
-            if(amountToPlaceBack > 0){
+            
+            if((amountToPlaceBack) > 0 && hasPutSomethingIn){
                 i1--;
             }
         }
