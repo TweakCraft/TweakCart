@@ -61,7 +61,7 @@ public class ChestUtil {
                 continue;
             }
             int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
-            mapAmount =  mapAmount > 64 ? 64 : mapAmount; //64 stacksizes :)
+            mapAmount =  (mapAmount > 64 && mapAmount < Integer.MAX_VALUE)? 64 : mapAmount; //64 stacksizes :)
             int startAmount = from[i1].getAmount(); //De hoeveelheid die in de cart of chest zit
             if (mapAmount == 0 || mapAmount == Integer.MIN_VALUE) {
                 continue;
