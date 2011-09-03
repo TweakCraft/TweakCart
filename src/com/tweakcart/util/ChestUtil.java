@@ -1,6 +1,8 @@
 package com.tweakcart.util;
 
 import com.tweakcart.model.IntMap;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -85,16 +87,17 @@ public class ChestUtil {
                     } else {
                         to[i2].setAmount(amountToMove + to[i2].getAmount());
                         amountToMove = 0;
+                        break;
                     }
-                    break;
                 }
             }
             int amountToPlaceBack = from[i1].getAmount() + amountToMove - 1;
             from[i1].setAmount(amountToPlaceBack);
+            through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
             if(amountToPlaceBack > 0){
+                Bukkit.getServer().broadcastMessage("I'm in the if");
                 i1--;
             }
-            through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
         }
         iTo.setContents(to);
         iFrom.setContents(from);
