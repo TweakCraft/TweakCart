@@ -95,7 +95,6 @@ public class ChestUtil {
             from[i1].setAmount(amountToPlaceBack);
             through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
             if(amountToPlaceBack > 0){
-                Bukkit.getServer().broadcastMessage("I'm in the if");
                 i1--;
             }
         }
