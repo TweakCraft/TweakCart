@@ -89,7 +89,7 @@ public class ChestUtil {
                         amountToMove = 0;
                         
                     }
-                    break;
+                    break; //even een dif maken?
                 }
             }
             int amountToPlaceBack = from[i1].getAmount() + amountToMove - 1;
