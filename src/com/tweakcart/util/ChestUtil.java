@@ -57,7 +57,6 @@ public class ChestUtil {
     public static void moveItems(Inventory iFrom, Inventory iTo, IntMap through) {
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
-        ItemStack[] temp = new ItemStack[64];
         int i1, i2;
         for (i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null) {
@@ -92,7 +91,7 @@ public class ChestUtil {
                         amountToMove = 0;
                         
                     }
-                    break; //even een dif maken?
+                    break;
                 }
                 
                 if(i2 == to.length -1){
@@ -106,7 +105,8 @@ public class ChestUtil {
             int amountToPlaceBack = from[i1].getAmount() + amountToMove - 1;
             Bukkit.getServer().broadcastMessage(ChatColor.AQUA + "" + amountToPlaceBack);
             from[i1].setAmount(amountToPlaceBack);
-            through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
+            //through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
+            //de bovenstaande regel slaat werkelijk waar nergens op, of wel?
             
             if((amountToPlaceBack) > 0 && hasPutSomethingIn){
                 i1--;
