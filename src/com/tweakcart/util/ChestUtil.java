@@ -61,13 +61,14 @@ public class ChestUtil {
                 continue;
             }
             int mapAmount = through.getInt(from[i1].getType(), (byte) from[i1].getDurability());
+            mapAmount =  mapAmount > 64 ? 64 : mapAmount; //64 stacksizes :)
             int startAmount = from[i1].getAmount(); //De hoeveelheid die in de cart of chest zit
             if (mapAmount == 0 || mapAmount == Integer.MIN_VALUE) {
                 continue;
             }
 
             int amountToMove = (mapAmount == Integer.MAX_VALUE ? startAmount : mapAmount); //de hoeveelheid die te moven is
-            from[i1].setAmount(from[i1].getAmount() - amountToMove + 1);
+            from[i1].setAmount(from[i1].getAmount() - amountToMove + 1);// hier kan zo hard iets stuk gaan
             for (i2 = 0; i2 < to.length; i2++) {
                 if (to[i2] == null) {
                     to[i2] = from[i1].clone();
@@ -88,7 +89,11 @@ public class ChestUtil {
                     break;
                 }
             }
-            from[i1].setAmount(from[i1].getAmount() + amountToMove - 1);
+            int amountToPlaceBack = from[i1].getAmount() + amountToMove - 1;
+            from[i1].setAmount(amountToPlaceBack);
+            if(amountToPlaceBack > 0){
+                i1--;
+            }
             through.setInt(from[i1].getType(), (byte) from[i1].getDurability(), amountToMove);
         }
         iTo.setContents(to);
