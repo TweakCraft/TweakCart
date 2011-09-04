@@ -117,7 +117,7 @@ public class ChestUtil {
              */
             for(int indexto = 0; indexto < to.length; indexto++ ) {
                 if(to[indexto] != null) continue;
-                int maxamount = settings.getInt(from[index].getTypeId(), data);
+                int maxamount = settings.getInt(item.getTypeId(), data);
                 if(item.getAmount() > maxamount) {
                     item.setAmount(item.getAmount() - maxamount);
                     to[indexto] = new ItemStack(item.getTypeId(), maxamount, data);
@@ -211,6 +211,7 @@ public class ChestUtil {
                 }
             }
         }
+        
         return chestList;
     }
     
@@ -219,21 +220,21 @@ public class ChestUtil {
         if((x == 1 || x == -1) && (z == 1 || z == -1)){
             if(block.getRelative(x+x, y, z).getTypeId() == Material.CHEST.getId()){
                 chestList.add((Chest) block.getRelative(x+x, y, z).getState());
-                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X:" + x + " Y:" + y + "Z:" + z);
+                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X: " + x + " Y: " + y + " Z: " + z);
             }
             else if(block.getRelative(x, y, z+z).getTypeId() == Material.CHEST.getId()){
                 chestList.add((Chest) block.getRelative(x, y, z+z).getState());
-                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X:" + x + " Y:" + y + "Z:" + z);
+                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X: " + x + " Y: " + y + " Z: " + z);
             }
         }else if(x == 1 || x == -1){
             if(block.getRelative(x+x, y, z).getTypeId() == Material.CHEST.getId()){
                 chestList.add((Chest) block.getRelative(x+x, y, z).getState());
-                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X:" + x + " Y:" + y + "Z:" + z);
+                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X: " + x + " Y: " + y + " Z: " + z);
             }
         }else if(z == 1 || z == -1){
             if(block.getRelative(x, y, z+z).getTypeId() == Material.CHEST.getId()){
                 chestList.add((Chest) block.getRelative(x, y, z+z).getState());
-                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X:" + x + " Y:" + y + "Z:" + z);
+                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X: " + x + " Y: " + y + " Z: " + z);
             }
         }
         
