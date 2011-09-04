@@ -204,11 +204,32 @@ public class ChestUtil {
         for (int dx = nsw; dx <= sw; dx++) {
             for (int dy = nsw; dy <= sw; dy++) {
                 for (int dz = nsw; dz <= sw; dz++) {
-                    if (block.getRelative(dx, dy, dz).getTypeId() == Material.CHEST.getId())
+                    if (block.getRelative(dx, dy, dz).getTypeId() == Material.CHEST.getId()){
                         chestList.add((Chest) block.getRelative(dx, dy, dz).getState());
+                        chestList = getChestsAdjacent(chestList, block, dx, dy, dz);
+                    }
                 }
             }
         }
+        return chestList;
+    }
+    
+    public static List<Chest> getChestsAdjacent(List<Chest> chestList, Block block, int x, int y, int z){
+
+        
+        if(x == 1 || x == -1){
+            if(block.getRelative(x+x, y, z).getTypeId() == Material.CHEST.getId()){
+                chestList.add((Chest) block.getRelative(x+x, y, z).getState());
+                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X:" + x + " Y:" + y + "Z:" + z);
+            }
+        }
+        else if(z == 1 || z == -1){
+            if(block.getRelative(x, y, z+z).getTypeId() == Material.CHEST.getId()){
+                chestList.add((Chest) block.getRelative(x, y+y, z).getState());
+                Bukkit.getServer().broadcastMessage("ik heb een kist gevonden op X:" + x + " Y:" + y + "Z:" + z);
+            }
+        }
+        
         return chestList;
     }
 }
