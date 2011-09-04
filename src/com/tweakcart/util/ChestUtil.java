@@ -130,6 +130,7 @@ public class ChestUtil {
                         maxamount -= item.getAmount();
                         settings.setInt(item.getTypeId(), data, maxamount);
                     }
+                    break;
                 }
             }
         }
