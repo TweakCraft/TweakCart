@@ -57,6 +57,7 @@ public class ChestUtil {
     public static void moveItems(Inventory iFrom, Inventory iTo, IntMap settings) {
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
+        Bukkit.getServer().broadcastMessage("bladieblabla");
         main:for(int index = 0; index < from.length; index++ ) { 
             if(from[index] == null) continue;
             byte data = from[index].getDurability() > Byte.MAX_VALUE ? 0 : IntMap.isAllowedMaterial(from[index].getTypeId(), (byte) from[index].getDurability()) ? (byte) from[index].getDurability() : 0;
@@ -80,11 +81,14 @@ public class ChestUtil {
                                     item.getAmount() < stackspace && maxamount >= stackspace ? item.getAmount() :
                                         maxamount < stackspace && item.getAmount() >= stackspace ? maxamount :
                                             maxamount > item.getAmount() ? item.getAmount() : maxamount);
+                System.out.println("from " + item.getAmount() + " to:" + temp.getAmount() + " move:" + moveamount + " stackspace:" + stackspace + " max:" + maxamount);
                 item.setAmount(item.getAmount() - moveamount);
                 temp.setAmount(temp.getAmount() + moveamount);
+                System.out.println("from " + item.getAmount() + " to:" + temp.getAmount() + " move:" + moveamount + " stackspace:" + stackspace + " max:" + maxamount);
                 if(maxamount != Integer.MAX_VALUE) {
                     settings.setInt(item.getTypeId(), data, maxamount-moveamount);
                 }
+                System.out.println("from " + item.getAmount() + " to:" + temp.getAmount() + " move:" + moveamount + " stackspace:" + stackspace + " max:" + settings.getInt(item.getTypeId(), data));
             }
             if(item.getAmount() <= 0) {
                 from[index] = null;
