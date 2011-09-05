@@ -62,12 +62,12 @@ public class ChestUtil {
             byte data = from[index].getDurability() > Byte.MAX_VALUE ? 0 : IntMap.isAllowedMaterial(from[index].getTypeId(), (byte) from[index].getDurability()) ? (byte) from[index].getDurability() : 0;
 
             if(settings.getInt(from[index].getTypeId(), data) <= 0) continue;
-
             ItemStack item = from[index];
             /*
              * First we try to append an existing stack.
              */
             for(int indexto = 0; indexto < to.length; indexto++ ) {
+                if(item.getAmount() <= 0) break;
                 if(to[indexto] == null) continue;
                 if(to[indexto].getTypeId() != item.getTypeId() || to[indexto].getDurability() != item.getDurability()) continue;
                 if(to[indexto].getAmount() >= 64) continue;
@@ -75,41 +75,20 @@ public class ChestUtil {
                 int maxamount = settings.getInt(from[index].getTypeId(), data);
 
                 ItemStack temp = to[indexto];
-                if(maxamount == Integer.MAX_VALUE || item.getAmount() < maxamount) {
-                    int before = item.getAmount();
-                    if(temp.getAmount() + item.getAmount() > 64) {
-                        item.setAmount(item.getAmount() - (64 - temp.getAmount()));
-                        temp.setAmount(64);
-                        int diff = before-item.getAmount();
-                        if(maxamount != Integer.MAX_VALUE) {
-                            maxamount -= diff;
-                            settings.setInt(item.getTypeId(), data, maxamount);
-                        }
-                    } else {
-                        temp.setAmount(temp.getAmount() + item.getAmount());
-                        item.setAmount(0); // prevent problems.
-                        if(maxamount != Integer.MAX_VALUE) {
-                            maxamount -= before;
-                            settings.setInt(item.getTypeId(), data, maxamount);
-                        }
-                        break;
-                    }
-                } else {
-                    if(maxamount + temp.getAmount() > 64) {
-                        item.setAmount(maxamount - (64 - temp.getAmount()));
-                        maxamount -= (64 - temp.getAmount());
-                        temp.setAmount(64);
-                        settings.setInt(item.getTypeId(), data, maxamount);
-                    } else {
-                        item.setAmount(item.getAmount() - maxamount);
-                        temp.setAmount(temp.getAmount() + maxamount);
-                        settings.setInt(item.getTypeId(), data, 0);
-                        break;
-                    }
+                int stackspace = 64 - temp.getAmount();
+                int moveamount = (item.getAmount() >= stackspace && maxamount >= stackspace ? stackspace :
+                                    item.getAmount() < stackspace && maxamount >= stackspace ? item.getAmount() :
+                                        maxamount < stackspace && item.getAmount() >= stackspace ? maxamount :
+                                            maxamount > item.getAmount() ? item.getAmount() : maxamount);
+                item.setAmount(item.getAmount() - moveamount);
+                temp.setAmount(temp.getAmount() + moveamount);
+                if(maxamount != Integer.MAX_VALUE) {
+                    settings.setInt(item.getTypeId(), data, maxamount-moveamount);
                 }
             }
-            if(item.getAmount() == 0) {
+            if(item.getAmount() <= 0) {
                 from[index] = null;
+                item.setAmount(0);
                 continue;
             }
             /*
