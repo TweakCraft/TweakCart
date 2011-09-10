@@ -54,11 +54,13 @@ public class ChestUtil {
         return putItems(stacks, containerBlock);
     }
     
-    public static void moveItems(Inventory iFrom, Inventory iTo, IntMap settings) {
+    public static IntMap moveItems(Inventory iFrom, Inventory iTo, IntMap map) {
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
+        IntMap settings = map.clone();
         //Bukkit.getServer().broadcastMessage("bladieblabla");
         main:for(int index = 0; index < from.length; index++ ) { 
+            Bukkit.getServer().broadcastMessage("Main for loop");
             if(from[index] == null) continue;
             byte data = from[index].getDurability() > Byte.MAX_VALUE ? 0 : IntMap.isAllowedMaterial(from[index].getTypeId(), (byte) from[index].getDurability()) ? (byte) from[index].getDurability() : 0;
 
@@ -67,11 +69,12 @@ public class ChestUtil {
             /*
              * First we try to append an existing stack.
              */
-            for(int indexto = 0; indexto < to.length; indexto++ ) {
+            append:for(int indexto = 0; indexto < to.length; indexto++ ) {
                 if(item.getAmount() <= 0) break;
-                if(to[indexto] == null) continue;
+                if(to[indexto] == null) continue append;
+                Bukkit.getServer().broadcastMessage("hai");
                 if(to[indexto].getTypeId() != item.getTypeId() || to[indexto].getDurability() != item.getDurability()) continue;
-                if(to[indexto].getAmount() >= 64) continue;
+                if(to[indexto].getAmount() >= 64) continue append;
 
                 int maxamount = settings.getInt(from[index].getTypeId(), data);
                 if(maxamount <= 0) break;
@@ -94,21 +97,23 @@ public class ChestUtil {
                 Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "Setting: " + settings.getInt(item.getTypeId(), data));
                 
             }
-            Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "Setting: " + settings.getInt(item.getTypeId(), data));
+            
             if(item.getAmount() <= 0) {
                 from[index] = null;
                 item.setAmount(0);
-                continue main;
+                continue;
             }
+            
+            Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "Setting: " + settings.getInt(item.getTypeId(), data));
             /*
              * Put item in an empty slot
              */
-            for(int indexto = 0; indexto < to.length; indexto++ ) {
-                if(to[indexto] != null) continue;
-                Bukkit.getServer().broadcastMessage(ChatColor.DARK_BLUE + "Ik zit in de tweede loop, met index: " + indexto);
+            empty:for(int indexto = 0; indexto < to.length; indexto++ ) {
+                Bukkit.getServer().broadcastMessage(ChatColor.DARK_BLUE + "Ik zit in de tweede loop, met index: " + indexto);               
+                if(to[indexto] != null) continue empty;
                 int maxamount = settings.getInt(item.getTypeId(), data);
                 Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "maxamount: " + maxamount);
-                if(maxamount <= 0) break; //FIX, PROFIT
+                if(maxamount <= 0) continue empty; //FIX, PROFIT
                 if(item.getAmount() > maxamount) {
                     item.setAmount(item.getAmount() - maxamount);
                     to[indexto] = new ItemStack(item.getTypeId(), maxamount, data);
@@ -127,6 +132,7 @@ public class ChestUtil {
         }
         iFrom.setContents(from);
         iTo.setContents(to);
+        return settings;
     }
 //    public static void moveItems(Inventory iFrom, Inventory iTo, IntMap through) {
 //        ItemStack[] from = iFrom.getContents();
