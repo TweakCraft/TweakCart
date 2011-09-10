@@ -57,7 +57,7 @@ public class ChestUtil {
     public static void moveItems(Inventory iFrom, Inventory iTo, IntMap settings) {
         ItemStack[] from = iFrom.getContents();
         ItemStack[] to = iTo.getContents();
-        Bukkit.getServer().broadcastMessage("bladieblabla");
+        //Bukkit.getServer().broadcastMessage("bladieblabla");
         main:for(int index = 0; index < from.length; index++ ) { 
             if(from[index] == null) continue;
             byte data = from[index].getDurability() > Byte.MAX_VALUE ? 0 : IntMap.isAllowedMaterial(from[index].getTypeId(), (byte) from[index].getDurability()) ? (byte) from[index].getDurability() : 0;
@@ -74,33 +74,39 @@ public class ChestUtil {
                 if(to[indexto].getAmount() >= 64) continue;
 
                 int maxamount = settings.getInt(from[index].getTypeId(), data);
-
+                if(maxamount <= 0) break;
                 ItemStack temp = to[indexto];
                 int stackspace = 64 - temp.getAmount();
                 int moveamount = (item.getAmount() >= stackspace && maxamount >= stackspace ? stackspace :
                                     item.getAmount() < stackspace && maxamount >= stackspace ? item.getAmount() :
                                         maxamount < stackspace && item.getAmount() >= stackspace ? maxamount :
                                             maxamount > item.getAmount() ? item.getAmount() : maxamount);
-                System.out.println("from " + item.getAmount() + " to:" + temp.getAmount() + " move:" + moveamount + " stackspace:" + stackspace + " max:" + maxamount);
+                Bukkit.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "MoveAmount: " + moveamount);
+                Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "ItemAmount: " + item.getAmount());
+                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "TempAmount: " + temp.getAmount());
                 item.setAmount(item.getAmount() - moveamount);
                 temp.setAmount(temp.getAmount() + moveamount);
-                System.out.println("from " + item.getAmount() + " to:" + temp.getAmount() + " move:" + moveamount + " stackspace:" + stackspace + " max:" + maxamount);
+                Bukkit.getServer().broadcastMessage(ChatColor.RED + "ItemAmount: " + item.getAmount());
+                Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "TempAmount: " + temp.getAmount());
                 if(maxamount != Integer.MAX_VALUE) {
                     settings.setInt(item.getTypeId(), data, maxamount-moveamount);
                 }
-                System.out.println("from " + item.getAmount() + " to:" + temp.getAmount() + " move:" + moveamount + " stackspace:" + stackspace + " max:" + settings.getInt(item.getTypeId(), data));
+                Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "Setting: " + settings.getInt(item.getTypeId(), data));
+                
             }
             if(item.getAmount() <= 0) {
                 from[index] = null;
                 item.setAmount(0);
-                continue;
+                continue main;
             }
             /*
              * Put item in an empty slot
              */
             for(int indexto = 0; indexto < to.length; indexto++ ) {
                 if(to[indexto] != null) continue;
+                Bukkit.getServer().broadcastMessage(ChatColor.DARK_BLUE + "Ik zit in de tweede loop, met index: " + indexto);
                 int maxamount = settings.getInt(item.getTypeId(), data);
+                if(maxamount <= 0) break; //FIX, PROFIT
                 if(item.getAmount() > maxamount) {
                     item.setAmount(item.getAmount() - maxamount);
                     to[indexto] = new ItemStack(item.getTypeId(), maxamount, data);
