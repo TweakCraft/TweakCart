@@ -18,7 +18,7 @@ public class IntMap {
     }
 
     private IntMap(int[] data) {
-        if (data.length != (mapSize + 53)) {
+        if (data.length != (mapSize)) {
             mapData = new int[mapSize];
         } else {
             mapData = data;

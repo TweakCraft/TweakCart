@@ -94,6 +94,7 @@ public class ChestUtil {
                 Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "Setting: " + settings.getInt(item.getTypeId(), data));
                 
             }
+            Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "Setting: " + settings.getInt(item.getTypeId(), data));
             if(item.getAmount() <= 0) {
                 from[index] = null;
                 item.setAmount(0);
@@ -106,6 +107,7 @@ public class ChestUtil {
                 if(to[indexto] != null) continue;
                 Bukkit.getServer().broadcastMessage(ChatColor.DARK_BLUE + "Ik zit in de tweede loop, met index: " + indexto);
                 int maxamount = settings.getInt(item.getTypeId(), data);
+                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "maxamount: " + maxamount);
                 if(maxamount <= 0) break; //FIX, PROFIT
                 if(item.getAmount() > maxamount) {
                     item.setAmount(item.getAmount() - maxamount);
