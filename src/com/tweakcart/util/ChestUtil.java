@@ -77,7 +77,7 @@ public class ChestUtil {
                 if(to[indexto].getAmount() >= 64) continue append;
 
                 int maxamount = settings.getInt(from[index].getTypeId(), data);
-                if(maxamount <= 0) break;
+                if(maxamount <= 0) break append;
                 ItemStack temp = to[indexto];
                 int stackspace = 64 - temp.getAmount();
                 int moveamount = (item.getAmount() >= stackspace && maxamount >= stackspace ? stackspace :
@@ -110,7 +110,7 @@ public class ChestUtil {
              */
             empty:for(int indexto = 0; indexto < to.length; indexto++ ) {
                 Bukkit.getServer().broadcastMessage(ChatColor.DARK_BLUE + "Ik zit in de tweede loop, met index: " + indexto);               
-                if(to[indexto] != null) continue empty;
+                if(to[indexto] != null) break;
                 int maxamount = settings.getInt(item.getTypeId(), data);
                 Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "maxamount: " + maxamount);
                 if(maxamount <= 0) continue empty; //FIX, PROFIT
