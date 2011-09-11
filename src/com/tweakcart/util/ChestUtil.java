@@ -60,8 +60,9 @@ public class ChestUtil {
             byte data = from[index].getDurability() > Byte.MAX_VALUE ? 0 : IntMap.isAllowedMaterial(from[index].getTypeId(), (byte) from[index].getDurability()) ? (byte) from[index].getDurability() : 0;
 
             ItemStack itemFrom = from[index];
-            if(settings.getInt(itemFrom.getTypeId(), data) <= 0) continue;
-            System.out.println("[0]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " d:" + data);
+            int typeid = itemFrom.getTypeId();
+            if(settings.getInt(typeid, data) <= 0) continue;
+            //System.out.println("[0]f: (" + typeid + ")" + itemFrom.getAmount() + " d:" + data);
             /*
              * First we try to append an existing stack.
              */
@@ -73,10 +74,10 @@ public class ChestUtil {
                 	to[indexto] = null;
                 	continue;
                 }
-                if(itemTo.getTypeId() != itemFrom.getTypeId() || itemTo.getDurability() != itemFrom.getDurability()) continue;
+                if(itemTo.getTypeId() != typeid || itemTo.getDurability() != itemFrom.getDurability()) continue;
                 if(itemTo.getAmount() >= 64) continue;
 
-                int maxamount = settings.getInt(itemFrom.getTypeId(), data);
+                int maxamount = settings.getInt(typeid, data);
                 if(maxamount <= 0) continue main;
                 
                 int stackspace = 64 - itemTo.getAmount();
@@ -84,13 +85,13 @@ public class ChestUtil {
                                     itemFrom.getAmount() < stackspace && maxamount >= stackspace ? itemFrom.getAmount() :
                                         maxamount < stackspace && itemFrom.getAmount() >= stackspace ? maxamount :
                                             maxamount > itemFrom.getAmount() ? itemFrom.getAmount() : maxamount);
-                System.out.println("[1]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " t: (" + itemTo.getTypeId() + ")" + itemTo.getAmount() + " d:" + data + " m:" + maxamount + " mv:" + moveamount);
+                //System.out.println("[1]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " t: (" + itemTo.getTypeId() + ")" + itemTo.getAmount() + " d:" + data + " m:" + maxamount + " mv:" + moveamount);
                 itemFrom.setAmount(itemFrom.getAmount() - moveamount);
                 itemTo.setAmount(itemTo.getAmount() + moveamount);
                 if(maxamount != Integer.MAX_VALUE) {
-                    settings.setInt(itemFrom.getTypeId(), data, maxamount-moveamount);
+                    settings.setInt(typeid, data, maxamount-moveamount);
                 }
-                System.out.println("[1]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " t: (" + itemTo.getTypeId() + ")" + itemTo.getAmount() + " d:" + data + " m:" + settings.getInt(itemFrom.getTypeId(), data) + " mv:" + moveamount);
+                //System.out.println("[1]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " t: (" + itemTo.getTypeId() + ")" + itemTo.getAmount() + " d:" + data + " m:" + settings.getInt(itemFrom.getTypeId(), data) + " mv:" + moveamount);
             }
             
             if(itemFrom.getAmount() <= 0) {
@@ -103,24 +104,24 @@ public class ChestUtil {
              */
             for(int indexto = 0; indexto < to.length; indexto++ ) {             
                 if(to[indexto] != null) continue;
-                int maxamount = settings.getInt(itemFrom.getTypeId(), data);
+                int maxamount = settings.getInt(typeid, data);
                 if(maxamount <= 0) break; //FIX, PROFIT
                 if(itemFrom.getAmount() > maxamount) {
-                	System.out.println("[2]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + maxamount + " d:" + data);
+                	//System.out.println("[2]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + maxamount + " d:" + data);
                     itemFrom.setAmount(itemFrom.getAmount() - maxamount);
-                    to[indexto] = new ItemStack(itemFrom.getTypeId(), maxamount, data);
-                    settings.setInt(itemFrom.getTypeId(), data, 0);
-                    System.out.println("[2]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + settings.getInt(itemFrom.getTypeId(), data) + " d:" + data);
+                    to[indexto] = new ItemStack(typeid, maxamount, data);
+                    settings.setInt(typeid, data, 0);
+                    //System.out.println("[2]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + settings.getInt(itemFrom.getTypeId(), data) + " d:" + data);
                     break; // We can't put more of this item type so we skip to the next item.
                 } else {
-                	System.out.println("[3]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + maxamount + " d:" + data);
+                	//System.out.println("[3]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + maxamount + " d:" + data);
                     to[indexto] = itemFrom;
                     from[index] = null;
                     if(maxamount != Integer.MAX_VALUE){
                         maxamount -= itemFrom.getAmount();
-                        settings.setInt(itemFrom.getTypeId(), data, maxamount);
+                        settings.setInt(typeid, data, maxamount);
                     }
-                    System.out.println("[3]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + settings.getInt(itemFrom.getTypeId(), data) + " d:" + data);
+                    //System.out.println("[3]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + settings.getInt(itemFrom.getTypeId(), data) + " d:" + data);
                     break;
                 }
             }
