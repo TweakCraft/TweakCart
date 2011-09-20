@@ -1,5 +1,4 @@
 package com.tweakcart;
-//Hai, je weet zelf
 
 import com.tweakcart.listeners.TweakCartBlockListener;
 import com.tweakcart.listeners.TweakCartVehicleListener;
