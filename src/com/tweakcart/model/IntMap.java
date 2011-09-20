@@ -113,7 +113,7 @@ public class IntMap {
                         else
                             return -1;
                     case STEP:
-                        if (data < 4)
+                        if (data < 7)
                             return materialSize + (int) data + 50;
                         else
                             return -1;
