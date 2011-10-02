@@ -55,7 +55,11 @@ public class SignParser {
                     case 'S':
                     case 'W':
                     case 'E':
-                        return Action.ITEM;
+                        if (line.charAt(2) == 'a' && line.equals(Character.toString(line.charAt(0)) + "+all items")) {
+                            return Action.ALL;
+                        } else {
+                            return Action.ITEM;
+                        }
                     default:
                 }
             }
@@ -85,75 +89,73 @@ public class SignParser {
         }
     }
 
-    public static IntMap buildIntMap(String line, Direction d) {
+    public static IntMap buildIntMap(String line) {
         IntMap map = new IntMap();
         boolean isNegate = false;
 
-        if (checkDirection(line, d)) {
-            if (line.length() >= 2 && line.charAt(1) == '+') {
-                line = line.substring(2);
-            }
-            if (line.charAt(0) == '!') {
-                isNegate = true;
-                line = line.substring(1);
-            }
+        if (line.length() >= 2 && line.charAt(1) == '+') {
+            line = line.substring(2);
+        }
+        if (line.charAt(0) == '!') {
+            isNegate = true;
+            line = line.substring(1);
+        }
 
-            String[] commands = line.split(":");
+        String[] commands = line.split(":");
 
-            for (String command : commands) {
-                int value = 0;
+        for (String command : commands) {
+            int value = 0;
 
-                String[] splitline = command.split("@");
+            String[] splitline = command.split("@");
 
-                if (splitline.length == 2) {
-                    try {
-                        value = Integer.parseInt(splitline[1]);
-                        value = (value < 1 ? Integer.MAX_VALUE : value);
-                        command = splitline[0];
-                    } catch (NumberFormatException e) {
-                        return null;
-                    }
-                } else if (splitline.length != 1) {
+            if (splitline.length == 2) {
+                try {
+                    value = Integer.parseInt(splitline[1]);
+                    value = (value < 1 ? Integer.MAX_VALUE : value);
+                    command = splitline[0];
+                } catch (NumberFormatException e) {
                     return null;
                 }
+            } else if (splitline.length != 1) {
+                return null;
+            }
 
-                splitline = command.split("-");
-                if (splitline.length == 2) {
-                    int[] startPair = checkIDData(splitline[0]);
-                    int[] endPair = checkIDData(splitline[1]);
-                    if (startPair != null && endPair != null) {
-                        if (value == 0) {
-                            if (isNegate) {
-                                value = Integer.MIN_VALUE;
-                            } else {
-                                value = Integer.MAX_VALUE;
-                            }
+            splitline = command.split("-");
+            if (splitline.length == 2) {
+                int[] startPair = checkIDData(splitline[0]);
+                int[] endPair = checkIDData(splitline[1]);
+                if (startPair != null && endPair != null) {
+                    if (value == 0) {
+                        if (isNegate) {
+                            value = Integer.MIN_VALUE;
+                        } else {
+                            value = Integer.MAX_VALUE;
                         }
-                        map.setRange(startPair[0], (byte) (startPair[1] & 0xff), endPair[0], (byte) (endPair[1] & 0xff), value);
-                    } else {
-                        return null;
                     }
-                } else if (splitline.length == 1) {
-                    int[] pair = checkIDData(splitline[0]);
-                    if (pair != null) {
-                        if (value == 0) {
-                            if (isNegate) {
-                                value = Integer.MIN_VALUE;
-                            } else {
-                                value = Integer.MAX_VALUE;
-                            }
-
-                        }
-                        map.setInt(pair[0], (byte) (pair[1] & 0xff), value);
-                    } else {
-                        //Ah er is dus iets mis gegaan bij het parsen
-                        return null;
-                    }
-
+                    map.setRange(startPair[0], (byte) (startPair[1] & 0xff), endPair[0], (byte) (endPair[1] & 0xff), value);
                 } else {
-                    //De gebruiker heeft meerdere '-' tekens aangegeven, en dat kan niet
                     return null;
                 }
+            } else if (splitline.length == 1) {
+                int[] pair = checkIDData(splitline[0]);
+                if (pair != null) {
+                    if (value == 0) {
+                        if (isNegate) {
+                            value = Integer.MIN_VALUE;
+                        } else {
+                            value = Integer.MAX_VALUE;
+                        }
+
+                    }
+                    map.setInt(pair[0], (byte) (pair[1] & 0xff), value);
+                } else {
+                    //Ah er is dus iets mis gegaan bij het parsen
+                    return null;
+                }
+
+            } else {
+                //De gebruiker heeft meerdere '-' tekens aangegeven, en dat kan niet
+                return null;
             }
 
 
@@ -216,7 +218,7 @@ public class SignParser {
 
     }
 
-    public static HashMap<Action, IntMap> parseSign(Sign sign, Minecart cart, Direction direction) {
+    public static HashMap<Action, IntMap> parseSign(Sign sign, Direction direction) {
 
         Action oldAction = Action.NULL;
 
@@ -232,45 +234,49 @@ public class SignParser {
                 oldAction = newAction;
                 continue;
             } else if (oldAction != Action.NULL) {
-                switch (oldAction) {
-                    case DEPOSIT:
-                    case COLLECT:
-                        switch (newAction) {
-                            case ALL:
-                                if (returnData.containsKey(oldAction)) {
-                                    map = returnData.get(oldAction);
-                                    map.fillAll();
-                                    returnData.put(oldAction, map);
-                                } else {
-                                    map = new IntMap();
-                                    map.fillAll();
-                                    returnData.put(oldAction, map);
-                                }
-                                break;
-                            case ITEM:
-                                IntMap parsed = buildIntMap(line, direction);
-
-                                if (parsed != null) {
-                                    // Mooi het is gelukt! Maps combinen dan maar!
+                if (checkDirection(line, direction)) {
+                    switch (oldAction) {
+                        case DEPOSIT:
+                        case COLLECT:
+                            switch (newAction) {
+                                case ALL:
                                     if (returnData.containsKey(oldAction)) {
                                         map = returnData.get(oldAction);
-                                        map.combine(parsed);
+                                        map.fillAll();
                                         returnData.put(oldAction, map);
                                     } else {
-                                        if (parsed != null)
-                                            returnData.put(oldAction, parsed);
+                                        map = new IntMap();
+                                        map.fillAll();
+                                        returnData.put(oldAction, map);
                                     }
-                                }
-                                break;
-                            default:
-                                //WTH?
-                                break;
-                        }
-                        break;
-                    //case ELEVATE?
-                    default:
-                        //Weird stuff is going on!
-                        break;
+                                    break;
+                                case ITEM:
+                                    IntMap parsed = buildIntMap(line);
+
+                                    if (parsed != null) {
+                                        // Mooi het is gelukt! Maps combinen dan maar!
+                                        if (returnData.containsKey(oldAction)) {
+                                            map = returnData.get(oldAction);
+                                            map.combine(parsed);
+                                            returnData.put(oldAction, map);
+                                        } else {
+                                            if (parsed != null)
+                                                returnData.put(oldAction, parsed);
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    //WTH?
+                                    break;
+                            }
+                            break;
+                        //case ELEVATE?
+                        default:
+                            //Weird stuff is going on!
+                            break;
+                    }
+                } else {
+                    continue;
                 }
             } else {
                 //Oldaction == Null and newAction is Item, so don't do anything.

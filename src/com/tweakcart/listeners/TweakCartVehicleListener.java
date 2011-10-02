@@ -111,7 +111,7 @@ public class TweakCartVehicleListener extends VehicleListener {
     }
 
     private void parseSign(Sign sign, Minecart cart, Direction direction) {
-        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, cart, direction);
+        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, direction);
         if (SignParser.checkStorageCart(cart)) {
             StorageMinecart storageCart = (StorageMinecart) cart;
             List<Chest> chests;

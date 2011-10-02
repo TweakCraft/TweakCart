@@ -264,6 +264,6 @@ public class IntMapTest {
         System.out.println("IntMap reporting size: " + IntMap.mapSize);
         System.out.println("Wol data 4: " + new MaterialData(351, (byte)4));
         
-        System.out.println(SignParser.buildIntMap("44,0", Direction.SELF));
+        System.out.println(SignParser.buildIntMap("44,0"));
     }
 }
