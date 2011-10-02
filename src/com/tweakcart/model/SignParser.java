@@ -55,10 +55,14 @@ public class SignParser {
                     case 'S':
                     case 'W':
                     case 'E':
-                        if (line.charAt(2) == 'a' && line.equals(Character.toString(line.charAt(0)) + "+all items")) {
-                            return Action.ALL;
+                        if (line.length() > 2) {
+                            if (line.charAt(2) == 'a' && line.equals(Character.toString(line.charAt(0)) + "+all items")) {
+                                return Action.ALL;
+                            } else {
+                                return Action.ITEM;
+                            }
                         } else {
-                            return Action.ITEM;
+                            return Action.NULL;
                         }
                     default:
                 }
