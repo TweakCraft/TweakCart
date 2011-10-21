@@ -39,29 +39,14 @@ public enum Direction {
         this.modZ = dir1.getModZ() + dir2.getModZ();
     }
 
-    /**
-     * Get the amount of X-coordinates to modify to get the represented block
-     *
-     * @return Amount of X-coordinates to modify
-     */
     public int getModX() {
         return modX;
     }
 
-    /**
-     * Get the amount of Y-coordinates to modify to get the represented block
-     *
-     * @return Amount of Y-coordinates to modify
-     */
     public int getModY() {
         return modY;
     }
 
-    /**
-     * Get the amount of Z-coordinates to modify to get the represented block
-     *
-     * @return Amount of Z-coordinates to modify
-     */
     public int getModZ() {
         return modZ;
     }
@@ -74,16 +59,7 @@ public enum Direction {
         return directions[modx + 1][mody + 1][modz + 1];
     }
 
-
-    /**
-     * Returns the direction the track is pointing at.
-     * few rules:
-     * - curved rails will return the direction their CURVE is pointing AT.
-     * - ascending tracks will return the direction they are ascending TO.
-     *
-     * @param track
-     * @return direction.
-     */
+    @Deprecated
     public static final Direction getHorizontalTrackDirection(Block track) {
         byte data = track.getData();
         switch (track.getTypeId()) {
@@ -121,15 +97,7 @@ public enum Direction {
         }
     }
 
-    /**
-     * Returns the vertical direction the track is pointing to.
-     * few rules:
-     * - returns UP for all ascending tracks.
-     * - return SELF for the rest.
-     *
-     * @param track
-     * @return direction
-     */
+    @Deprecated
     public static final Direction getVerticalTrackDirection(Block track) {
         switch (track.getTypeId()) {
             case 27:

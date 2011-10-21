@@ -1,7 +1,11 @@
 package com.tweakcart.model;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
+
+import com.tweakcart.model.SignParser.Action;
 
 /**
  * Created by Eclipse.
@@ -12,6 +16,8 @@ public class IntMap {
     public static final int materialSize = Material.values().length;
     public static final int mapSize = materialSize + 57;
     private int[] mapData;
+    private Direction dir;
+    private Action act;
 
     public IntMap() {
         mapData = new int[mapSize];
@@ -211,11 +217,16 @@ public class IntMap {
     public boolean equals(Object other) {
         if (other instanceof IntMap) {
             IntMap otherMap = (IntMap) other;
-            for (int index = 0; index <= mapData.length; index++) {
-                if (mapData[index] != otherMap.mapData[index])
-                    return false;
+            if(otherMap.getDirection() == this.getDirection()){
+                for (int index = 0; index < mapData.length; index++) {
+                    if (mapData[index] != otherMap.mapData[index])
+                        return false;
+                }
+                return true;
             }
-            return true;
+            else{
+                return false;
+            }
         } else {
             return false;
         }
@@ -249,4 +260,22 @@ public class IntMap {
         }
 
     }
+
+    public void setDirection(Direction dir) {
+        this.dir = dir;
+    }
+    
+    public Direction getDirection(){
+        return dir;
+    }
+
+    public void setAction(Action act) {
+        this.act = act;
+        
+    }
+    
+    public Action getAction(){
+        return act;
+    }
+    
 }

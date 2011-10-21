@@ -1,12 +1,15 @@
 package com.tweakcart.listeners;
 
+import com.google.common.collect.MapMaker;
 import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
+import com.tweakcart.model.SignLocation;
 import com.tweakcart.model.SignParser;
 import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
+
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -18,30 +21,33 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Edoxile
+ *
+ * @author Edoxile
  */
 public class TweakCartVehicleListener extends VehicleListener {
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private static TweakCart plugin = null;
-
+    //private static TweakCart plugin = null;
+    private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
+    private static int softMapHits = 0;
+    private static int softMapMisses = 0;
+    private int softMapPartialMisses = 0;
     public TweakCartVehicleListener(TweakCart instance) {
-        plugin = instance;
+        //plugin = instance;
+        softmap = new MapMaker().concurrencyLevel(4).softValues().makeMap();
     }
 
     public void onVehicleMove(VehicleMoveEvent event) {
-        if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) {
-            return;
-        }
-
-        if (event.getVehicle() instanceof Minecart) {
-            Minecart cart = (Minecart) event.getVehicle();
+        if (event.getVehicle() instanceof StorageMinecart) {
+            if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) {
+                return;
+            }
+            StorageMinecart cart = (StorageMinecart) event.getVehicle();
 
             Vector cartSpeed = cart.getVelocity(); // We are gonna use this 1 object everywhere(a new Vector() is made on every call ;) ).
             Block toBlock = event.getTo().getBlock(); //Use this object everywhere as well.
@@ -50,39 +56,58 @@ public class TweakCartVehicleListener extends VehicleListener {
                 return;
             }
 
-            switch (horizontalDirection) {
-                case NORTH:
-                case SOUTH:
-                    for (int dy = -1; dy <= 0; dy++) {
-                        for (int dz = -1; dz <= 1; dz += 2) {
-                            Block tempBlock = toBlock.getRelative(0, dy, dz);
-                            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                                Sign s = (Sign) tempBlock.getState();
-                                parseSign(s, cart, horizontalDirection);
+            switch (toBlock.getType()) {
+                case RAILS:
+                case POWERED_RAIL:
+                case DETECTOR_RAIL:
+                    switch (horizontalDirection) {
+                        case NORTH:
+                        case SOUTH:
+                            for (int dy = -1; dy <= 0; dy++) {
+                                for (int dz = -1; dz <= 1; dz += 2) {
+                                    Block tempBlock = toBlock.getRelative(0, dy, dz);
+                                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                        Sign s = (Sign) tempBlock.getState();
+                                        parseItemSign(s, cart, horizontalDirection);
+                                    }
+                                }
                             }
-                        }
+                            break;
+                        case EAST:
+                        case WEST:
+                            for (int dy = -1; dy <= 0; dy++) {
+                                for (int dx = -1; dx <= 1; dx += 2) {
+                                    Block tempBlock = toBlock.getRelative(dx, dy, 0);
+                                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                                        Sign s = (Sign) tempBlock.getState();
+                                        parseItemSign(s, cart, horizontalDirection);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                    Block tempBlock = toBlock.getRelative(0, 1, 0);
+                    if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
+                            || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
+                        Sign s = (Sign) tempBlock.getState();
+                        parseItemSign(s, cart, horizontalDirection);
                     }
                     break;
-                case EAST:
-                case WEST:
-                    for (int dy = -1; dy <= 0; dy++) {
-                        for (int dx = -1; dx <= 1; dx += 2) {
-                            Block tempBlock = toBlock.getRelative(dx, dy, 0);
-                            if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
-                                    || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                                Sign s = (Sign) tempBlock.getState();
-                                parseSign(s, cart, horizontalDirection);
-                            }
-                        }
-                    }
+                case SIGN_POST:
+                case WALL_SIGN:
+
                     break;
             }
+        }
+        else{
+            
         }
     }
 
     public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-        if (event.getBlock().getRelative(BlockFace.UP).getTypeId() == 23 && event.getVehicle() instanceof Minecart) {
+        if (event.getVehicle() instanceof Minecart && event.getBlock().getRelative(BlockFace.UP).getTypeId() == Material.DISPENSER.getId()) {
             ItemStack item;
             if (event.getVehicle() instanceof PoweredMinecart) {
                 item = new ItemStack(Material.POWERED_MINECART, 1);
@@ -110,32 +135,98 @@ public class TweakCartVehicleListener extends VehicleListener {
         }
     }
 
-    private void parseSign(Sign sign, Minecart cart, Direction direction) {
-        HashMap<SignParser.Action, IntMap> dataMap = SignParser.parseSign(sign, direction);
-        if (SignParser.checkStorageCart(cart)) {
-            StorageMinecart storageCart = (StorageMinecart) cart;
-            List<Chest> chests;
-            for (Map.Entry<SignParser.Action, IntMap> entry : dataMap.entrySet()) {
-                if (entry.getValue() == null)
-                    continue;
-                switch (entry.getKey()) {
-                    case COLLECT:
-                        //Collect items (from cart to chest)
-                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
-                        IntMap temp = entry.getValue();
-                        for (Chest c : chests) {
-                            temp = ChestUtil.moveItems(storageCart.getInventory(), c.getInventory(), temp);
-                        }
-                        break;
-                    case DEPOSIT:
-                        //Deposit items (from chest to cart)
-                        chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
-                        for (Chest c : chests) {
-                            ChestUtil.moveItems(c.getInventory(), storageCart.getInventory(), entry.getValue());
-                        }
-                        break;
+
+    private void parseItemSign(Sign sign, StorageMinecart cart, Direction direction) {
+        List<IntMap> intmaps;
+        List<Chest> chests;
+        SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
+        List<IntMap> temp = softmap.get(loc);
+        if(temp != null && containsDirection(temp, direction)){
+            intmaps = stripDirection(temp, direction);
+            softMapHits++;
+        }
+        else{
+            intmaps = SignParser.parseItemSign(sign, direction);
+            if(softmap.get(loc) != null){
+                List<IntMap> prevresult = softmap.get(loc);
+                for(int i = 0; i < prevresult.size(); i++){
+                    if(!intmaps.contains(prevresult.get(i))){
+                        intmaps.add(prevresult.get(i));
+                    }
                 }
+                softmap.put(loc, intmaps);
+                softMapPartialMisses++;
+            }
+            else{
+                softmap.put(loc, intmaps);
+                softMapMisses++;
+            }
+
+        }
+        for (IntMap map: intmaps) {
+            if (map == null)
+                continue;
+            switch (map.getAction()) {
+                case COLLECT:
+                    //Collect items (from cart to chest)
+                    chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                    for (Chest c : chests) {
+                        ChestUtil.moveItems(cart.getInventory(), c.getInventory(), map);
+                    }
+                    break;
+                case DEPOSIT:
+                    //Deposit items (from chest to cart)
+                    chests = ChestUtil.getChestsAroundBlock(sign.getBlock(), 1);
+                    for (Chest c : chests) {
+                        ChestUtil.moveItems(c.getInventory(), cart.getInventory(), map);
+                    }
+                    break;
             }
         }
+    }
+
+    private List<IntMap> stripDirection(List<IntMap> temp, Direction dir) {
+       List<IntMap> result = new ArrayList<IntMap>();
+       for(int i = 0; i < temp.size(); i++){
+           if(temp.get(i).getDirection() == dir || temp.get(i).getDirection() == Direction.SELF){
+               result.add(temp.get(i));
+           }
+       }
+       
+       return result;
+    }
+
+    private boolean containsDirection(List<IntMap> list, Direction dir) {
+        for(Iterator<IntMap> it = list.iterator(); it.hasNext();){
+            Direction dir2 = it.next().getDirection();
+            if(dir2 == dir){
+                return true;
+            }
+        }
+        return false;
+         
+    }
+    
+    public int getSoftMapHits(){
+        return softMapHits;
+    }
+    
+    public int getSoftMapMisses(){
+        return softMapMisses;
+    }
+    
+    public int getPartialMisses(){
+        return softMapPartialMisses;
+    }
+    
+    /**
+     * TODO: write this function.
+     */
+    public void parseRouteSign(Sign sign, Minecart cart, Direction direction) {
+        //fill this
+    }
+
+    public void removeEntry(SignLocation loc) {
+        softmap.remove(loc);      
     }
 }

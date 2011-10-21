@@ -18,7 +18,7 @@ import java.util.List;
  * @author Edoxile
  */
 public class ChestUtil {
-    public static final ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
+    public static ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
         ItemStack[] to = containerBlock.getInventory().getContents();
         for (int i1 = 0; i1 < from.length; i1++) {
             if (from[i1] == null)
@@ -33,7 +33,6 @@ public class ChestUtil {
                         from[i1].setAmount((to[i2].getAmount() + from[i1].getAmount()) - 64);
                         to[i2].setAmount(64);
                         i1--;
-
                     } else {
                         to[i2].setAmount(to[i2].getAmount() + from[i1].getAmount());
                         from[i1] = null;
@@ -92,6 +91,7 @@ public class ChestUtil {
                     settings.setInt(typeid, data, maxamount-moveamount);
                 }
                 //System.out.println("[1]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " t: (" + itemTo.getTypeId() + ")" + itemTo.getAmount() + " d:" + data + " m:" + settings.getInt(itemFrom.getTypeId(), data) + " mv:" + moveamount);
+
             }
             
             if(itemFrom.getAmount() <= 0) {
@@ -120,6 +120,7 @@ public class ChestUtil {
                     if(maxamount != Integer.MAX_VALUE){
                         maxamount -= itemFrom.getAmount();
                         settings.setInt(typeid, data, maxamount);
+
                     }
                     //System.out.println("[3]f: (" + itemFrom.getTypeId() + ")" + itemFrom.getAmount() + " m:" + settings.getInt(itemFrom.getTypeId(), data) + " d:" + data);
                     break;

@@ -2,5 +2,14 @@ name: TweakCart
 main: com.tweakcart.TweakCart
 authors: [Meaglin, The-Sec, windwarrior, Edoxile]
 website: https://github.com/Edoxile/TweakCart
+<<<<<<< HEAD
 version: 0.2.4
 
+=======
+version: 0.3.0
+commands:
+    cartdebug:
+        description: Show TweakCart debug info
+        usage: /cartdebug
+        aliases: [cd]
+>>>>>>> dev
