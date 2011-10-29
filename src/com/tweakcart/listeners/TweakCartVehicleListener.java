@@ -10,6 +10,7 @@ import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
@@ -68,8 +69,13 @@ public class TweakCartVehicleListener extends VehicleListener {
                                     Block tempBlock = toBlock.getRelative(0, dy, dz);
                                     if (tempBlock.getTypeId() == Material.SIGN_POST.getId()
                                             || tempBlock.getTypeId() == Material.WALL_SIGN.getId()) {
-                                        Sign s = (Sign) tempBlock.getState();
-                                        parseItemSign(s, cart, horizontalDirection);
+                                        
+                                    	Sign s = (Sign) tempBlock.getState();
+                                    	if(tempBlock.getRelative(BlockFace.DOWN).isBlockPowered() || tempBlock.getRelative(BlockFace.DOWN).isBlockIndirectlyPowered()){
+                                    		Bukkit.getServer().broadcastMessage("block is gepowered");
+                                    		return;
+                                    	}
+                                    	parseItemSign(s, cart, horizontalDirection);
                                     }
                                 }
                             }
