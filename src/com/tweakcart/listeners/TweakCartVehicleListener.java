@@ -147,7 +147,7 @@ public class TweakCartVehicleListener extends VehicleListener {
         List<Chest> chests;
         SignLocation loc = new SignLocation(sign.getX(), sign.getY(), sign.getZ());
         List<IntMap> temp = softmap.get(loc);
-        if(temp != null && containsDirection(temp, direction)){
+        if(temp != null && containsDirection(temp, direction, sign)){
             intmaps = stripDirection(temp, direction);
             softMapHits++;
         }
@@ -192,17 +192,26 @@ public class TweakCartVehicleListener extends VehicleListener {
     }
 
     private List<IntMap> stripDirection(List<IntMap> temp, Direction dir) {
-       List<IntMap> result = new ArrayList<IntMap>();
-       for(int i = 0; i < temp.size(); i++){
-           if(temp.get(i).getDirection() == dir || temp.get(i).getDirection() == Direction.SELF){
-               result.add(temp.get(i));
-           }
+        List<IntMap> result = new ArrayList<IntMap>();
+        for(int i = 0; i < temp.size(); i++){
+            if(temp.get(i).getDirection() == dir || temp.get(i).getDirection() == Direction.SELF){
+                result.add(temp.get(i));
+            }
        }
        
        return result;
     }
 
-    private boolean containsDirection(List<IntMap> list, Direction dir) {
+    private boolean containsDirection(List<IntMap> list, Direction dir, Sign s) {
+        int amountofentries = 0;
+        for(String line: s.getLines()){
+            if(line != null && !line.equals("") && !line.equalsIgnoreCase("deposit items") && !line.equalsIgnoreCase("deposit items")){
+                Bukkit.getServer().broadcastMessage("pong");
+                amountofentries++;
+            }
+        }
+        if(list.size() == amountofentries) return true;
+        
         for(Iterator<IntMap> it = list.iterator(); it.hasNext();){
             Direction dir2 = it.next().getDirection();
             if(dir2 == dir){
