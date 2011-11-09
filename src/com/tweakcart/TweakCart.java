@@ -46,7 +46,7 @@ public class TweakCart extends JavaPlugin {
         if(cmd.getName().toLowerCase().equals("cartdebug")){
             sender.sendMessage("SoftMap peformance," + ChatColor.GREEN + " Hits: " + vehicleListener.getSoftMapHits() + ChatColor.YELLOW + ", Partial misses: " + vehicleListener.getPartialMisses() + ChatColor.RED + ", Misses: " + vehicleListener.getSoftMapMisses() + ChatColor.GOLD + ", Average Full hits: " + (float) vehicleListener.getSoftMapHits() / ((float) vehicleListener.getSoftMapHits() + (float) vehicleListener.getSoftMapMisses())  * 100.0f + "%");
         }
-        return false;
+        return true;
     }
     
     public TweakCartBlockListener getBlockListener(){

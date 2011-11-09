@@ -3,7 +3,6 @@ package com.tweakcart.test;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
-import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
 import com.tweakcart.model.SignParser;
 

@@ -203,59 +203,39 @@ public class SignParser {
     /**
      * TODO: implement this function. It automatically teleports the cart to the correct location and in the correct direction (this is why cart is an argument).
      */
-    public static boolean parseRouteSign(Sign sign, Direction direction, Minecart cart) {
+    public static List<IntersectionRoute> parseRouteSign(Sign sign, Direction direction, Minecart cart) {
         //BASIC syntax: [Direction from <N,S,E,W>];[Type of cart <S,M,P>],[Full/Empty <F,E>];[Direction to go <N,S,E,W>]
-        //Example: S,F;N: makes storagecarts that are full go north :)        
+        //Example: S;S;F;N: makes storagecarts from south that are full go north :)      
+        List<IntersectionRoute> routelist = new ArrayList<IntersectionRoute>();
         String[] lines = sign.getLines();
         
         for(int i = 0; i < lines.length; i++){
             String line = lines[i];
-            Minecart type;
             
-            String[] temp = line.split(":");
-            for(String partline: temp){
-                String[] directionalparts = partline.split(";");
-                if(directionalparts.length == 3){
-                    //deel 1 is een direction
-                    Direction from = getDirection(directionalparts[0].toLowerCase().charAt(0));
-                    if(from != direction && direction != Direction.SELF){
-                        continue;
-                    }
-                    Direction to = getDirection(directionalparts[2].toLowerCase().charAt(0));
-                    String[] cartTypeFullness = directionalparts[1].split(";");
-                    if(cartTypeFullness.length == 2 && checkCartType(cartTypeFullness[0], cart)){
-                        boolean fullcart = getFull(cartTypeFullness[1].toLowerCase().charAt(0));
-                        if(cart instanceof StorageMinecart){
-                            StorageMinecart storecart = (StorageMinecart) cart;
-                            if(storecart.isEmpty() == !fullcart){
-                                //oke moven dan maar ;)
-                            }
-                        }else if(cart instanceof PoweredMinecart){
-                            PoweredMinecart powcart = (PoweredMinecart) cart;
-                            if(powcart.isEmpty() == !fullcart){
-                                //ook maar moven
-                            }
-                        }else{
-                            if(cart.isEmpty() == !fullcart){
-                                //whatever :)
-                            }
-                        }
-                    }
-                    else{
-                        continue;
-                    }
-                    
-                }else if(directionalparts.length == 2){
-                    Direction to = getDirection(directionalparts[1].toLowerCase().charAt(0));
-                    String[] cartTypeFullness = directionalparts[1].split(";");
-                }else{
-                    //User fail
-                }
+            String[] routes = line.split(":");
+            for(String route: routes){
+                Direction from;
+                Direction to;
+                CartType ct;
+                List<Condition> conditions = new ArrayList<Condition>();
+                
+                String[] fromSplit = route.split("+");
+                
+                if(fromSplit.length != 2) continue;
+                
+                from = getDirection(fromSplit[0].charAt(0));
+                
+                String[] cartSplit = fromSplit[1].split(";");
+                
+                if(cartSplit.length != 2) continue;
+                
+                ct = CartType.getCartType(cartSplit[0].charAt(0));
+                
                 
             }
         }
         
-        return false;
+        return routelist;
     }
     
     /**
@@ -263,10 +243,13 @@ public class SignParser {
      * @param c
      * @return
      */
+    
+    @Deprecated
     private static boolean getFull(char c) {        
         return c == 'f';
     }
 
+    @Deprecated
     private static boolean checkCartType(String type, Minecart cart) {
         char carttypechar = type.toLowerCase().charAt(0);
         switch(carttypechar){
@@ -285,18 +268,30 @@ public class SignParser {
 
     private static Direction getDirection(char c){
         switch(c){
+        case 'N':
         case 'n':
             return Direction.NORTH;
+        case 'S':
         case 's':
             return Direction.SOUTH;
+        case 'E':
         case 'e':
             return Direction.EAST;
+        case 'W':
         case 'w':
             return Direction.WEST;
         default:
             return Direction.SELF;
 
         }
+    }
+    
+    public static void parseIntersectionSign(Sign s, StorageMinecart cart,
+            Direction horizontalDirection) {
+        if(s.getLine(0).equalsIgnoreCase("elevator")){
+            
+        }
+        
     }
 
     public static List<IntMap> parseItemSign(Sign sign, Direction direction) {

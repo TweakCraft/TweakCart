@@ -103,7 +103,7 @@ public class TweakCartVehicleListener extends VehicleListener {
                     break;
                 case SIGN_POST:
                 case WALL_SIGN:
-
+                    //hier iets toevoegen
                     break;
             }
         }
