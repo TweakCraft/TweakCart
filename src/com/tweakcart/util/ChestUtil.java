@@ -2,6 +2,7 @@ package com.tweakcart.util;
 
 import com.tweakcart.model.IntMap;
 
+import com.tweakcart.model.StackInventory;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author Edoxile
  */
 public class ChestUtil {
+    @Deprecated
     public static ItemStack[] putItems(ItemStack[] from, ContainerBlock containerBlock) {
         ItemStack[] to = containerBlock.getInventory().getContents();
         for (int i1 = 0; i1 < from.length; i1++) {
@@ -46,9 +48,18 @@ public class ChestUtil {
         return from;
     }
 
+    @Deprecated
     public static ItemStack[] putItems(ItemStack from, ContainerBlock containerBlock) {
         ItemStack[] stacks = {from};
         return putItems(stacks, containerBlock);
+    }
+
+    public static ItemStack[] moveItems(ItemStack[] from, Inventory iTo){
+        StackInventory iFrom = new StackInventory(from);
+        IntMap settings = new IntMap();
+        settings.fillAll();
+        moveItems(iFrom, iTo, settings);
+        return iFrom.getContents();
     }
     
     public static IntMap moveItems(Inventory iFrom, Inventory iTo, IntMap settings) {

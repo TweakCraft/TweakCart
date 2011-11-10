@@ -219,7 +219,7 @@ public class SignParser {
                 CartType ct;
                 List<Condition> conditions = new ArrayList<Condition>();
                 
-                String[] fromSplit = route.split("+");
+                String[] fromSplit = route.split("\\+");
                 
                 if(fromSplit.length != 2) continue;
                 
