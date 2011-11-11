@@ -159,4 +159,24 @@ public enum Direction {
                 return Direction.SELF;
         }
     }
+    
+    public static Direction getDirection(char c){
+        switch(c){
+        case 'N':
+        case 'n':
+            return Direction.NORTH;
+        case 'S':
+        case 's':
+            return Direction.SOUTH;
+        case 'E':
+        case 'e':
+            return Direction.EAST;
+        case 'W':
+        case 'w':
+            return Direction.WEST;
+        default:
+            return Direction.SELF;
+
+        }
+    }
 }

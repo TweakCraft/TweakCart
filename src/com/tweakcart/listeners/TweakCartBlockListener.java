@@ -76,7 +76,7 @@ public class TweakCartBlockListener extends BlockListener {
                             default:
                                 break;
                         }
-                        cart.setVelocity(direction.mod(cart.getMaxSpeed()));
+                        if(track.getTypeId() != 27 || (track.getTypeId() == 27 && track.isBlockPowered())) cart.setVelocity(direction.mod(cart.getMaxSpeed()));
                         Dispenser dispenser = (Dispenser) event.getBlock().getState();
                         dispenser.getInventory().removeItem(event.getItem()).isEmpty();
                         event.setCancelled(true);

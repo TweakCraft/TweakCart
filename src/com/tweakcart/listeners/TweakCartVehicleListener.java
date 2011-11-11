@@ -5,10 +5,10 @@ import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
 import com.tweakcart.model.SignLocation;
-import com.tweakcart.model.SignParser;
 import com.tweakcart.util.CartUtil;
 import com.tweakcart.util.ChestUtil;
 import com.tweakcart.util.MathUtil;
+import com.tweakcraft.parsers.ItemSignParser;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -33,13 +33,12 @@ import java.util.concurrent.ConcurrentMap;
  * @author Edoxile
  */
 public class TweakCartVehicleListener extends VehicleListener {
-    //private static TweakCart plugin = null;
     private static ConcurrentMap<SignLocation, List<IntMap>> softmap;
     private static int softMapHits = 0;
     private static int softMapMisses = 0;
     private int softMapPartialMisses = 0;
+    
     public TweakCartVehicleListener(TweakCart instance) {
-        //plugin = instance;
         softmap = new MapMaker().concurrencyLevel(4).softValues().makeMap();
     }
 
@@ -152,7 +151,7 @@ public class TweakCartVehicleListener extends VehicleListener {
             softMapHits++;
         }
         else{
-            intmaps = SignParser.parseItemSign(sign, direction);
+            intmaps = ItemSignParser.parseItemSign(sign, direction);
             if(softmap.get(loc) != null){
                 List<IntMap> prevresult = softmap.get(loc);
                 for(int i = 0; i < prevresult.size(); i++){

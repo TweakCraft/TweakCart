@@ -3,7 +3,7 @@ package com.tweakcart.model;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
-import com.tweakcart.model.SignParser.Action;
+import com.tweakcraft.parsers.ItemSignParser.Action;
 
 /**
  * Created by Eclipse.
