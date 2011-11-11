@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
 import com.tweakcart.model.IntMap;
-import com.tweakcart.model.SignParser;
+import com.tweakcraft.parsers.ItemSignParser;
 
 public class IntMapTest {
     public static void main(String[] args){
@@ -263,6 +263,6 @@ public class IntMapTest {
         System.out.println("IntMap reporting size: " + IntMap.mapSize);
         System.out.println("Wol data 4: " + new MaterialData(351, (byte)4));
         
-        System.out.println(SignParser.buildIntMap("44,0"));
+        System.out.println(ItemSignParser.buildIntMap("44,0"));
     }
 }
