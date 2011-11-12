@@ -12,7 +12,7 @@ public class ItemParser {
         IntMap intMap = new IntMap();
         boolean isFlipped = false;
 
-        isFlipped = (line.charAt(0) == '!');
+        isFlipped = (line.charAt(0) == ItemCharacter.FLIP.getCharacter().charAt(0));
         if (isFlipped)
             line = line.substring(1);
 
@@ -45,6 +45,8 @@ public class ItemParser {
                             continue;
                         } else if (apple.length == 2) {
                             hasRange = true;
+                        } else {
+                            return null;
                         }
                         break;
                     case DATA_VALUE:
@@ -54,6 +56,8 @@ public class ItemParser {
                         } else if (banana.length == 2) {
                             data[0] = Byte.parseByte(banana[1]);
                             apple[0] = apple[0].substring(0, apple[0].length() - banana[1].length());
+                        } else {
+                            return null;
                         }
                         if (hasRange) {
                             banana = apple[1].split(itemCharacter.getCharacter());
@@ -63,7 +67,7 @@ public class ItemParser {
                                 data[1] = Byte.parseByte(banana[1]);
                                 apple[1] = apple[1].substring(0, apple[1].length() - banana[1].length());
                             } else {
-                                continue;
+                                return null;
                             }
                         }
                         break;
