@@ -10,6 +10,7 @@ import java.util.HashMap;
  * @author Edoxile
  */
 public enum DirectionCharacter {
+    DELIMITER("+"),
     NORTH("n", Direction.NORTH),
     EAST("e", Direction.EAST),
     SOUTH("s", Direction.SOUTH),
@@ -25,6 +26,11 @@ public enum DirectionCharacter {
             directionMap.put(d.getCharacter(), d.getDirection());
             directionCharacterMap.put(d.getDirection(), d);
         }
+    }
+
+    private DirectionCharacter(String c){
+        character = c;
+        direction = Direction.SELF;
     }
 
     private DirectionCharacter(String c, Direction d) {

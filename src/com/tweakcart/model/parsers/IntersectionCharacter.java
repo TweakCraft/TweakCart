@@ -12,7 +12,11 @@ public enum IntersectionCharacter {
     MINECART("m"),
     STORAGE_CART("s"),
     POWERED_CART("p"),
-    ANY_CART("a");
+    ANY_CART("a"),
+
+    DIRECTION_DELIMITER(";"),
+    CART_DELIMITER(":"),
+    REMAINDER_DELIMITER("!");
 
     private String character;
 

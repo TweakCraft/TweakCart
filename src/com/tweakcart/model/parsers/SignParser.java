@@ -1,5 +1,6 @@
 package com.tweakcart.model.parsers;
 
+import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
 
 /**
@@ -7,7 +8,21 @@ import com.tweakcart.model.IntMap;
  *
  * @author Edoxile
  */
-public class ItemParser {
+public class SignParser {
+
+    public static int parseDirection(String line, Direction cartDirection) {
+        if (line.charAt(1) == DirectionCharacter.DELIMITER.getCharacter().charAt(0)) {
+            DirectionCharacter directionCharacter = DirectionCharacter.getDirectionCharacter(line.substring(0, 1));
+            if (directionCharacter.getDirection().equals(cartDirection)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            return -1;
+        }
+    }
+
     public static IntMap parseItems(String line) {
         IntMap intMap = new IntMap();
         boolean isFlipped = false;
@@ -73,7 +88,7 @@ public class ItemParser {
                         break;
                     case ID:
                         id[0] = Integer.parseInt(apple[0]);
-                        if(hasRange){
+                        if (hasRange) {
                             id[1] = Integer.parseInt(apple[1]);
                         }
                         return null;
@@ -87,5 +102,10 @@ public class ItemParser {
         }
 
         return intMap;
+    }
+
+    public static int[] parseIntersection(){
+        //TODO: implement, think about return type
+        return null;
     }
 }
