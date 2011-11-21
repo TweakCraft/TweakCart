@@ -2,6 +2,7 @@ package com.tweakcart.model.parsers;
 
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
+import org.bukkit.entity.Minecart;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,13 +24,21 @@ public class SignParser {
         }
     }
 
-    public static IntMap parseItems(String line) {
+    public static IntMap parseItems(String line, Direction cartDirection) {
         IntMap intMap = new IntMap();
         boolean isFlipped = false;
 
         isFlipped = (line.charAt(0) == ItemCharacter.FLIP.getCharacter().charAt(0));
-        if (isFlipped)
+        if (isFlipped) {
             line = line.substring(1);
+        }
+
+        int direction = parseDirection(line, cartDirection);
+        if (direction == 0) {
+            return null;
+        } else if (direction == 1) {
+            line = line.substring(2);
+        }
 
         String[] splitted = line.split(ItemCharacter.DELIMITER.getCharacter());
 
@@ -45,7 +54,7 @@ public class SignParser {
                     case AMOUNT:
                         apple = part.split(itemCharacter.getCharacter());
                         if (apple.length == 1) {
-                            continue;
+                            break;
                         } else if (apple.length == 2) {
                             amount = Integer.parseInt(apple[1]);
                             line = line.substring(0, line.length() - apple[1].length());
@@ -57,7 +66,7 @@ public class SignParser {
                     case RANGE:
                         apple = part.split(itemCharacter.getCharacter());
                         if (apple.length == 1) {
-                            continue;
+                            break;
                         } else if (apple.length == 2) {
                             hasRange = true;
                         } else {
@@ -92,6 +101,8 @@ public class SignParser {
                             id[1] = Integer.parseInt(apple[1]);
                         }
                         return null;
+                    default:
+                        break;
                 }
             }
             if (hasRange) {
@@ -104,8 +115,58 @@ public class SignParser {
         return intMap;
     }
 
-    public static int[] parseIntersection(){
-        //TODO: implement, think about return type
-        return null;
+    public static Direction parseIntersection(String line, Minecart cart, Direction cartDirection, boolean isFull) {
+        //Returns the direction to go to. null = parse error, BlockFace.SELF is incompatible direction.
+        int direction = parseDirection(line, cartDirection);
+        Direction remainder;
+
+        if (direction == -1) {
+            return null;
+        } else if (direction == 0) {
+            return Direction.SELF;
+        } else {
+            //Chop off direction
+            line = line.substring(2);
+            //Chop off the remainder statement
+            String[] apple = line.split(IntersectionCharacter.REMAINDER_DELIMITER.getCharacter());
+            if (apple.length == 1) {
+                remainder = cartDirection;
+            } else if (apple.length == 2) {
+                remainder = DirectionCharacter.getDirection(apple[1]);
+                if (remainder == null) {
+                    return null;
+                }
+                line = line.substring(0, line.length() - 1);
+            } else {
+                return null;
+            }
+
+            apple = line.split(IntersectionCharacter.CART_DELIMITER.getCharacter());
+            for (String mango : apple) {
+                String[] banana = mango.split(IntersectionCharacter.DIRECTION_DELIMITER.getCharacter());
+                if (apple.length == 2) {
+                    remainder = DirectionCharacter.getDirection(banana[1]);
+                    if (remainder == null) {
+                        return null;
+                    }
+                } else {
+                    //Syntax error (no to-direction given)
+                    return null;
+                }
+
+                //0 = no type found, 1 = empty, 2 = full;
+                int type = 0;
+
+                for (int i = 0; i < mango.length(); i++) {
+                    IntersectionCharacter ic = IntersectionCharacter.getIntersectionCharacter(mango.substring(i, i + 1));
+                    switch(ic){
+                        case MINECART:
+                            //TODO: checks etc
+                    }
+                }
+            }
+            //Remainder
+            return remainder;
+        }
     }
 }
