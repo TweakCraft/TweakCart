@@ -3,6 +3,8 @@ package com.tweakcart.model.parsers;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.PoweredMinecart;
+import org.bukkit.entity.StorageMinecart;
 
 /**
  * Created by IntelliJ IDEA.
@@ -155,13 +157,43 @@ public class SignParser {
                 }
 
                 //0 = no type found, 1 = empty, 2 = full;
-                int type = 0;
+                int type;
+                boolean cartFound = false;
 
                 for (int i = 0; i < mango.length(); i++) {
                     IntersectionCharacter ic = IntersectionCharacter.getIntersectionCharacter(mango.substring(i, i + 1));
-                    switch(ic){
+                    switch (ic) {
                         case MINECART:
                             //TODO: checks etc
+                            if (!(cart instanceof StorageMinecart) && !(cart instanceof PoweredMinecart)) {
+                                cartFound = true;
+                                break;
+                            } else {
+                                break;
+                            }
+                        case STORAGE_CART:
+                            if(cart instanceof StorageMinecart){
+                                cartFound = true;
+                                break;
+                            } else {
+                                break;
+                            }
+                        case POWERED_CART:
+                            if(cart instanceof PoweredMinecart){
+                                cartFound = true;
+                                break;
+                            } else {
+                                break;
+                            }
+                        case EMPTY_CART:
+                            //TODO: think of implementation;
+                            break;
+                        case FULL_CART:
+                            //TODO: think of implementation;
+                            break;
+                        //TODO: put more delimiters in here;
+                        default:
+                            return null;
                     }
                 }
             }
