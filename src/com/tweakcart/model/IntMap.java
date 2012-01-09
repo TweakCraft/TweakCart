@@ -172,14 +172,16 @@ public class IntMap {
                 startId++;
             }
             while (startId <= endId) {
-                if (hasDataValue(startId)) {
+                if (!isAllowedMaterial(startId, (byte) 0)){
+                    startId++;
+                }
+                else if(hasDataValue(startId)) {
                     setDataRange(startId, (byte) 0, (byte) 15, value);
+                    startId++;
                 } else {
                     setInt(startId, (byte) 0, value);
-                }
-                do {
                     startId++;
-                } while (!isAllowedMaterial(startId, (byte) 0));
+                }
             }
             return true;
         } else if (startId == endId) {
