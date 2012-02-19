@@ -1,6 +1,5 @@
 package com.tweakcart.listeners;
 
-import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -8,23 +7,18 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.BlockListener;
 
-import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
-public class TweakCartBlockListener extends BlockListener {
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private TweakCart plugin;
+public class TweakCartBlockListener implements Listener {
 
-    public TweakCartBlockListener(TweakCart plugin) {
-        this.plugin = plugin;
-    }
-
+    @EventHandler
     public void onBlockDispense(BlockDispenseEvent event) {
         switch (event.getItem().getTypeId()) {
             case 328:

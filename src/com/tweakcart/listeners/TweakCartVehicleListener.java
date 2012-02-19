@@ -1,6 +1,5 @@
 package com.tweakcart.listeners;
 
-import com.tweakcart.TweakCart;
 import com.tweakcart.model.Direction;
 import com.tweakcart.model.IntMap;
 import com.tweakcart.model.SignParser;
@@ -12,8 +11,9 @@ import org.bukkit.block.*;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
-import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -21,20 +21,14 @@ import org.bukkit.util.Vector;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
-public class TweakCartVehicleListener extends VehicleListener {
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private static TweakCart plugin = null;
+public class TweakCartVehicleListener implements Listener {
 
-    public TweakCartVehicleListener(TweakCart instance) {
-        plugin = instance;
-    }
-
+    @EventHandler
     public void onVehicleMove(VehicleMoveEvent event) {
         if (MathUtil.isSameBlock(event.getFrom(), event.getTo())) {
             return;
@@ -81,6 +75,7 @@ public class TweakCartVehicleListener extends VehicleListener {
         }
     }
 
+    @EventHandler
     public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
         if (event.getBlock().getRelative(BlockFace.UP).getTypeId() == 23 && event.getVehicle() instanceof Minecart) {
             ItemStack item;

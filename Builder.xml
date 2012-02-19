@@ -12,8 +12,6 @@
 	<path id="classpath">
 		<fileset dir="libs">
 			<include name="craftbukkit-0.0.1-SNAPSHOT.jar" />
-			<include name="Permissions.jar" />
-			<include name="trove-2.1.0.jar" />
 		</fileset>
 	</path>
 	
@@ -43,10 +41,6 @@
 			</zipfileset >
 			<zipfileset dir="${src}" prefix="src" >
 				<include name="**" />
-			</zipfileset>
-			<zipfileset src="libs/trove-2.1.0.jar" prefix="" >
-				<include name="**" />
-				<exclude name="META-INF/*" />
 			</zipfileset>
 		</jar>
 	</target>

@@ -6,6 +6,7 @@ import com.google.common.collect.MapMaker;
 import com.tweakcart.model.IntMap;
 import com.tweakcart.model.SignLocation;
 
+@Deprecated
 public class SoftSignMap{
     ConcurrentMap<SignLocation, IntMap> signmap;
     

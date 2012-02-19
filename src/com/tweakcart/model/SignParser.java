@@ -6,7 +6,6 @@ import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,8 +20,6 @@ public class SignParser {
         ITEM,
         ALL
     }
-
-    private static final Logger log = Logger.getLogger("Minecraft");
 
     public static String removeBrackets(String line) {
         if (line.length() > 2 && line.charAt(0) == '[' && line.charAt(line.length() - 1) == ']') {

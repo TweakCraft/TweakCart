@@ -3,7 +3,6 @@ package com.tweakcart;
 
 import com.tweakcart.listeners.TweakCartBlockListener;
 import com.tweakcart.listeners.TweakCartVehicleListener;
-import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,16 +18,11 @@ public class TweakCart extends JavaPlugin {
     private TweakCartBlockListener blockListener = null;
 
     public void onEnable() {
-        // Initialising variables
-        vehicleListener = new TweakCartVehicleListener(this);
-        blockListener = new TweakCartBlockListener(this);
-
-        // Load plugin-manager and register events
+        vehicleListener = new TweakCartVehicleListener();
+        blockListener = new TweakCartBlockListener();
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Event.Priority.Normal, this);
-        pm.registerEvent(Event.Type.BLOCK_DISPENSE, blockListener, Event.Priority.Normal, this);
-        pm.registerEvent(Event.Type.VEHICLE_COLLISION_BLOCK, vehicleListener, Event.Priority.Normal, this);
-
+        pm.registerEvents(vehicleListener, this);
+        pm.registerEvents(blockListener, this);
         // Loaded!
         log.info("[" + getDescription().getName() + "] Enabled! version:" + getDescription().getVersion());
     }
