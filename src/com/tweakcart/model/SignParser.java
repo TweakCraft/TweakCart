@@ -56,6 +56,7 @@ public class SignParser {
                             if (line.charAt(2) == 'a' && line.equals(Character.toString(line.charAt(0)) + "+all items")) {
                                 return Action.ALL;
                             } else {
+                                System.out.println("Action.ITEM");
                                 return Action.ITEM;
                             }
                         } else {
@@ -192,21 +193,25 @@ public class SignParser {
         if (line.length() >= 2 && line.charAt(1) == '+') {
             char c = line.charAt(0);
             switch (c) {
+                case 'N':
                 case 'n':
                     if (d != Direction.NORTH) {
                         return false;
                     }
                     break;
+                case 'S':
                 case 's':
                     if (d != Direction.SOUTH) {
                         return false;
                     }
                     break;
+                case 'E':
                 case 'e':
                     if (d != Direction.EAST) {
                         return false;
                     }
                     break;
+                case 'W':
                 case 'w':
                     if (d != Direction.WEST) {
                         return false;
@@ -277,6 +282,7 @@ public class SignParser {
                             break;
                     }
                 } else {
+                    System.out.println("Direction " + direction);
                     continue;
                 }
             } else {

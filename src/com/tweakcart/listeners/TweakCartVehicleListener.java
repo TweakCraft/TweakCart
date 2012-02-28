@@ -18,6 +18,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,11 @@ public class TweakCartVehicleListener implements Listener {
             Direction horizontalDirection = Direction.getHorizontalDirection(cartSpeed);
             if (CartUtil.stoppedSlowCart(cart, cartSpeed, toBlock, horizontalDirection)) {
                 return;
+            }
+            Block tempie;
+            if((tempie = toBlock.getRelative(BlockFace.UP)).getState() instanceof Sign){
+                Sign s = (Sign) tempie.getState();
+                parseSign(s, cart, horizontalDirection);
             }
 
             switch (horizontalDirection) {
@@ -70,14 +76,16 @@ public class TweakCartVehicleListener implements Listener {
                             }
                         }
                     }
+                    
                     break;
             }
         }
     }
+    
 
     @EventHandler
     public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-        if (event.getBlock().getRelative(BlockFace.UP).getTypeId() == 23 && event.getVehicle() instanceof Minecart) {
+        if (event.getBlock().getState() instanceof Dispenser && event.getVehicle() instanceof Minecart) {
             ItemStack item;
             if (event.getVehicle() instanceof PoweredMinecart) {
                 item = new ItemStack(Material.POWERED_MINECART, 1);
@@ -86,7 +94,7 @@ public class TweakCartVehicleListener implements Listener {
             } else {
                 item = new ItemStack(Material.MINECART, 1);
             }
-            Dispenser dispenser = (Dispenser) event.getBlock().getRelative(BlockFace.UP).getState();
+            Dispenser dispenser = (Dispenser) event.getBlock().getState();
             ItemStack cartItemStack = ChestUtil.putItems(item, dispenser)[0];
             if (cartItemStack == null) {
                 if (event.getVehicle() instanceof StorageMinecart) {

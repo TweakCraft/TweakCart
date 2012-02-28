@@ -10,7 +10,7 @@ import org.bukkit.material.MaterialData;
  */
 public class IntMap {
     public static final int materialSize = Material.values().length;
-    public static final int mapSize = materialSize + 54;
+    public static final int mapSize = materialSize + 57;
     private int[] mapData;
 
     public IntMap() {
