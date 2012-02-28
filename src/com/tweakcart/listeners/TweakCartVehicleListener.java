@@ -22,12 +22,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
 public class TweakCartVehicleListener implements Listener {
+    private static Logger log = Logger.getLogger("Minecraft");
 
     @EventHandler
     public void onVehicleMove(VehicleMoveEvent event) {
@@ -85,7 +87,7 @@ public class TweakCartVehicleListener implements Listener {
 
     @EventHandler
     public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-        if (event.getBlock().getState() instanceof Dispenser && event.getVehicle() instanceof Minecart) {
+        if (event.getBlock().getRelative(BlockFace.UP).getState() instanceof Dispenser && event.getVehicle() instanceof Minecart) {
             ItemStack item;
             if (event.getVehicle() instanceof PoweredMinecart) {
                 item = new ItemStack(Material.POWERED_MINECART, 1);
@@ -94,7 +96,7 @@ public class TweakCartVehicleListener implements Listener {
             } else {
                 item = new ItemStack(Material.MINECART, 1);
             }
-            Dispenser dispenser = (Dispenser) event.getBlock().getState();
+            Dispenser dispenser = (Dispenser) event.getBlock().getRelative(BlockFace.UP).getState();
             ItemStack cartItemStack = ChestUtil.putItems(item, dispenser)[0];
             if (cartItemStack == null) {
                 if (event.getVehicle() instanceof StorageMinecart) {
