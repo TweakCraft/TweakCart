@@ -191,27 +191,23 @@ public class SignParser {
 
     private static boolean checkDirection(String line, Direction d) {
         if (line.length() >= 2 && line.charAt(1) == '+') {
-            char c = line.charAt(0);
+            char c = line.toLowerCase().charAt(0);
             switch (c) {
-                case 'N':
                 case 'n':
                     if (d != Direction.NORTH) {
                         return false;
                     }
                     break;
-                case 'S':
                 case 's':
                     if (d != Direction.SOUTH) {
                         return false;
                     }
                     break;
-                case 'E':
                 case 'e':
                     if (d != Direction.EAST) {
                         return false;
                     }
                     break;
-                case 'W':
                 case 'w':
                     if (d != Direction.WEST) {
                         return false;
@@ -282,7 +278,6 @@ public class SignParser {
                             break;
                     }
                 } else {
-                    System.out.println("Direction " + direction);
                     continue;
                 }
             } else {
